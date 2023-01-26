@@ -7,3 +7,6 @@
 [submodule "geo/TSMP_EU11"]
 	path = geo/TSMP_EU11
 	url = https://icg4geo.icg.kfa-juelich.de/Configurations/TSMP_statfiles_IBG3/TSMP_EU11.git
+[submodule "src/int2lm3.00"]
+	path = src/int2lm3.00
+	url = https://icg4geo.icg.kfa-juelich.de/ModelSystems/tsmp_src/int2lm3.00.git
