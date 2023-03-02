@@ -1,50 +1,26 @@
-# Welcome to `FZJ-IBG3_Climatrun-Template` 
+# DETECT_EUR-11_ECMWF-ERA5_evaluation_r1i1p1_FZJ-COSMO5-01-CLM3-5-0-ParFlow3-12-0_vBaseline 
 
 # Getting started
 First clone this repository (**Setup**) to you project-directory:
 ``` bash
 cd $PROJECT_DIR
-git clone --recurse-submodules https://icg4geo.icg.kfa-juelich.de/ModelSystems/tsmp_scripts_tools_engines/FZJ-IBG3_Climatrun-Template.git
-```
-and export the new path to an environment variable for later use:
-``` bash
-cd $PROJECT_DIR/FZJ-IBG3_Climatrun-Template
-export BASE_ROOT=$(pwd)
+git clone --recurse-submodules https://icg4geo.icg.kfa-juelich.de/Configurations/TSMP/DETECT_EUR-11_ECMWF-ERA5_evaluation_r1i1p1_FZJ-COSMO5-01-CLM3-5-0-ParFlow3-12-0_vBaseline.git
 ```
 
-Than get the **ModelSystem** (TSMP), place under `src` directory, and checkout desired version/tag:
+Than prepare the **ModelSystem** (TSMP), located under `src` directory:
 ``` bash
-cd $BASE_ROOT/src
-git clone https://github.com/HPSCTerrSys/TSMP.git
-cd TSMP
-git checkout v1.2.3
+cd $BASE_ROOT/src/TSMP
 export TSMP_DIR=$(pwd)
-```
-Get TSMP component models (COSMO, ParFlow, CLM, Oasis)
-``` bash
-cd ${TSMP_DIR}
-git clone https://icg4geo.icg.kfa-juelich.de/ModelSystems/tsmp_src/cosmo5.01_fresh.git
-git clone https://icg4geo.icg.kfa-juelich.de/ModelSystems/tsmp_src/parflow3.2_fresh.git
-git clone https://icg4geo.icg.kfa-juelich.de/ModelSystems/tsmp_src/clm3.5_fresh.git
-git clone https://icg4geo.icg.kfa-juelich.de/ModelSystems/tsmp_src/oasis3-mct.git
-mv cosmo5.01_fresh cosmo5_1
-mv parflow3.2_fresh parflow3_2
-mv clm3.5_fresh clm3_5
-```
-Patch `ParFlow` to enable writing out `et.pfb` where usually compilation with CLM is needed, but not possible with TSMP:
-``` bash
-patch ${TSMP_DIR}/parflow3_2/pfsimulator/parflow_lib/solver_richards.c ${BASE_ROOT}/ctrl/externals/ParFlowPatches/patch2writeSourceAndSinksWithoutCLM/patch_solver_richards.c
+# Get TSMP component models (COSMO, ParFlow, CLM, Oasis)
+git clone https://icg4geo.icg.kfa-juelich.de/ModelSystems/tsmp_src/cosmo5.01_fresh.git cosmo5_1
+git clone -b v3.12.0 https://github.com/parflow/parflow.git parflow
+git clone https://icg4geo.icg.kfa-juelich.de/ModelSystems/tsmp_src/clm3.5_fresh.git clm3_5
+git clone https://icg4geo.icg.kfa-juelich.de/ModelSystems/tsmp_src/oasis3-mct.git oasis3-mct
 ```
 Compile TSMP
 ``` bash
 cd $TSMP_DIR/bldsva
-./build_tsmp.ksh -v 3.1.0MCT -c clm-cos-pfl -m JUWELS -O Intel
-```
-
-Get needed **Static-files** and stoer under geo/ (not final yet...)
-``` bash
-cd ${BASE_ROOT}/geo
-git clone [...]
+./build_tsmp.ksh --readclm=true -v 3.1.0MCT -c clm-cos-pfl -m JURECA -O Intel
 ```
 
 Finally you need to adjust `export_paths.ksh` in the `ctrl` directory:
@@ -57,21 +33,19 @@ according to you `$PROJECT_DIR` from above. To verify `rootdir` is set properly
 do `source $BASE_ROOT/ctrl/export_paths.ksh && echo "$rootdir" && ls -l $rootdir`. You should see the following content:
 ``` console
 PATH/TO/YOUR/PROJECT
-CHANGELOG
 ctrl
+doc
 forcing
 geo
+monitoring
 postpro
 README.md
-run_INT2LM
-run_TSMP
+rundir
 simres
 src
 ```
 
 Now the setup is complete, and can be run after providing proper forcing and restart files. 
-Take a look at the [Wiki](https://icg4geo.icg.kfa-juelich.de/ModelSystems/ERA5Climat_EUR11_ECMWF-ERA5_analysis_FZJ-IBG3/wikis/home) to see how to provide those files.
-
 To start a simulation simply execute `starter.sh` from `ctrl`-directory:
 ``` bash
 cd $BASE_ROOT/ctrl
