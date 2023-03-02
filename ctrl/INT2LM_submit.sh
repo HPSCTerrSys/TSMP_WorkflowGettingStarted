@@ -120,7 +120,7 @@ echo "DEBUG: modify namelist (sed inserts etc.)"
 sed "s,__start_date__,${int2lm_start_date},g" -i ${rundir}/INPUT
 sed "s,__init_date__,${int2lm_start_date},g" -i ${rundir}/INPUT
 sed "s,__hstop__,${int2lm_hstop},g" -i ${rundir}/INPUT
-sed "s,__lm_ext_dir__,${BASE_GEODIR}/TSMP_EU11/static/int2lm,g" -i ${rundir}/INPUT
+sed "s,__lm_ext_dir__,${BASE_GEODIR}/TSMP_EUR-11/static/int2lm,g" -i ${rundir}/INPUT
 sed "s,__in_ext_dir__,${BASE_FORCINGDIR}/ERA5raw/INT2LM_inext,g" -i ${rundir}/INPUT
 sed "s,__in_cat_dir__,${BASE_FORCINGDIR}/ERA5raw/${y0},g" -i ${rundir}/INPUT
 sed "s,__lm_cat_dir__,${int2lm_LmCatDir},g" -i ${rundir}/INPUT
