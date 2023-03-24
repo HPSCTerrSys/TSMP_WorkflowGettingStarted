@@ -12,7 +12,7 @@ simLength='1 month'  # length of one simulaiton. Has to be a valid `date`
                      # option like '1 month', '10 days', etc. (number is 
                      # IMPORTANT!)
                      # AT THE MOMENT simLength>=1day IS NEEDED!
-NoS=1               # number of simulations 
+NoS=1                # number of simulations 
 startDate="1970-01-01T00:00Z" # start date - is changing while simulation is
                      # progressing.
 initDate="1970-01-01T00:00Z"  # init date - is fix for entre simulation 
@@ -41,7 +41,7 @@ COMBINATION="clm-cos-pfl" # Set the component model combination run run.
 
 
 CaseMode=true        # true, if running in case mode, false if not.
-CaseID="TestHincrad05SummerMonth" # Which case to run? Cases are defined in ctrl/CASES.conf
+CaseID="MainRun"     # Which case to run? Cases are defined in ctrl/CASES.conf
                      # Available are: "ActiveLakes", "HetTen", "NoPfsol", 
                      #   "TestHincrad05", "SeepageFace", "SeepageFaceAndHetTen"
 

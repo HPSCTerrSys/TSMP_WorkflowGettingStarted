@@ -287,6 +287,7 @@ for component in "${components[@]}"; do
     echo "--- - COSMO"
     # Create component subdir
     mkdir -p "$new_simres/cosmo"
+    mkdir -p -v ${BASE_RUNDIR}/restarts/cosmo
     # Save restart files for next simulation
     # -- COSMO does store the restart files in correct dir already
     # Move model-output to simres/
@@ -300,6 +301,7 @@ for component in "${components[@]}"; do
     echo "--- - CLM"
     # Create component subdir
     mkdir -p "$new_simres/clm"
+    mkdir -p -v ${BASE_RUNDIR}/restarts/clm
 
     # Do use `-` prefix for date string to avoid below error:
     # ERROR: value too great for base (error token is "09")
@@ -325,6 +327,7 @@ for component in "${components[@]}"; do
     echo "--- - PFL"
     # Create component subdir
     mkdir -p "$new_simres/parflow"
+    mkdir -p -v ${BASE_RUNDIR}/restarts/parflow
     # Save restart files for next simulation
     pfl_restart=`ls -1 ${rundir}/${pfidb}.out.?????.nc | tail -1`
     cp -v ${pfl_restart} ${BASE_RUNDIR}/restarts/parflow/
