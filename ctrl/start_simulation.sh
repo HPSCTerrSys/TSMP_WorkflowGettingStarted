@@ -106,6 +106,7 @@ for component in "${components[@]}"; do
   if [ "${component}" = "cos" ]; then
 	echo "--- -- - cos"
 	mkdir -vp ${rundir}/cosmo_out
+  mkdir -vp ${BASE_RUNDIR}/restarts/cosmo
 	cp ${BASE_NAMEDIR}/INPUT_* ${rundir}/
 	sed -i "s,__hstart__,${hstart},g" INPUT_IO
 	sed -i "s,__hstop__,${hstop},g" INPUT_IO
