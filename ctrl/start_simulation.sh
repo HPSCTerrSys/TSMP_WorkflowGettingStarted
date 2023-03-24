@@ -356,7 +356,8 @@ totalRunTime_sec=$(($scriptEndTime - $scriptStartTime))
 totalRunTime=$(printf '%02dh:%02dm:%02ds\n' $((totalRunTime_sec/3600)) $((totalRunTime_sec%3600/60)) $((totalRunTime_sec%60)))
 
 echo "--- Moving TSMP log to simres/"
-cp ${TSMP_BINDIR}/log_all* ${new_simres}/log/TSMP_BuildLog.txt
+TSMPLogFile=`ls -rt ${TSMP_BINDIR}/log_all* | tail -1`
+cp ${TSMPLogFile} ${new_simres}/log/TSMP_BuildLog.txt
 
 echo "--- Moving SLURM log to simres/"
 cp -v ${BASE_CTRLDIR}/logs/${CaseID}_simulation-??? $new_simres/log/

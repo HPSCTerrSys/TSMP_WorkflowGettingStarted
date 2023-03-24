@@ -12,10 +12,10 @@ simLength='1 month'  # length of one simulaiton. Has to be a valid `date`
                      # option like '1 month', '10 days', etc. (number is 
                      # IMPORTANT!)
                      # AT THE MOMENT simLength>=1day IS NEEDED!
-NoS=1                # number of simulations 
-startDate="2020-01-01T00:00Z" # start date - is changing while simulation is
+NoS=1               # number of simulations 
+startDate="1970-01-01T00:00Z" # start date - is changing while simulation is
                      # progressing.
-initDate="2020-01-01T00:00Z"  # init date - is fix for entre simulation 
+initDate="1970-01-01T00:00Z"  # init date - is fix for entre simulation 
                      # The format of `startDate` and `initDate` hast to follow 
 		                 # ISO norm 8601 --> https://de.wikipedia.org/wiki/ISO_8601
 		                 # This is importat to ensure `date` is working properly!
@@ -24,7 +24,7 @@ dateString='+%Y%m%d%H' # The date string used to name simulation results etc.
 dependency=3556111   # JOBID to depend the following jobs at
                      # if set JOBID is below latest JOBID the job starts without
 		                 # dependency automatically
-simPerJob=5          # number of simulaitons to run within one job (less queuing 
+simPerJob=1          # number of simulaitons to run within one job (less queuing 
                      # time?)
                      # -> 6: run 6 simulaitons within one big job
 pre=false            # Define which substeps (PREprocessing, SIMulation, 
@@ -41,17 +41,17 @@ COMBINATION="clm-cos-pfl" # Set the component model combination run run.
 
 
 CaseMode=true        # true, if running in case mode, false if not.
-CaseID="SPINUP"      # already implemented for alter use -- currently NOT used.
-                     # This will be needed if I implement the 'CaseMode'
-
+CaseID="TestHincrad05SummerMonth" # Which case to run? Cases are defined in ctrl/CASES.conf
+                     # Available are: "ActiveLakes", "HetTen", "NoPfsol", 
+                     #   "TestHincrad05", "SeepageFace", "SeepageFaceAndHetTen"
 
 simStatus="test"     # supported are "test" and "prod"
 # PROC (processor) distribution of individual component models
 PROC_COSMO_X=16
 PROC_COSMO_Y=24
-PROC_PARFLOW_P=12
-PROC_PARFLOW_Q=12
-PROC_CLM=48
+PROC_PARFLOW_P=14
+PROC_PARFLOW_Q=14
+PROC_CLM=60
 # def SBATCH for prepro
 pre_NODES=1
 pre_NTASKS=1
@@ -63,20 +63,20 @@ pre_MAILTYPE=NONE
 # sim_NODES and sim_NTASKS are set automatically based on
 # PROC_* further below.
 sim_NTASKSPERNODE=128 # 128, 48 
-sim_WALLCLOCK=1:59:00
+sim_WALLCLOCK=23:59:00
 sim_PARTITION=dc-cpu #dc-cpu, mem192, batch, esm
-sim_MAILTYPE=NONE
+sim_MAILTYPE=ALL
 # def SBATCH for postpro
 pos_NODES=1
-pos_NTASKS=1
-pos_NTASKSPERNODE=1
-pos_WALLCLOCK=01:59:00
-pos_PARTITION=dc-cpu-devel
-pos_MAILTYPE=NONE
+pos_NTASKS=128
+pos_NTASKSPERNODE=128
+pos_WALLCLOCK=04:59:00
+pos_PARTITION=dc-cpu
+pos_MAILTYPE=FAIL
 # def SBATCH for finishing
 fin_NODES=1
-fin_NTASKS=48
-fin_NTASKSPERNODE=48
+fin_NTASKS=128
+fin_NTASKSPERNODE=128
 fin_WALLCLOCK=23:59:00
 fin_PARTITION=dc-cpu
 fin_MAILTYPE=NONE

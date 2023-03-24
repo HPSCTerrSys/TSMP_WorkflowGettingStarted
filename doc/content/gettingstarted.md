@@ -1,20 +1,4 @@
-# DETECT_EUR-11_ECMWF-ERA5_evaluation_r1i1p1_FZJ-COSMO5-01-CLM3-5-0-ParFlow3-12-0_vBaseline 
-
-> :warning: **Warning**  
-> The current version / tag of this repository is < v1.0.0 and is therefore 
-> still under testing, so use it with caution.
-
-There is a small documentation on how to use this experiment located in `doc/`.   
-This documentation is intended to be rendered with Sphinx. To do this, clone 
-this repo and run   
-`sphinx-build -a . _build`   
-from the `doc/` directory. There may be some dependencies for sphinx, which 
-should be easy to install using `pip`.    
-The most important section, the `Getting Started`, is also included below.   
-
-> **NOTE**:   
-> DETECT users should use `Getting Started` from below, and not from the 
-> documentation rendered by Sphinx. 
+# Getting Started 
 
 ## Set up the TSMP_WorkflowStarter
 
@@ -23,13 +7,13 @@ dependencies marked with Git submodules,
 
 ``` bash
 cd $PROJECT_DIR
-git clone --recurse-submodules https://gitlab.jsc.fz-juelich.de/detect/detect_z03_z04/setups_configurations/DETECT_EUR-11_ECMWF-ERA5_evaluation_r1i1p1_FZJ-COSMO5-01-CLM3-5-0-ParFlow3-12-0_vBaseline.git
+git clone --recurse-submodules https://github.com/niklaswr/TSMP_WorkflowStarter.git
 ```
 
 and export the following path to an environment variable for later use.
 
 ``` bash
-cd $PROJECT_DIR/DETECT_EUR-11_ECMWF-ERA5_evaluation_r1i1p1_FZJ-COSMO5-01-CLM3-5-0-ParFlow3-12-0_vBaseline
+cd $PROJECT_DIR/TSMP_WorkflowStarter
 export BASE_ROOT=$(pwd)
 ```
 
@@ -113,7 +97,7 @@ In this example, we do run a simulation over the EUR-11 domain for the year
 1970, for which restart files could be taken from:
 
 ```
-/p/largedata2/detectdata/projects/Z04/ExampleCase_ForcingAndRestart/restarts
+/p/project/cslts/wagner6/TempForcAndRestFileFor_TSMP_WorkflowStarter/restarts
 ``` 
 
 If needed, do request access to the related data project via [JuDoor](https://judoor.fz-juelich.de/login).
@@ -124,9 +108,9 @@ restart files there:
 ``` bash
 cd $BASE_ROOT/rundir/MainRun/restarts
 # copy CLM restart file
-cp -r /p/largedata2/detectdata/projects/Z04/ExampleCase_ForcingAndRestart/restarts/clm ./
+cp -r /p/project/cslts/wagner6/TempForcAndRestFileFor_TSMP_WorkflowStarter/restarts/clm ./
 # copy ParFlow restart file
-cp -r /p/largedata2/detectdata/projects/Z04/ExampleCase_ForcingAndRestart/restarts/parflow ./
+cp -r /p/project/cslts/wagner6/TempForcAndRestFileFor_TSMP_WorkflowStarter/restarts/parflow ./
 ```
 **NOTE**: 
 ParFlow needs the previous model-outpt as a restart-file, whereas CLM needs a 
@@ -155,7 +139,7 @@ In this example, we do run a simulation over the EUR-11 domain for the year
 1970, for which forcing files could be taken from:
 
 ```
-/p/largedata2/detectdata/projects/Z04/ExampleCase_ForcingAndRestart/forcing/laf_lbfd/1970
+/p/project/cslts/wagner6/TempForcAndRestFileFor_TSMP_WorkflowStarter/forcing/laf_lbfd/1970
 ``` 
 
 If needed, do request access to the data project via [JuDoor](https://judoor.fz-juelich.de/login).
@@ -165,7 +149,7 @@ workflow and link all files to `$BASE_ROOT/forcing/laf_lbfd/all`
 ``` bash
 # move to forcing dir and copy forcing files
 cd $BASE_ROOT/forcing/laf_lbfd/
-cp -rv /p/largedata2/detectdata/projects/Z04/ExampleCase_ForcingAndRestart/forcing/laf_lbfd/1970 ./
+cp -rv /p/project/cslts/wagner6/TempForcAndRestFileFor_TSMP_WorkflowStarter/forcing/laf_lbfd/1970 ./
 # link boundary files to all/
 cd $BASE_ROOT/forcing/laf_lbfd/
 mkdir all
