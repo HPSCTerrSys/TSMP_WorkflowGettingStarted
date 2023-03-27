@@ -53,6 +53,19 @@ git apply ${BASE_ROOT}/ctrl/externals/TSMP_Patch/ClmSendZero.patch
 ./build_tsmp.ksh --readclm=true -v 3.1.0MCT -c clm-cos-pfl -m JURECA -O Intel
 ```
 
+**Next**, customise your personal information in `ctrl/SimInfo.sh`. The lines 
+you need to adjust are   
+`AUTHOR_NAME=`  
+`AUTHOR_MAIL=`  
+`AUTHOR_INSTITUTE=`  
+This information will be used to add to simulation results and to send SLURM 
+notifications.
+
+``` bash
+cd $BASE_ROOT/ctrl
+vi SimInfo.sh
+```
+
 **Finally**, adapt `ctrl/export_paths.sh` to correctly determine the root 
 directory of this workflow:
 

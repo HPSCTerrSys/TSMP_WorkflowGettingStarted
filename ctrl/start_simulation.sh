@@ -455,8 +455,6 @@ CaseID: ${CaseID}
 EOM
 check4error $? "--- ERROR while creating HISTORY.txt"
 
-echo "ready: TSMP simulation for ${formattedStartDate} is complete!" > ${rundir}/ready.txt
-
 echo "###################################################"
 echo "STOP Logging ($(date)):"
 echo "--- exe: $0"

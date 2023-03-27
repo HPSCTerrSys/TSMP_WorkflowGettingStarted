@@ -1,10 +1,10 @@
 #!/bin/bash
 # Owner / author
-export AUTHOR_NAME="Niklas WAGNER"
-export AUTHOR_MAIL="n.wagner@fz-juelich.de"
-export AUTHOR_INSTITUTE="FZJ-IBG3"
+export AUTHOR_NAME="AUTHOR NAME"
+export AUTHOR_MAIL="author@mailadress.de"
+export AUTHOR_INSTITUTE="INSTITUTE"
 # Simulation / DRS
-export DRS_PROJECT_ID="FZJ-IBG3_Climatrun-Template"
+export DRS_PROJECT_ID="DETECT"
 export DRS_DOMAIN="EUR-11"
 export DRS_GCMMODEL="ECMWF-ERA5"
 export DRS_EXPERIMENT_NAME="evaluation"
