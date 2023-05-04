@@ -3,7 +3,7 @@
 # Owner / author: Niklas WAGNER, n.wagner@fz-juelich.de
 # USAGE: 
 # >> ./$0
-# >> ./starter_new.sh
+# >> ./starter.sh
 
 ###############################################################################
 #### Adjust according to your need BELOW
@@ -34,7 +34,7 @@ fin=false            # steps exclude other substeps by setting to 'false'
 computeAcount='jjsc39' # jjsc39, slts, esmtst
 CTRLDIR=$(pwd)       # assuming one is executing this script from the 
                      # BASE_CTRLDIR, what is the cast most of the time
-COMBINATION="clm-cos-pfl" # Set the component model combination run run. 
+COMBINATION="clm3-cos5-pfl" # Set the component model combination run run. 
                      # "cos-clm-pfl" is fully coupled.
 		                 # IMPORTANT if CaseMode=true (below) COMBINATION is 
 		                 # overwritten by the individual setting in CASE.conf !
@@ -79,7 +79,7 @@ fin_NTASKS=128
 fin_NTASKSPERNODE=128
 fin_WALLCLOCK=23:59:00
 fin_PARTITION=dc-cpu
-fin_MAILTYPE=NONE
+fin_MAILTYPE=FAIL
 ###############################################################################
 #### Adjust according to your need ABOVE
 ###############################################################################
@@ -114,8 +114,8 @@ if [ "$CaseMode" = true ]; then
     updatePathsForCASES ${BASE_CTRLDIR}/CASES.conf ${CaseID}
 fi
 export COMBINATION=${COMBINATION}
-TSMPbuild="JURECA_3.1.0MCT_${COMBINATION}" # The TSMP build name.
-#TSMPbuild="JUWELS_3.1.0MCT_${COMBINATION}" # The TSMP build name.
+TSMPbuild="JURECA_${COMBINATION}" # The TSMP build name.
+#TSMPbuild="JUWELS_${COMBINATION}" # The TSMP build name.
                      # This name is automatically created during the TSMP 
 		     # builing step (compilation) and typically consists of
 		     # JSCMACHINE_TSMPVERSION_COMBINATION. One can look up
@@ -138,11 +138,11 @@ sim_NTASKS=0
 IFS='-' read -ra components <<< "${COMBINATION}"
 for component in "${components[@]}"; do
   # COSMO
-  if [ "${component}" = "cos" ]; then
+  if [[ "${component}" == cos? ]]; then
     sim_NTASKS=$(( ($PROC_COSMO_X*$PROC_COSMO_Y) + $sim_NTASKS ))
-  elif [ "${component}" = "clm" ]; then
+  elif [[ "${component}" == clm? ]]; then
     sim_NTASKS=$(( $PROC_CLM + $sim_NTASKS ))
-  elif [ "${component}" = "pfl" ]; then
+  elif [[ "${component}" == pfl ]]; then
     sim_NTASKS=$(( ($PROC_PARFLOW_P*$PROC_PARFLOW_Q) + $sim_NTASKS ))
   else
     echo "ERROR: unknown component ($component) --> Exit"

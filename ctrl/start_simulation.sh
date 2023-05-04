@@ -103,7 +103,7 @@ echo "--- -- copying binaries, geo files, and namlists for"
 IFS='-' read -ra components <<< "${COMBINATION}"
 for component in "${components[@]}"; do
   # COSMO
-  if [ "${component}" = "cos" ]; then
+  if [[ "${component}" == cos? ]]; then
 	echo "--- -- - cos"
 	mkdir -vp ${rundir}/cosmo_out
   mkdir -vp ${BASE_RUNDIR}/restarts/cosmo
@@ -126,7 +126,7 @@ for component in "${components[@]}"; do
 	cp ${TSMP_BINDIR}/lmparbin_pur ${rundir}/
 
   # CLM
-  elif [ "${component}" = "clm" ]; then
+  elif [[ "${component}" == clm? ]]; then
 	echo "--- -- - clm"
 	cp ${BASE_NAMEDIR}/lnd.stdin ${rundir}/
 	nelapse=$((numHours*3600/900+1))
@@ -160,7 +160,7 @@ for component in "${components[@]}"; do
 	cp ${TSMP_BINDIR}/clm ${rundir}/
 
   # ParFlow
-  elif [ "${component}" = "pfl" ]; then
+  elif [[ "${component}" == pfl ]]; then
 	echo "--- -- - pfl"
         # Export PARFLOW_DIR, which is equal to TSMP_BINDIR, but needed
         # by ParFlow as PARFLOW_DIR
@@ -235,26 +235,26 @@ sed -i "s,__runTime__,${runTime},g" namcouple
 # Prepare slm_multiprog_mapping.conf
 # prviding information which component to run at which CPUs
 ################################################################################
-if [ "$COMBINATION" = "clm-cos-pfl" ]; then
+if [[ "$COMBINATION" == clm?-cos?-pfl ]]; then
 	get_mappingConf ./slm_multiprog_mapping.conf \
 		$((${PROC_COSMO_X} * ${PROC_COSMO_Y})) "./lmparbin_pur" \
 		$((${PROC_PARFLOW_P} * ${PROC_PARFLOW_Q})) "./parflow ${pfidb}" \
 		${PROC_CLM} "./clm"
-elif [ "$COMBINATION" = "clm-pfl" ]; then
+elif [[ "$COMBINATION" == clm?-pfl ]]; then
 	get_mappingConf ./slm_multiprog_mapping.conf \
 		$((${PROC_PARFLOW_P} * ${PROC_PARFLOW_Q})) "./parflow ${pfidb}" \
 		${PROC_CLM} "./clm"
-elif [ "$COMBINATION" = "clm-cos" ]; then
+elif [[ "$COMBINATION" == clm?-cos? ]]; then
 	get_mappingConf ./slm_multiprog_mapping.conf \
 		$((${PROC_COSMO_X} * ${PROC_COSMO_Y})) "./lmparbin_pur" \
 		${PROC_CLM} "./clm"
-elif [ "$COMBINATION" = "cos" ]; then
+elif [[ "$COMBINATION" == cos? ]]; then
 	get_mappingConf ./slm_multiprog_mapping.conf \
 		$((${PROC_COSMO_X} * ${PROC_COSMO_Y})) "./lmparbin_pur" 
-elif [ "$COMBINATION" = "clm" ]; then
+elif [[ "$COMBINATION" == clm? ]]; then
 	get_mappingConf ./slm_multiprog_mapping.conf \
 		${PROC_CLM} "./clm"
-elif [ "$COMBINATION" = "pfl" ]; then
+elif [[ "$COMBINATION" == pfl ]]; then
 	get_mappingConf ./slm_multiprog_mapping.conf \
     $((${PROC_PARFLOW_P} * ${PROC_PARFLOW_Q})) "./parflow ${pfidb}"
 fi
@@ -284,7 +284,7 @@ echo "--- Moving model-output to simres/ and restarts/"
 IFS='-' read -ra components <<< "${COMBINATION}"
 for component in "${components[@]}"; do
   # COSMO
-  if [ "${component}" = "cos" ]; then
+  if [[ "${component}" == cos? ]]; then
     echo "--- - COSMO"
     # Create component subdir
     mkdir -p "$new_simres/cosmo"
@@ -298,7 +298,7 @@ for component in "${components[@]}"; do
     cp -v ${BASE_RUNDIR}/restarts/cosmo/lrfd${cosmoRestartFileDate}o $new_simres/restarts
     check4error $? "--- ERROR while moving COSMO model output to simres-dir"
   # CLM
-  elif [ "${component}" = "clm" ]; then
+  elif [[ "${component}" == clm? ]]; then
     echo "--- - CLM"
     # Create component subdir
     mkdir -p "$new_simres/clm"
@@ -324,7 +324,7 @@ for component in "${components[@]}"; do
     cp -v ${BASE_RUNDIR}/restarts/clm/${clm_restart_fiel_p1} $new_simres/restarts/
     check4error $? "--- ERROR while moving CLM model output to simres-dir"
   # PFL
-  elif [ "${component}" = "pfl" ]; then
+  elif [[ "${component}" == pfl ]]; then
     echo "--- - PFL"
     # Create component subdir
     mkdir -p "$new_simres/parflow"

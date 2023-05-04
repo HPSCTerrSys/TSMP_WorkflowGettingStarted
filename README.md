@@ -50,7 +50,7 @@ and build the binaries.
 ``` bash
 cd $TSMP_DIR/bldsva
 git apply ${BASE_ROOT}/ctrl/externals/TSMP_Patch/ClmSendZero.patch
-./build_tsmp.ksh --readclm=true -v 3.1.0MCT -c clm-cos-pfl -m JURECA -O Intel
+./build_tsmp.ksh --readclm=true --maxpft=4 -c clm3-cos5-pfl -m JURECA -O Intel
 ```
 
 **Next**, customise your personal information in `ctrl/SimInfo.sh`. The lines 
