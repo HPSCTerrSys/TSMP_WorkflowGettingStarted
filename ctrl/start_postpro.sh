@@ -237,6 +237,11 @@ python monitoring_ts.py \
 	--dataRootDir ${ToPostProDir}/parflow_out \
   --tmpDataDir ${BASE_MONITORINGDIR} \
 	--saveDir ${newMonitoringDir}
+python monitoring_ts_prud.py \
+  --configFile ./CONFIG_ts_prud \
+  --dataRootDir ${ToPostProDir}/parflow_out \
+  --tmpDataDir ${BASE_MONITORINGDIR} \
+  --saveDir ${newMonitoringDir}
 python monitoring_generic.py \
   --configFile CONFIG_generic \
   --dataRootDir ${SimresDir} \
