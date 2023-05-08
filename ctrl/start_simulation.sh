@@ -336,6 +336,8 @@ for component in "${components[@]}"; do
     cp -v ${rundir}/${pfidb}.out.* $new_simres/parflow
     cp -v ${BASE_RUNDIR}/restarts/parflow/${pfidb}.out.?????.nc $new_simres/restarts
     check4error $? "--- ERROR while moving ParFlow model output to simres-dir"
+    # Move *kinsol.log to simres/log
+    cp -v ${rundir}/*out.kinsol.log ${new_simres}/log/
   else
     echo "ERROR: unknown component ($component) --> Exit"
     exit 1
