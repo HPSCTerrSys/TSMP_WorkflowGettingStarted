@@ -123,12 +123,12 @@ for component in "${components[@]}"; do
 	sed -i "s,__cosmo_ydate_ini__,${cosmo_ydate_ini},g" INPUT_ORG
 	sed -i "s,__nprocx_cos_bldsva__,${PROC_COSMO_X},g" INPUT_ORG
 	sed -i "s,__nprocy_cos_bldsva__,${PROC_COSMO_Y},g" INPUT_ORG
-	cp ${TSMP_BINDIR}/lmparbin_pur ${rundir}/
+	cp -v ${TSMP_BINDIR}/lmparbin_pur ${rundir}/
 
   # CLM
   elif [[ "${component}" == clm? ]]; then
 	echo "--- -- - clm"
-	cp ${BASE_NAMEDIR}/lnd.stdin ${rundir}/
+	cp -v ${BASE_NAMEDIR}/lnd.stdin ${rundir}/
 	nelapse=$((numHours*3600/900+1))
 	sed -i "s,__nelapse__,${nelapse},g" lnd.stdin
 	start_ymd=$(date -u -d "${startDate}" '+%Y%m%d')
@@ -157,7 +157,7 @@ for component in "${components[@]}"; do
 	  #sed -i "s,.*offline_atmdir.*, offline_atmdir = '',g" lnd.stdin
   fi
 	# 
-	cp ${TSMP_BINDIR}/clm ${rundir}/
+	cp -v ${TSMP_BINDIR}/clm ${rundir}/
 
   # ParFlow
   elif [[ "${component}" == pfl ]]; then
@@ -165,8 +165,8 @@ for component in "${components[@]}"; do
         # Export PARFLOW_DIR, which is equal to TSMP_BINDIR, but needed
         # by ParFlow as PARFLOW_DIR
         export PARFLOW_DIR=${TSMP_BINDIR}
-	cp ${BASE_NAMEDIR}/coup_oas.tcl ${rundir}/
-	cp ${BASE_GEODIR}/parflow/* ${rundir}/
+	cp -v ${BASE_NAMEDIR}/coup_oas.tcl ${rundir}/
+	cp -v ${BASE_GEODIR}/parflow/* ${rundir}/
 	sed -i "s,__TimingInfo.StopTime__,${numHours},g" coup_oas.tcl
   # Below test if restart file for ParFlow does exist is important!
   # If ParFlow is driven with netCDF files, a non existing ICPressure file
@@ -182,7 +182,7 @@ for component in "${components[@]}"; do
       echo "ParFlow restart file (${pfl_restart_file}) does not exist --> exit"
       exit 1
   fi
-	cp ${BASE_RUNDIR}/restarts/parflow/${pfidb_m1}.out.*.nc .
+	cp -v ${BASE_RUNDIR}/restarts/parflow/${pfidb_m1}.out.*.nc .
 	ic_pressure=`ls -1 ${pfidb_m1}.out.*.nc | tail -1`
 	sed -i "s,__ICPressure__,${ic_pressure},g" coup_oas.tcl
 	sed -i "s,__pfidb__,${pfidb},g" coup_oas.tcl
@@ -216,7 +216,7 @@ for component in "${components[@]}"; do
 	tclsh ascii2pfb_hetPermTen.tcl
   srun -N 1 -n 1 tclsh coup_oas.tcl
   #
-	cp ${TSMP_BINDIR}/parflow ${rundir}/
+	cp -v ${TSMP_BINDIR}/parflow ${rundir}/
   
   else
 	echo "ERROR: unknown component ($component) --> Exit"
@@ -297,6 +297,8 @@ for component in "${components[@]}"; do
     cosmoRestartFileDate=$(date -u -d "${startDate_p1}" "+%Y%m%d%H")
     cp -v ${BASE_RUNDIR}/restarts/cosmo/lrfd${cosmoRestartFileDate}o $new_simres/restarts
     check4error $? "--- ERROR while moving COSMO model output to simres-dir"
+    # Move COSMO logs to simres/log
+    cp -v ${rundir}/YU* ${new_simres}/log/
   # CLM
   elif [[ "${component}" == clm? ]]; then
     echo "--- - CLM"
@@ -323,6 +325,8 @@ for component in "${components[@]}"; do
     check4error $? "--- ERROR while moving CLM model output to simres-dir"
     cp -v ${BASE_RUNDIR}/restarts/clm/${clm_restart_fiel_p1} $new_simres/restarts/
     check4error $? "--- ERROR while moving CLM model output to simres-dir"
+    # Move CLM logs to simres/log
+    cp -v ${rundir}/timing_all ${new_simres}/log/
   # PFL
   elif [[ "${component}" == pfl ]]; then
     echo "--- - PFL"
@@ -338,6 +342,8 @@ for component in "${components[@]}"; do
     check4error $? "--- ERROR while moving ParFlow model output to simres-dir"
     # Move *kinsol.log to simres/log
     cp -v ${rundir}/*out.kinsol.log ${new_simres}/log/
+    # Move ParFlow timing to simres/log
+    cp -v ${rundir}/*out.timing* ${new_simres}/log/
   else
     echo "ERROR: unknown component ($component) --> Exit"
     exit 1
