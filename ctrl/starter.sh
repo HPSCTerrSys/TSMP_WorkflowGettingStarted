@@ -52,13 +52,16 @@ PROC_COSMO_Y=24
 PROC_PARFLOW_P=14
 PROC_PARFLOW_Q=14
 PROC_CLM=60
+PROCX_INT2LM=16
+PROCY_INT2LM=8
+PROCIO_INT2LM=0
 # def SBATCH for prepro
 pre_NODES=1
-pre_NTASKS=1
-pre_NTASKSPERNODE=1
+pre_NTASKS=128
+pre_NTASKSPERNODE=128
 pre_WALLCLOCK=23:59:00
 pre_PARTITION=dc-cpu
-pre_MAILTYPE=NONE
+pre_MAILTYPE=FAIL
 # def SBATCH for simulation
 # sim_NODES and sim_NTASKS are set automatically based on
 # PROC_* further below.
@@ -94,6 +97,9 @@ export PROC_COSMO_Y=${PROC_COSMO_Y}
 export PROC_PARFLOW_P=${PROC_PARFLOW_P}
 export PROC_PARFLOW_Q=${PROC_PARFLOW_Q}
 export PROC_CLM=${PROC_CLM}
+export PROCX_INT2LM=${PROCX_INT2LM}
+export PROCY_INT2LM=${PROCY_INT2LM}
+export PROCIO_INT2LM=${PROCIO_INT2LM}
 export SIMSTATUS=${simStatus}
 export PRE_PARTITION=${pre_PARTITION}
 export PRE_NTASKS=${pre_NTASKS}
@@ -188,8 +194,10 @@ do
     # dependency manualy by setting to JOBID of substep before
     submit_prepro=$dependency
   else
-    submit_prepro_return=$(sbatch -d afterok:${submit_prepro} \
+    #submit_prepro_return=$(sbatch -d afterok:${submit_prepro} \
+    submit_prepro_return=$(sbatch \
           --job-name="${CaseID}_prepro" \
+          --constraint=largedata \
           --export=ALL,startDate=$startDate,CTRLDIR=$BASE_CTRLDIR,NoS=$simPerJob \
           -o "${BASE_LOGDIR}/%x-out" -e "${BASE_LOGDIR}/%x-err" \
           --mail-user=${AUTHOR_MAIL} --account=$computeAcount \

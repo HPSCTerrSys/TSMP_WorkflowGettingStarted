@@ -107,14 +107,14 @@ for component in "${components[@]}"; do
 	echo "--- -- - cos"
 	mkdir -vp ${rundir}/cosmo_out
   mkdir -vp ${BASE_RUNDIR}/restarts/cosmo
-	cp ${BASE_NAMEDIR}/INPUT_* ${rundir}/
+	cp -v ${BASE_NAMEDIR}/INPUT_* ${rundir}/
 	sed -i "s,__hstart__,${hstart},g" INPUT_IO
 	sed -i "s,__hstop__,${hstop},g" INPUT_IO
 	sed -i "s,__cosmo_restart_dump_interval__,$hstop,g" INPUT_IO
 	sed -i "s,__cosmo_ydir_restart_in__,${BASE_RUNDIR}/restarts/cosmo,g" INPUT_IO
 	sed -i "s,__cosmo_ydir_restart_out__,${BASE_RUNDIR}/restarts/cosmo,g" INPUT_IO
-	sed -i "s,__cosmo_ydirini__,${BASE_FORCINGDIR}/laf_lbfd/all,g" INPUT_IO
-	sed -i "s,__cosmo_ydirbd__,${BASE_FORCINGDIR}/laf_lbfd/all,g" INPUT_IO
+	sed -i "s,__cosmo_ydirini__,${BASE_FORCINGDIR}/laf_lbfd/${formattedStartDate},g" INPUT_IO
+	sed -i "s,__cosmo_ydirbd__,${BASE_FORCINGDIR}/laf_lbfd/${formattedStartDate},g" INPUT_IO
 	sed -i "s,__cosmo_ydir__,${rundir}/cosmo_out,g" INPUT_IO
 
 	cosmo_ydate_ini=$(date -u -d "${initDate}" '+%Y%m%d%H')
