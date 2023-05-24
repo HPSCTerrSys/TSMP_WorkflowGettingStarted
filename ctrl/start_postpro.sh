@@ -247,12 +247,6 @@ python monitoring_generic.py \
   --dataRootDir ${SimresDir} \
   --saveDir ${newMonitoringDir} \
   --runName ${CaseID}
-#python monitoring.py \
-#	--configFile ./CONFIG \
-#	--dataRootDir ${ToPostProDir}/parflow_out \
-#	#--dataRootDir ${BASE_POSTPRODIR}/${formattedStartDate} \
-#  --tmpDataDir ${BASE_MONITORINGDIR} \
-#	--saveDir ${newMonitoringDir}
 echo "--- END monitoring"
 
 exit 0

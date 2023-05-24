@@ -237,13 +237,11 @@ for configSection in configSections:
 
 
     except FileNotFoundError as e:
-        print(e.message, e.args)
         print(f"ERROR: A file was not found for {configSection}--> skip")
         continue
-    except:
+    except Exception:
         e = sys.exc_info()[0]
         print(f"some other error for {configSection}")
-        print(e.message, e.args)
         print(' --> skip')
         continue
 

@@ -142,11 +142,9 @@ for configSection in configSections:
                 cmapName=cmapName)
 
     except FileNotFoundError as e:
-        print(e.message, e.args)
         print(f"ERROR: A file was not found for {configSection}--> skip")
         continue
     except Exception:
         print(f"some other error for {configSection}:")
-        traceback.print_exc()
         print(' --> skip')
         continue
