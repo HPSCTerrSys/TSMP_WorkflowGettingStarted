@@ -34,7 +34,7 @@ do
   cd $BASE_CTRLDIR
   ./start_postpro.sh $startDate
   if [[ $? != 0 ]] ; then exit 1 ; fi
-  # forward startDate by one month
+  # forward startDate by simLength
   startDate=$(date -u -d "$startDate + ${simLength}" "+%Y-%m-%dT%H:%MZ")
   loop_counter=$((loop_counter+1))
   wait
