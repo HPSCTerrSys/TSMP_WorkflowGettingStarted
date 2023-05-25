@@ -91,12 +91,17 @@ mkdir -pv ${tmpRawCafFiles}
 #... copying and unzipping will be done in parallel chunks
 MAXPP=${SLURM_NTASKS}
 COUNTPP=0
-rootRawCafDir="/p/largedata2/detectdata/CentralDB/era5/${y0}/${y0}_${m0}"
-FILELIST=$(ls -1 ${rootRawCafDir}/*)
+cafFilesIn="${BASE_FORCINGDIR}/cafFilesIn/${y0}/${y0}_${m0}"
+# Use find and POSIX-Extended_Regular_Expressions 
+# > https://en.wikibooks.org/wiki/Regular_Expressions/POSIX-Extended_Regular_Expressions
+# to copy only needed files.
+# In our case we need the forcing for every 3 hours only.
+FILELIST=$(find ${cafFilesIn} -regextype posix-extended -regex '.*cas[0-9]{8}(00|03|06|09|12|15|18|21)\.ncz' -print)
+#FILELIST=$(ls -1 ${cafFilesIn}/cas????????)
 for FILE in ${FILELIST}
   do
     FILEBASE=$(basename ${FILE} .ncz)
-    nccopy -k 2 ${rootRawCafDir}/${FILEBASE}.ncz ${tmpRawCafFiles}/${FILEBASE}.nc &
+    nccopy -k 2 ${cafFilesIn}/${FILEBASE}.ncz ${tmpRawCafFiles}/${FILEBASE}.nc &
     (( COUNTPP=COUNTPP+1 ))
     if [[ ${COUNTPP} -ge ${MAXPP} ]]
     then
@@ -170,7 +175,7 @@ echo "DEBUG: copy INT2LM executable to rundir"
 cp -v ${INT2LM_BINDIR}/${INT2LM_EXNAME} ${rundir}/
 int2lm_start_date=${y0}${m0}${d0}${h0}
 echo "DEBUG: int2lm_start_date: ${int2lm_start_date}"
-inExtFile=$(ls ${BASE_FORCINGDIR}/tmpRawCafFiles/${y0} | head -1)
+inExtFile=$(ls ${tmpRawCafFiles} | head -1)
 echo "DEBUG: inExtFile=${inExtFile}"
 
 echo "DEBUG: copy namelist"
@@ -182,9 +187,9 @@ sed "s,__init_date__,${int2lm_start_date},g" -i ${rundir}/INPUT
 sed "s,__hstop__,${numHours},g" -i ${rundir}/INPUT
 sed "s,__lm_ext_dir__,${BASE_GEODIR}/int2lm,g" -i ${rundir}/INPUT
 sed "s,__lm_ext_file__,EUR-11_TSMP_FZJ-IBG3_464x452_webPEP.nc,g" -i ${rundir}/INPUT
-sed "s,__in_ext_dir__,${BASE_FORCINGDIR}/tmpRawCafFiles/${y0},g" -i ${rundir}/INPUT
+sed "s,__in_ext_dir__,${tmpRawCafFiles},g" -i ${rundir}/INPUT
 sed "s,__in_ext_file__,${inExtFile},g" -i ${rundir}/INPUT
-sed "s,__in_cat_dir__,${BASE_FORCINGDIR}/tmpRawCafFiles/${y0},g" -i ${rundir}/INPUT
+sed "s,__in_cat_dir__,${tmpRawCafFiles},g" -i ${rundir}/INPUT
 sed "s,__lm_cat_dir__,${int2lm_LmCatDir},g" -i ${rundir}/INPUT
 sed "s,__nprocx_int2lm__,${PROCX_INT2LM},g" -i ${rundir}/INPUT
 sed "s,__nprocy_int2lm__,${PROCY_INT2LM},g" -i ${rundir}/INPUT
