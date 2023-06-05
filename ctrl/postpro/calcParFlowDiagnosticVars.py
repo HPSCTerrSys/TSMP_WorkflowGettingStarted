@@ -196,44 +196,46 @@ saturSubSurfStor = []
 subSurfRunoff    = []
 for count, pressureFile in enumerate(pressureFiles):
     with nc.Dataset(pressureFile, 'r') as nc_file:
-        press        = nc_file.variables[pressureVarName][0,...]
-        nc_time      = nc_file.variables['time']
-        nc_times     = nc_time[...]
-        times.append(nc_times)
-        nc_calendar  = nc_time.calendar
-        #dates        = nc.num2date(nc_time[:],units=nc_time.units,calendar=nc_time.calendar)
-        nc_timeUnits = nc_time.units
+        for t in range(nc_file['time'].shape[0]):
+            press        = nc_file.variables[pressureVarName][t,...]
+            nc_time      = nc_file.variables['time']
+            nc_times     = nc_time[t]
+            times.append(nc_times)
+            nc_calendar  = nc_time.calendar
+            #dates        = nc.num2date(nc_time[:],units=nc_time.units,calendar=nc_time.calendar)
+            nc_timeUnits = nc_time.units
 
-        print(f'-- count: {count}; press.shape: {press.shape}')
-    # convert press to ht-array as we deal with DIagnostcs.py
-    press = ht.array(press)
-    # Calculate relative saturation and relative hydraulic conductivity
-    tmp_satur,krel = diag.VanGenuchten(press)
-    # Calculate subsurface flow in all 6 directions for each grid cell (L^3/T)
-    flowleft,flowright,flowfront,flowback,flowbottom,flowtop = diag.SubsurfaceFlow(press,krel)
-    # Calculate a ground water body mask (gwb_mask)
-    gwb_mask, wtd_z_index = sloth.analysis.get_3Dgroundwaterbody_mask(tmp_satur)
-    # Get surface pressure
-    surfPress = diag.TopLayerPressure(press)
-    # Calculate overlandFlow in [L^2/T]
-    tmp_qx, tmp_qy = diag.OverlandFlow(surfPress)
-    # [L^2/T] --> [L^3/T]
-    tmp_overlandFlow = ht.absolute(tmp_qx*dx) + ht.absolute(tmp_qy*dy)
-    # Calculate subsurface storage and convert to units of [L] 
-    tmp_subSurfStor = diag.SubsurfaceStorage(press, tmp_satur)
-    tmp_subSurfStor = tmp_subSurfStor / (dx*dy)
+            print(f'-- count: {count} -- t {t}; press.shape: {press.shape}')
 
-    wtd.append(sloth.analysis.calc_wtd(press=press, cellDepths=dz*Dzmult))
-    overlandFlow.append(tmp_overlandFlow)
-    subSurfStor.append(tmp_subSurfStor)
-    saturSubSurfStor.append(post.calc_ssss(sss=tmp_subSurfStor, 
-        press_t=press, poro=porosity, gwb_mask=gwb_mask, 
-        wtd_z_index=wtd_z_index))
-    surfStor.append(post.calc_ss(surfPress))
-    subSurfRunoff.append(post.calc_netLateralSubSurFlow(
-        flowleft=flowleft, flowright=flowright,
-        flowfront=flowfront, flowback=flowback,
-        dy=dy, dx=dx, dt=dt))
+            # convert press to ht-array as we deal with DIagnostcs.py
+            press = ht.array(press)
+            # Calculate relative saturation and relative hydraulic conductivity
+            tmp_satur,krel = diag.VanGenuchten(press)
+            # Calculate subsurface flow in all 6 directions for each grid cell (L^3/T)
+            flowleft,flowright,flowfront,flowback,flowbottom,flowtop = diag.SubsurfaceFlow(press,krel)
+            # Calculate a ground water body mask (gwb_mask)
+            gwb_mask, wtd_z_index = sloth.analysis.get_3Dgroundwaterbody_mask(tmp_satur)
+            # Get surface pressure
+            surfPress = diag.TopLayerPressure(press)
+            # Calculate overlandFlow in [L^2/T]
+            tmp_qx, tmp_qy = diag.OverlandFlow(surfPress)
+            # [L^2/T] --> [L^3/T]
+            tmp_overlandFlow = ht.absolute(tmp_qx*dx) + ht.absolute(tmp_qy*dy)
+            # Calculate subsurface storage and convert to units of [L] 
+            tmp_subSurfStor = diag.SubsurfaceStorage(press, tmp_satur)
+            tmp_subSurfStor = tmp_subSurfStor / (dx*dy)
+
+            wtd.append(sloth.analysis.calc_wtd(press=press, cellDepths=dz*Dzmult))
+            overlandFlow.append(tmp_overlandFlow)
+            subSurfStor.append(tmp_subSurfStor)
+            saturSubSurfStor.append(post.calc_ssss(sss=tmp_subSurfStor, 
+                press_t=press, poro=porosity, gwb_mask=gwb_mask, 
+                wtd_z_index=wtd_z_index))
+            surfStor.append(post.calc_ss(surfPress))
+            subSurfRunoff.append(post.calc_netLateralSubSurFlow(
+                flowleft=flowleft, flowright=flowright,
+                flowfront=flowfront, flowback=flowback,
+                dy=dy, dx=dx, dt=dt))
 
 print(f'DEBUG: stack arrays inside list to one whole array')
 print(f'DEBUG: convert from HeAT array to ndarray')
