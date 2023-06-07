@@ -7,3 +7,6 @@
 [submodule "ctrl/namelists/MainRun"]
 	path = ctrl/namelists/MainRun
 	url = https://icg4geo.icg.kfa-juelich.de/Configurations/TSMP_namelists/TSMP_EUR-11_eval.git
+[submodule "src/SLOTH"]
+	path = src/SLOTH
+	url = https://github.com/HPSCTerrSys/SLOTH.git
