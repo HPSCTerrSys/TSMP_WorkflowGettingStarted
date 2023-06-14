@@ -452,10 +452,8 @@ the output of \`git diff HEAD\` is printed to \`GitDiffHead_geo.diff\`.
 ###############################################################################
 MACHINE: $(cat /etc/FZJ/systemname)
 PARTITION: ${SIM_PARTITION}
-simStatus: ${SIMSTATUS} 
 CaseID: ${CaseID}
-###############################################################################
-# Total runtime: ${totalRunTime}
+Total runtime: ${totalRunTime}
 ###############################################################################
 EOM
 check4error $? "--- ERROR while creating HISTORY.txt"

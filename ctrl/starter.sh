@@ -45,7 +45,6 @@ CaseID="MainRun"     # Which case to run? Cases are defined in ctrl/CASES.conf
                      # Available are: "ActiveLakes", "HetTen", "NoPfsol", 
                      #   "TestHincrad05", "SeepageFace", "SeepageFaceAndHetTen"
 
-simStatus="test"     # supported are "test" and "prod"
 # PROC (processor) distribution of individual component models
 PROC_COSMO_X=16
 PROC_COSMO_Y=24
@@ -100,7 +99,6 @@ export PROC_CLM=${PROC_CLM}
 export PROCX_INT2LM=${PROCX_INT2LM}
 export PROCY_INT2LM=${PROCY_INT2LM}
 export PROCIO_INT2LM=${PROCIO_INT2LM}
-export SIMSTATUS=${simStatus}
 export PRE_PARTITION=${pre_PARTITION}
 export PRE_NTASKS=${pre_NTASKS}
 export SIM_PARTITION=${sim_PARTITION}
@@ -127,14 +125,6 @@ TSMPbuild="JURECA_${COMBINATION}" # The TSMP build name.
 		     # JSCMACHINE_TSMPVERSION_COMBINATION. One can look up
 		     # this name within the TSMP/bin/ dir.
 export TSMP_BINDIR=${BASE_SRCDIR}/TSMP/bin/${TSMPbuild}
-
-# For SIMSTATUS=prod perform two checks:
-#  i) Check if git / working tree to be clean. If not print a message to stdout.
-# ii) Check current git commit has a tag. If not, create a new tag with 
-#     increased digit at patch level.
-# The function 'checkGitStatus()' performing above two checks (including the 
-# check if SIMSTATUS=prod|test is located in 'start_helper.sh'.
-checkGitStatus ${SIMSTATUS}
 
 ################################################################################
 # Calculate sim_NTASKS
