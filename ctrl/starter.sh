@@ -34,10 +34,6 @@ fin=false            # steps exclude other substeps by setting to 'false'
 computeAcount='jjsc39' # jjsc39, slts, esmtst
 CTRLDIR=$(pwd)       # assuming one is executing this script from the 
                      # BASE_CTRLDIR, what is the cast most of the time
-COMBINATION="clm3-cos5-pfl" # Set the component model combination run run. 
-                     # "cos-clm-pfl" is fully coupled.
-		                 # IMPORTANT if CaseMode=true (below) COMBINATION is 
-		                 # overwritten by the individual setting in CASE.conf !
 
 
 CaseMode=true        # true, if running in case mode, false if not.
@@ -89,7 +85,6 @@ fin_MAILTYPE=FAIL
 export simLength=${simLength}
 export dateString=${dateString}
 export initDate=${initDate}
-export CaseMode=${CaseMode}
 export CaseID=${CaseID}
 export PROC_COSMO_X=${PROC_COSMO_X}
 export PROC_COSMO_Y=${PROC_COSMO_Y}
@@ -112,11 +107,9 @@ source ${CTRLDIR}/SimInfo.sh
 # Load export_paths.ksh
 source ${CTRLDIR}/export_paths.ksh
 source ${BASE_CTRLDIR}/start_helper.sh
-# In case of CaseMode=true, update some paths exported via 'export_paths.ksh'
+# Update some paths exported via 'export_paths.ksh'
 # 'updatePathsForCASES()' is located in 'start_helper.sh'
-if [ "$CaseMode" = true ]; then
-    updatePathsForCASES ${BASE_CTRLDIR}/CASES.conf ${CaseID}
-fi
+updatePathsForCASES ${BASE_CTRLDIR}/CASES.conf ${CaseID}
 export COMBINATION=${COMBINATION}
 TSMPbuild="JURECA_${COMBINATION}" # The TSMP build name.
 #TSMPbuild="JUWELS_${COMBINATION}" # The TSMP build name.

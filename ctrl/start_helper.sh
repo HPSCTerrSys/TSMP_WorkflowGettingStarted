@@ -157,9 +157,9 @@ updatePathsForCASES() {
     # Version: 2022-06-01
     # Description:
     # This function does update the paths which are exported as environmental 
-    # variables within the export_paths.ksh. The update is needed if the 
-    # workflow is running in CaseMode to ensure all simulations are 
-    # running within its own sub directory to avoid interference.
+    # variables within the export_paths.ksh.
+    # The update is needed to ensure all simulations are running within its own
+    # sub directory as indicatd in CASE.conf
     # IMPORTANT
     # Make sure this is called after 'export_paths.ksh' is sourced
     ConfigFile=$1
