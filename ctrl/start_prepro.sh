@@ -97,7 +97,6 @@ cafFilesIn="${BASE_FORCINGDIR}/cafFilesIn/${y0}/${y0}_${m0}"
 # to copy only needed files.
 # In our case we need the forcing for every 3 hours only.
 FILELIST=$(find ${cafFilesIn} -regextype posix-extended -regex '.*cas[0-9]{8}(00|03|06|09|12|15|18|21)\.ncz' -print)
-#FILELIST=$(ls -1 ${cafFilesIn}/cas????????)
 for FILE in ${FILELIST}
   do
     FILEBASE=$(basename ${FILE} .ncz)
@@ -186,7 +185,7 @@ sed "s,__start_date__,${int2lm_start_date},g" -i ${rundir}/INPUT
 sed "s,__init_date__,${int2lm_start_date},g" -i ${rundir}/INPUT
 sed "s,__hstop__,${numHours},g" -i ${rundir}/INPUT
 sed "s,__lm_ext_dir__,${BASE_GEODIR}/int2lm,g" -i ${rundir}/INPUT
-sed "s,__lm_ext_file__,EUR-11_TSMP_FZJ-IBG3_464x452_webPEP.nc,g" -i ${rundir}/INPUT
+sed "s,__lm_ext_file__,EUR-11_TSMP_FZJ-IBG3_464x452_EXTPAR.nc,g" -i ${rundir}/INPUT
 sed "s,__in_ext_dir__,${tmpRawCafFiles},g" -i ${rundir}/INPUT
 sed "s,__in_ext_file__,${inExtFile},g" -i ${rundir}/INPUT
 sed "s,__in_cat_dir__,${tmpRawCafFiles},g" -i ${rundir}/INPUT
