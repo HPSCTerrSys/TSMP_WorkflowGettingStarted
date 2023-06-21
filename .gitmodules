@@ -10,3 +10,6 @@
 [submodule "src/SLOTH"]
 	path = src/SLOTH
 	url = https://github.com/HPSCTerrSys/SLOTH.git
+[submodule "src/int2lm3.00"]
+	path = src/int2lm3.00
+	url = https://icg4geo.icg.kfa-juelich.de/ModelSystems/tsmp_src/int2lm3.00.git
