@@ -156,46 +156,6 @@ ParFlow needs the previous model-outpt as a restart-file, whereas CLM needs a
 special restart-file from the current time-step. This is why the date within 
 the file name is different.
 
-## Provide forcing (boundary) files
-
-COSMO is a local model, simulating only a subdomain of the globe, and therefore 
-needs to be informed about incoming meteorological conditions passing the 
-boundary (as e.g. low pressure systems). This is done using local boundary 
-files (lbf for short). At the same time, the status quo of the atmosphere is 
-needed for the first time step (not to be confused with restart files!). In 
-the meteorological domain this status quo is called ‘analysis’, wherefore this 
-information is passed to COSMO with so called ‘local analysis files’  (laf for 
-short).
-
-These two types of boundary files must to be provided for each simulation and 
-are expected by the workflow under:
-
-``` bash 
-$BASE_ROOT/forcing/laf_lbfd/all
-```
-
-In this example, we do run a simulation over the EUR-11 domain for the year 
-1970, for which forcing files could be taken from:
-
-```
-/p/largedata2/detectdata/projects/Z04/ExampleCase_ForcingAndRestart/forcing/laf_lbfd/1970
-``` 
-
-If needed, do request access to the data project via [JuDoor](https://judoor.fz-juelich.de/login).
-
-To properly provide these files, do copy the directory from above to your 
-workflow and link all files to `$BASE_ROOT/forcing/laf_lbfd/all`
-``` bash
-# move to forcing dir and copy forcing files
-cd $BASE_ROOT/forcing/laf_lbfd/
-cp -rv /p/largedata2/detectdata/projects/Z04/ExampleCase_ForcingAndRestart/forcing/laf_lbfd/1970 ./
-# link boundary files to all/
-cd $BASE_ROOT/forcing/laf_lbfd/
-mkdir all
-cd all
-ln -sf ../1970/l* ./
-```
-
 ## Start a simulation
 
 To start a simulation simply execute `starter.sh` from `ctrl` directory:
