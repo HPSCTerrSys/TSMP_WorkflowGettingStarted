@@ -12,7 +12,7 @@
 # In principle, only the 'rootdir' has to be adjusted, all other paths result 
 # from it.
 expid="DETECT_EUR-11_ECMWF-ERA5_evaluation_r1i1p1_FZJ-COSMO5-01-CLM3-5-0-ParFlow3-12-0_vBaseline"
-rootdir="/p/scratch/cesmtst/wagner6/${expid}"
+rootdir="/ADD/YOUR/ROOT/DIR/${expid}"
 export EXPID="${expid}"
 # export needed paths
 export BASE_ROOTDIR="${rootdir}"

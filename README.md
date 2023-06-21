@@ -4,22 +4,10 @@
 > The current version / tag of this repository is < v1.0.0 and is therefore 
 > still under testing, so use it with caution.
 
-There is a small documentation on how to use this experiment located in `doc/`.   
-This documentation is intended to be rendered with Sphinx. To do this, clone 
-this repo and run   
-`sphinx-build -a . _build`   
-from the `doc/` directory. There may be some dependencies for sphinx, which 
-should be easy to install using `pip`.    
-The most important section, the `Getting Started`, is also included below.   
-
-> **NOTE**:   
-> DETECT users should use `Getting Started` from below, and not from the 
-> documentation rendered by Sphinx. 
-
 ## Set up the TSMP_WorkflowStarter
 
 **First**, clone this repository into your project-directory with its 
-dependencies marked with Git submodules, 
+dependencies provided as git submodules, 
 
 ``` bash
 cd $PROJECT_DIR
@@ -29,7 +17,7 @@ git clone --recurse-submodules https://gitlab.jsc.fz-juelich.de/detect/detect_z0
 and export the following path to an environment variable for later use.
 
 ``` bash
-cd $PROJECT_DIR/DETECT_EUR-11_ECMWF-ERA5_evaluation_r1i1p1_FZJ-COSMO5-01-CLM3-5-0-ParFlow3-12-0_vBaseline
+cd DETECT_EUR-11_ECMWF-ERA5_evaluation_r1i1p1_FZJ-COSMO5-01-CLM3-5-0-ParFlow3-12-0_vBaseline
 export BASE_ROOT=$(pwd)
 ```
 
@@ -40,7 +28,7 @@ CLM, and Oasis) into `src/TSMP/`,
 cd ${BASE_ROOT}/src/TSMP
 export TSMP_DIR=$(pwd)
 git clone https://icg4geo.icg.kfa-juelich.de/ModelSystems/tsmp_src/cosmo5.01_fresh.git  cosmo5_1
-git clone -b v3.12.0 https://github.com/parflow/parflow.git                             parflow
+git clone -b UseMaskNc https://github.com/niklaswr/parflow.git                          parflow
 git clone https://icg4geo.icg.kfa-juelich.de/ModelSystems/tsmp_src/clm3.5_fresh.git     clm3_5
 git clone https://icg4geo.icg.kfa-juelich.de/ModelSystems/tsmp_src/oasis3-mct.git       oasis3-mct
 ```
@@ -49,9 +37,12 @@ and build the binaries.
 
 ``` bash
 cd $TSMP_DIR/bldsva
-git apply ${BASE_ROOT}/ctrl/externals/TSMP_Patch/ClmSendZero.patch
 ./build_tsmp.ksh --readclm=true --maxpft=4 -c clm3-cos5-pfl -m JURECA -O Intel
 ```
+
+**Third**, install `int2lm` which is needed to prepare the COSMO forcing needed
+during the actuall simulation. `int2lm` is provided as submodule and located 
+in `src/
 
 **Next**, customise your personal information in `ctrl/SimInfo.sh`. The lines 
 you need to adjust are   
@@ -75,7 +66,7 @@ vi export_paths.sh
 ```
 
 Within this file change the line   
-`rootdir="/p/scratch/cesmtst/wagner6/${expid}"`   
+`rootdir="/ADD/YOUR/ROOT/DIR/${expid}"`   
 according to you `$PROJECT_DIR` from above. To verify `rootdir` is set properly 
 do   
 `source $BASE_ROOT/ctrl/export_paths.sh && echo "$rootdir" && ls -l $rootdir`.    
@@ -123,7 +114,7 @@ cold-start, while CLM and ParFlow always expect restart-files. So the user
 only needs to provide restart-files for ParFlow and CLM only.
 
 In this example, we do run a simulation over the EUR-11 domain for the year 
-1970, for which restart files could be taken from:
+1979, for which restart files could be taken from:
 
 ```
 /p/largedata2/detectdata/projects/Z04/ExampleCase_ForcingAndRestart/restarts
@@ -211,3 +202,5 @@ To become a little bit famillar with this workflow, work on the following tasks:
 4) Think about how you could check the simulation is running fine during 
    runtime.
 
+## Further documentation
+Please find further and more general documentation [here](https://niklaswr.github.io/TSMP_WorkflowStarter/content/introduction.html)
