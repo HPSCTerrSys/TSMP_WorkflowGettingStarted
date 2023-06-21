@@ -1,6 +1,5 @@
 #!/bin/bash
 #
-# Owner / author: Niklas WAGNER, n.wagner@fz-juelich.de
 # USAGE: 
 # >> ./$0
 # >> ./starter.sh
@@ -13,30 +12,28 @@ simLength='1 month'  # length of one simulaiton. Has to be a valid `date`
                      # IMPORTANT!)
                      # AT THE MOMENT simLength>=1day IS NEEDED!
 NoS=1                # number of simulations 
-startDate="1970-01-01T00:00Z" # start date - is changing while simulation is
+startDate="1979-01-01T00:00Z" # start date - is changing while simulation is
                      # progressing.
-initDate="1970-01-01T00:00Z"  # init date - is fix for entre simulation 
+initDate="1979-01-01T00:00Z"  # init date - is fix for entre simulation 
                      # The format of `startDate` and `initDate` hast to follow 
 		                 # ISO norm 8601 --> https://de.wikipedia.org/wiki/ISO_8601
 		                 # This is importat to ensure `date` is working properly!
 dateString='+%Y%m%d%H' # The date string used to name simulation results etc.
                      # Again, this has to be a valid `date` option
-dependency=3556111   # JOBID to depend the following jobs at
+dependency=1205746  # JOBID to depend the following jobs at
                      # if set JOBID is below latest JOBID the job starts without
 		                 # dependency automatically
-simPerJob=1          # number of simulaitons to run within one job (less queuing 
+simPerJob=4          # number of simulaitons to run within one job (less queuing 
                      # time?)
                      # -> 6: run 6 simulaitons within one big job
-pre=false            # Define which substeps (PREprocessing, SIMulation, 
+pre=true             # Define which substeps (PREprocessing, SIMulation, 
 sim=true             # POStprocessing, FINishing) should be run. Default is to
-pos=false            # set each substep to 'true', if one need to run individual 
-fin=false            # steps exclude other substeps by setting to 'false'
+pos=true             # set each substep to 'true', if one need to run individual 
+fin=true             # steps exclude other substeps by setting to 'false'
 computeAcount='jjsc39' # jjsc39, slts, esmtst
 CTRLDIR=$(pwd)       # assuming one is executing this script from the 
                      # BASE_CTRLDIR, what is the cast most of the time
 
-
-CaseMode=true        # true, if running in case mode, false if not.
 CaseID="MainRun"     # Which case to run? Cases are defined in ctrl/CASES.conf
                      # Available are: "ActiveLakes", "HetTen", "NoPfsol", 
                      #   "TestHincrad05", "SeepageFace", "SeepageFaceAndHetTen"
@@ -54,7 +51,7 @@ PROCIO_INT2LM=0
 pre_NODES=1
 pre_NTASKS=128
 pre_NTASKSPERNODE=128
-pre_WALLCLOCK=23:59:00
+pre_WALLCLOCK=04:59:00
 pre_PARTITION=dc-cpu
 pre_MAILTYPE=FAIL
 # def SBATCH for simulation
@@ -113,10 +110,10 @@ updatePathsForCASES ${BASE_CTRLDIR}/CASES.conf ${CaseID}
 export COMBINATION=${COMBINATION}
 TSMPbuild="JURECA_${COMBINATION}" # The TSMP build name.
 #TSMPbuild="JUWELS_${COMBINATION}" # The TSMP build name.
-                     # This name is automatically created during the TSMP 
-		     # builing step (compilation) and typically consists of
-		     # JSCMACHINE_TSMPVERSION_COMBINATION. One can look up
-		     # this name within the TSMP/bin/ dir.
+# This name is automatically created during the TSMP 
+# builing step (compilation) and typically consists of
+# JSCMACHINE_COMBINATION. One can look up
+# this name within the TSMP/bin/ dir.
 export TSMP_BINDIR=${BASE_SRCDIR}/TSMP/bin/${TSMPbuild}
 
 ################################################################################
