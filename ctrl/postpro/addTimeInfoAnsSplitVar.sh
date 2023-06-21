@@ -2,11 +2,9 @@
 # Using a 'strict' bash.
 set -x
 #
-# Owner / author: Niklas WAGNER, n.wagner@fz-juelich.de
 # USAGE: 
 
 addTimeInfoAndSplitVar() {
-  # Owner / author: Niklas WAGNER, n.wagner@fz-juelich.de
   # This funciton does add time information (nc-units, nc-calendar), split for 
   # individual variables pressure, saturation, and evaptrans, and does store the 
   # in new output file
@@ -64,7 +62,6 @@ addTimeInfoAndSplitVar() {
   fi
 }
 
-# Owner / author: Niklas WAGNER, n.wagner@fz-juelich.de
 # This function is a wrapper to keep start_postpro.sh clean and easy to read.
 # The aim of this function is to loop over all origin ParFlow output files, 
 # add nc time information, and split for individual variables.

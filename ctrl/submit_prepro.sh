@@ -1,6 +1,5 @@
 #!/bin/bash
 #
-# Owner / author: Niklas WAGNER, n.wagner@fz-juelich.de
 # USAGE: 
 # >> sbatch --export=ALL,startDate=$startDate,NoS=6 \
 #           -o "${BASE_LOGDIR}/%x-out" -e "${BASE_LOGDIR}/%x-err" \

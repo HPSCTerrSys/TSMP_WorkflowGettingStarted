@@ -1,7 +1,5 @@
 #!/usr/bin/bash
 #
-# Owner / author: Niklas WAGNER, n.wagner@fz-juelich.de
-#
 # Description
 # This script is intened to get data on $ARCHIVE back to spinning disk 
 # (restage) once they are really on tape.

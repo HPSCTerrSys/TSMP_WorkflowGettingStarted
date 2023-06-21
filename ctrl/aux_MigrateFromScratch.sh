@@ -1,7 +1,5 @@
 #!/usr/bin/bash
 #
-# Owner / author: Niklas WAGNER, n.wagner@fz-juelich.de
-#
 # Description:
 # This script does tar given sourc-dir(s) to given target-dir, 
 # removes the original directory(s), and links the created tar-ball form 

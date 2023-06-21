@@ -1,7 +1,5 @@
 #!/usr/bin/bash
 #
-# Owner / author: Niklas WAGNER, n.wagner@fz-juelich.de
-#
 # Description
 # This script tars a given directory to tape, remove the original directory, 
 # and links the created tar-ball form tape to the location of the original 

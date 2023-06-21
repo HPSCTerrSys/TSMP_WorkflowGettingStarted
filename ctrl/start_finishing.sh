@@ -1,6 +1,5 @@
 #!/bin/bash
 #
-# Owner / author: Niklas WAGNER, n.wagner@fz-juelich.de
 # USAGE: 
 # >> ./$0 CTRLDIR startDate
 # >> ./start_finishing.sh $startDate

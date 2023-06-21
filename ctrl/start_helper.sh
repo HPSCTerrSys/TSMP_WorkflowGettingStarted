@@ -1,6 +1,5 @@
 #!/bin/bash
 #
-# Owner / author: Niklas WAGNER, n.wagner@fz-juelich.de
 # USAGE: 
 
 ###############################################################################

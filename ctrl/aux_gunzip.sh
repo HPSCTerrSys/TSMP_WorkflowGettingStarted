@@ -8,8 +8,6 @@
 #SBATCH --partition=dc-cpu-devel
 #SBATCH --account=slts
 #
-# Owner / author: Niklas WAGNER, n.wagner@fz-juelich.de
-#
 # USAGE: 
 # >> sbatch ./$0 TARGET/FILES/WILDCARDS/ARE/POSSIBL*
 # >> sbatch ./aux_gzip_general.ksh /p/scratch/cjibg35/tsmpforecast/ERA5Climat_EUR11_ECMWF-ERA5_analysis_FZJ-IBG3/run_TSMP/laf_lbfd/201[8,9]

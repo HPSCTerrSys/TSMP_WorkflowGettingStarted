@@ -2,7 +2,6 @@
 # Using a 'strict' bash
 set -xe
 #
-# Owner / author: Niklas WAGNER, n.wagner@fz-juelich.de
 # USAGE: 
 # >> ./$0 $startDate
 # >> ./starter_postpro.sh $startDate
