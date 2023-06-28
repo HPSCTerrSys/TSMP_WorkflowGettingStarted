@@ -18,3 +18,9 @@ TSMP_WorkflowStarter
    content/jobsubmission.md
    content/auxiliaryscripts.md
 
+.. toctree::
+   :maxdepth: 3
+   :numbered:
+   :caption: InDetail:
+
+   content/inDetail/monitoring.md

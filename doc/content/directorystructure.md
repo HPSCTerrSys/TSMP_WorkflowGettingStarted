@@ -63,17 +63,27 @@ the land cover, may change over time, `static` could be misleading, hence the
 name `geo/`.
 
 ## monitoring/
-`monitoring/` contains the output of some **monitoring** functions. Monitoring 
-of simulations is mandatory, as there are many situations that can affect the 
-model results, ranging from just stopping / crashing the simulation to silently 
-corrupting the simulation results. 
-Manually checking the simulation results from time to time is very 
-time-consuming, as simulation results are usually very big and the simulations 
-might run for months. So there are small functions in this workflow that provide 
-some summary plots. These are generated automatically on a regular basis and are 
-stored with the `monitoring/` directory, so that you can either browse through 
-these plots to monitor your simulation, or the plots can be uploaded to some 
-web-server, making it even easier to monitor the simulation.
+`monitoring/` contains the output of some **monitoring** functions. 
+Monitoring of simulations is a crucial aspect to ensure accurate and reliable
+results. Various factors can impact the simulation outcomes, ranging from 
+simulation interruptions and crashes to subtle corruptions of the results. 
+Manually reviewing simulation results periodically can be extremely 
+time-consuming, especially considering the large size of simulation outputs and 
+the potentially lengthy duration of simulations, which may run for several 
+months. To address this challenge, a monitoring functionality has been 
+incorporated into this workflow.
+
+The monitoring functionality automatically generates summary plots at regular
+intervals, providing a concise overview of the simulation progress. These plots 
+are stored in the `monitoring/` directory, allowing users to conveniently monitor 
+the simulation directly by browsing through them. It is also conceivable that 
+one could upload these plots to a web server, enabling even more accessible
+monitoring of the simulation. Scripts providing this functionality have been
+intentionally designed with simplicity and robustness in mind. While they may 
+not generate publication-ready plots, they serve the purpose of providing 
+essential information about the simulation. Users should bring a basic 
+understanding of the simulation results to effectively utilize these scripts.
+
 
 ## postpro/
 `postpro/` simply contains the **post-pro**cessed simulation results. The 
