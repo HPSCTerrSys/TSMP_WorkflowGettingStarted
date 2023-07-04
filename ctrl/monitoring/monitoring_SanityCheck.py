@@ -6,7 +6,6 @@ import os
 import configparser
 import sloth.SanityCheck
 import argparse
-import traceback
 
 def parseList(args):
     """ convert a comma seperated str to a list 
@@ -74,7 +73,14 @@ for configSection in configSections:
         Slices     = parseList(config[configSection]["Slices"])
         Slices     = parseSlices(Slices)
         SanityKind = config[configSection]["SanityKind"]
+        print(f'DEBUG: SanityKind {SanityKind}')
         cmapName   = config[configSection]["cmapName"]
+        valueRange = config[configSection]["valueRange"]
+        print(f'DEBUG: valueRange {valueRange}')
+        print(f'DEBUG: type(valueRange) {type(valueRange)}')
+        valueRange = None if valueRange == 'None' else [float(strg) for strg in valueRange.split(' ')]
+        print(f'DEBUG: valueRange {valueRange}')
+        print(f'DEBUG: type(valueRange) {type(valueRange)}')
         maskBelow  = config[configSection]["maskBelow"]
         maskAbove  = config[configSection]["maskAbove"]
         ncFile     = f'{dataRootDir}/{fileName}'
@@ -85,7 +91,12 @@ for configSection in configSections:
         print(f'DEBUG: ncFile is {ncFile}')
         ncFiles    = sorted(glob.glob(ncFile))
         print(f'DEBUG: ncFiles: {ncFiles}')
-        saveFile   = f'{saveDir}/{varName}.{imgFormat}'
+        # Extracting timestamp (model timestamp)
+        # To do so we assume `dataRootDir` is containing the model timestamp at
+        # the very end: `PATH/TO/dataRootDir/timestamp`
+        timestamp = dataRootDir.split('/')[-1]
+        # creating the saveFileName
+        saveFile   = f'{saveDir}/{configSection}_{timestamp}.{imgFormat}'
         print(f'saveFile: {saveFile}')
     
         data = []
@@ -95,29 +106,28 @@ for configSection in configSections:
                 nc_var_dim = nc_var.shape
                 # special treatment to flexible pass how to slice
                 tmp_data   = nc_var.__getitem__(Slices)
-                print(f'tmp_data.shape: {tmp_data.shape}')
                 data.append(tmp_data)
+        # if one element in list only, do not concatanate or stack
+        if len(data) == 1:
+            print(f'found: len(data) = {len(data)}')
+            data = data[0]
         # if elements in data are 3D:
         #   assuming (t,y,x) and concatanate
-        if len(data[0].shape) == 3:
+        elif len(data[0].shape) == 3:
             print(f'found: len(data[0].shape) = {len(data[0].shape)}')
             data = np.concatenate(data, axis=0)
         else:
             print(f'found: len(data[0].shape) = {len(data[0].shape)}')
             data = np.stack(data, axis=0)
         print(f'data.shape {data.shape}')
-        print(f'DEBUG: np.max(data) {np.max(data)}')
+        print(f'DEBUG: Before masking or unit change - np.max(data) {np.max(data)}')
 
         fig_title_list  = [
-                f'Sanity-Check for {configSection} in {unitsPlot}',
+                f'Sanity-Check for {varName} in {unitsPlot}',
                 f'original data shape: {nc_var_dim} -- sliced with: {Slices}',
-                f'run: {runName}'
+                f'Model timestamp: {timestamp}'
                 ]
         fig_title    = '\n'.join(fig_title_list)
-        minax_title  = f'{varName} min'
-        maxax_title  = f'{varName} max'
-        kinax_title  = f'{varName} {SanityKind}'
-        hisax_title  = f'{varName} {SanityKind} - distribution'
 
         if maskBelow != 'None':
             thresBelow = float(maskBelow)
@@ -132,19 +142,20 @@ for configSection in configSections:
         if unitCoef != 'None':
             unitCoef = float(unitCoef)
             data     *= unitCoef
-        print(f'DEBUG: np.max(data) {np.max(data)}')
+        print(f'DEBUG: After masking and unit change - np.max(data) {np.max(data)}')
 
         sloth.SanityCheck.plot_SanityCheck(data=data,
                 kind=SanityKind, figname=saveFile,
-                lowerP=5, upperP=95, fig_title=fig_title, 
-                minax_title=minax_title, maxax_title=maxax_title, 
-                kinax_title=kinax_title, hisax_title=hisax_title,
+                lowerP=5, upperP=95, fixValueRange=valueRange,
+                fig_title=fig_title, 
                 cmapName=cmapName)
 
     except FileNotFoundError as e:
-        print(f"ERROR: A file was not found for {configSection}--> skip")
+        print(f"ERROR: A file was not found for {configSection} --> skip")
         continue
-    except Exception:
-        print(f"some other error for {configSection}:")
+    except Exception as e:
+        print(f"ERROR: Uncaught error for {configSection}:")
+        print(f'{e}')
+        raise
         print(' --> skip')
         continue

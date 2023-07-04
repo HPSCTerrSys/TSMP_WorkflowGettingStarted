@@ -1,0 +1,170 @@
+[template]
+varName:    None
+fileName:   None
+unitsOrig:  None
+unitsPlot:  None
+unitCoef:   None
+unitOffset: None
+Slices:     None
+SanityKind: None
+maskBelow:  None
+maskAbove:  None
+cmapName:   Spectral   
+valueRange: None
+
+[DEFAULT]
+cmapName:   Spectral   
+valueRange: None
+
+# CLM
+[clm_RAIN]
+varName:    RAIN
+fileName:   clm/RAIN.nc
+unitsOrig:  [mm/s]
+unitsPlot:  [mm/h]
+unitCoef:   3600
+unitOffset: None
+Slices:     None
+SanityKind: mean
+maskBelow:  None
+maskAbove:  1e35
+valueRange: 0.1 0.2 0.5 1 2 5 10 15 
+cmapName:   precip3_16lev
+
+[clm_SNOW]
+varName:    SNOW
+fileName:   clm/SNOW.nc
+unitsOrig:  [mm/s]
+unitsPlot:  [mm/h]
+unitCoef:   3600
+unitOffset: None
+Slices:     None
+SanityKind: mean
+maskBelow:  None
+maskAbove:  1e35
+valueRange: 0.1 0.2 0.5 1 2 5 10 15 
+cmapName:   precip3_16lev
+
+[clm_TSA]
+varName:    TSA
+fileName:   clm/TSA.nc
+unitsOrig:  [K]
+unitsPlot:  [°C]
+unitCoef:   None
+unitOffset: -275.15
+Slices:     None
+SanityKind: mean
+maskBelow:  None
+maskAbove:  1e35
+valueRange: -45 -39 -33 -30 -27 -24 -21 -18 -15 -12 -9 -6 -3 0 3 6 9 12 15 18 21 24 29 30 33 39 45
+cmapName:  t2m_29lev 
+
+# CSOMO
+[cos_T2M]
+varName:    T_2M
+fileName:   cosmo/T_2M_ts.nc
+unitsOrig:  [K]
+unitsPlot:  [°C]
+unitCoef:   None
+unitOffset: -275.15
+Slices:     None
+SanityKind: mean
+maskBelow:  None
+maskAbove:  None
+valueRange: -45 -39 -33 -30 -27 -24 -21 -18 -15 -12 -9 -6 -3 0 3 6 9 12 15 18 21 24 29 30 33 39 45
+cmapName:  t2m_29lev 
+
+[cos_V10m]
+varName:    V_10M
+fileName:   cosmo/V_10M_ts.nc
+unitsOrig:  [m/s]
+unitsPlot:  [m/s]
+unitCoef:   None
+unitOffset: None
+Slices:     None
+SanityKind: mean
+maskBelow:  None
+maskAbove:  None
+#valueRange: 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25
+#cmapName:   rainbow
+
+[cos_U10m]
+varName:    U_10M
+fileName:   cosmo/U_10M_ts.nc
+unitsOrig:  [m/s]
+unitsPlot:  [m/s]
+unitCoef:   None
+unitOffset: None
+Slices:     None
+SanityKind: mean
+maskBelow:  None
+maskAbove:  None
+#valueRange: 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25
+#cmapName:   rainbow
+
+[cos_TOTPREC]
+varName:    TOT_PREC
+fileName:   cosmo/TOT_PREC_ts.nc
+unitsOrig:  [kg m^-2]
+unitsPlot:  [kg m^-2]
+unitCoef:   None
+unitOffset: None
+Slices:     None
+SanityKind: sum
+maskBelow:  None
+maskAbove:  None
+cmapName:   precip3_16lev
+
+# ParFlow
+[pfl_SurfLayerPressure]
+varName:    pressure
+fileName:   parflow/pressure.nc
+unitsOrig:  [m]
+unitsPlot:  [mm]
+unitCoef:   1000
+unitOffset: None
+Slices:     None, -1
+SanityKind: mean
+maskBelow:  -1e35
+maskAbove:  None
+valueRange: -1500 -1000 -500 0 10 100
+
+[pfl_MidLayerPressure]
+varName:    pressure
+fileName:   parflow/pressure.nc
+unitsOrig:  [m]
+unitsPlot:  [mm]
+unitCoef:   1000
+unitOffset: None
+Slices:     None, -8
+SanityKind: mean
+maskBelow:  -1e35
+maskAbove:  None
+valueRange: -1500 -1000 -500 0 500 1000 1500
+
+[pfl_evaptrans]
+varName:    evaptrans
+fileName:   parflow/evaptrans.nc
+unitsOrig:  [1/h]
+unitsPlot:  [mm]
+unitCoef:   20
+unitOffset: None
+Slices:     None, -1
+SanityKind: sum
+maskBelow:  -1e35
+maskAbove:  None
+cmapName:   GMT_no_green_r
+
+[pfl_SurfLayerSaturation]
+varName:    saturation
+fileName:   parflow/saturation.nc
+unitsOrig:  [-]
+unitsPlot:  [-]
+unitCoef:   None
+unitOffset: None
+Slices:     None, -1
+SanityKind: mean
+maskBelow:  -1e35
+maskAbove:  None
+valueRange: 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0
+cmapName:   Blues

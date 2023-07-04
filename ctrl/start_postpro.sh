@@ -1,6 +1,6 @@
 #!/bin/bash
 # Using a 'strict' bash
-set -xe
+#set -xe
 #
 # USAGE: 
 # >> ./$0 $startDate
@@ -233,19 +233,20 @@ mkdir -p ${BASE_MONITORINGDIR}/${formattedStartDate}
 cd ${BASE_CTRLDIR}/monitoring/
 python monitoring_ts.py \
 	--configFile ./CONFIG_ts \
-	--dataRootDir ${ToPostProDir}/parflow_out \
+	--dataRootDir ${PostProStoreDir}/parflow \
   --tmpDataDir ${BASE_MONITORINGDIR} \
-	--saveDir ${newMonitoringDir}
+	--saveDir ${newMonitoringDir} &
 python monitoring_ts_prud.py \
   --configFile ./CONFIG_ts_prud \
-  --dataRootDir ${ToPostProDir}/parflow_out \
+  --dataRootDir ${PostProStoreDir}/parflow \
   --tmpDataDir ${BASE_MONITORINGDIR} \
-  --saveDir ${newMonitoringDir}
-python monitoring_generic.py \
-  --configFile CONFIG_generic \
-  --dataRootDir ${SimresDir} \
+  --saveDir ${newMonitoringDir} &
+python monitoring_SanityCheck.py \
+  --configFile CONFIG_SanityCheck_postpro \
+  --dataRootDir ${PostProStoreDir} \
   --saveDir ${newMonitoringDir} \
-  --runName ${CaseID}
+  --runName ${CaseID} &
+wait
 echo "--- END monitoring"
 
 exit 0

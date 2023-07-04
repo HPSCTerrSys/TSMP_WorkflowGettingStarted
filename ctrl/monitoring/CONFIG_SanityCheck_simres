@@ -9,9 +9,11 @@ Slices:     None
 SanityKind: None
 maskBelow:  None
 maskAbove:  None
+valueRange: None
 
 [DEFAULT]
-cmapName:   Spectral   
+cmapName:   Spectral
+valueRange: None   
 
 # CLM
 [clm_RAIN]
@@ -54,7 +56,7 @@ maskAbove:  1e35
 # CSOMO
 [cos_T2M]
 varName:    T_2M
-fileName:   cosmo/lffd??????????.nc
+fileName:   cosmo/3h/lffd??????????.nc
 unitsOrig:  [K]
 unitsPlot:  [°C]
 unitCoef:   None
@@ -67,7 +69,7 @@ maskAbove:  None
 
 [cos_V10m]
 varName:    V_10M
-fileName:   cosmo/lffd??????????.nc
+fileName:   cosmo/3h/lffd??????????.nc
 unitsOrig:  [m/s]
 unitsPlot:  [m/s]
 unitCoef:   None
@@ -79,7 +81,7 @@ maskAbove:  None
 
 [cos_U10m]
 varName:    U_10M
-fileName:   cosmo/lffd??????????.nc
+fileName:   cosmo/3h/lffd??????????.nc
 unitsOrig:  [m/s]
 unitsPlot:  [m/s]
 unitCoef:   None
@@ -91,7 +93,7 @@ maskAbove:  None
 
 [cos_TOTPREC]
 varName:    TOT_PREC
-fileName:   cosmo/lffd??????????.nc
+fileName:   cosmo/3h/lffd??????????.nc
 unitsOrig:  [kg m^-2]
 unitsPlot:  [kg m^-2]
 unitCoef:   None
@@ -100,3 +102,16 @@ Slices:     None
 SanityKind: sum
 maskBelow:  None
 maskAbove:  None
+
+# ParFlow
+[pfl_SurfPressure]
+varName:    pressure
+fileName:   parflow/ParFlow_EU11_??????????.out.?????.nc
+unitsOrig:  [m]
+unitsPlot:  [mm]
+unitCoef:   1000
+unitOffset: None
+Slices:     None, -1
+SanityKind: mean
+maskBelow:  None
+maskAbove:  -1e35
