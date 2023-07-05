@@ -34,9 +34,12 @@ Slices:     None
 SanityKind: None
 maskBelow:  None
 maskAbove:  None
+cmapName:   None  
+valueRange: None
 
 [DEFAULT]
-cmapName:   Spectral   
+cmapName:   Spectral  
+valueRange: None
 
 # CLM
 [clm_RAIN]
@@ -50,6 +53,8 @@ Slices:     None
 SanityKind: mean
 maskBelow:  None
 maskAbove:  1e35
+valueRange: 0.1 0.2 0.5 1 2 5 10 15 
+cmapName:   precip3_16lev
 
 # ParFlow
 [pfl_evaptrans]
@@ -63,7 +68,7 @@ Slices:     None, -1
 SanityKind: sum
 maskBelow:  -1e35
 maskAbove:  None
-cmapName:   seismic_r
+cmapName:   GMT_no_green_r
 ```
 
 The configuration file consists of different sections, including `[template]`, `[default]`, `[clm_RAIN]`, and `[pfl_evaptrans]`, each representing an individual monitoring plot. The `[template]` and `[default]` sections have special purposes. The `[template]` section provides a template for adding new plots, and the `[default]` section holds default values that are applied to all sections unless overridden. But both are ignored for the actuall monitoring plots, that under the line above config files is generating monitoring plots `[clm_RAIN]` and `[pfl_evaptrans]`.
@@ -81,3 +86,4 @@ Each section in the configuration file includes the following settings:
 - `maskBelow`: Defines a lower value bound. Values below this threshold are masked out (before unit conversion!!).   
 - `maskAbove`: Defines an upper value bound. Values above this threshold are masked out (before unit conversion!!).   
 - `cmapName`: Specifies the name of the Python colorbar to be used in the monitoring plot.
+- `valueRange`: Specifies the values range of the colorbar, by setting all bin values for the colorbar.
