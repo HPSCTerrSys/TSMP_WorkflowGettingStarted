@@ -6,10 +6,10 @@
 	url = https://gitlab.jsc.fz-juelich.de/detect/detect_z03_z04/constant_fields/TSMP_EUR-11.git
 [submodule "ctrl/namelists/MainRun"]
 	path = ctrl/namelists/MainRun
-	url = https://icg4geo.icg.kfa-juelich.de/Configurations/TSMP_namelists/TSMP_EUR-11_eval.git
+	url = https://gitlab.jsc.fz-juelich.de/detect/detect_z03_z04/software_tools/tools_mirrors/tsmp_eur-11_eval.git
 [submodule "src/SLOTH"]
 	path = src/SLOTH
 	url = https://github.com/HPSCTerrSys/SLOTH.git
 [submodule "src/int2lm3.00"]
 	path = src/int2lm3.00
-	url = https://icg4geo.icg.kfa-juelich.de/ModelSystems/tsmp_src/int2lm3.00.git
+	url = https://gitlab.jsc.fz-juelich.de/detect/detect_z03_z04/software_tools/tools_mirrors/int2lm3.00.git
