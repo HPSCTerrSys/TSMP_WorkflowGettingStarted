@@ -22,9 +22,6 @@ echo "--- HOST:  $(hostname)"
 echo "--- source helper scripts"
 source $BASE_CTRLDIR/start_helper.sh
 
-###############################################################################
-# Pre-Pro
-###############################################################################
 # clear $? before continue
 echo $?
 
@@ -65,6 +62,9 @@ echo "DEBUG NOW: startDate=$startDate"
 echo "DEBUG NOW: startDate_p1=$startDate_p1"                                    
 echo "DEBUG NOW: numHours=$numHours"                                            
 
+###############################################################################
+# Pre-Pro INT2LM
+###############################################################################
 int2lm_LmCatDir="${BASE_FORCINGDIR}/laf_lbfd/${formattedStartDate}"
 tmpRawCafFiles="${BASE_FORCINGDIR}/tmpRawCafFiles/${formattedStartDate}"
 rundir="${BASE_RUNDIR}/INT2LM_${formattedStartDate}"
@@ -122,7 +122,7 @@ do
   fi
 done
 wait
-################################################################################
+
 # Creating HISTORY.txt (reusability etc.)
 ################################################################################
 histfile=${int2lm_LmCatDir}/HISTORY.txt
