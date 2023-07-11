@@ -1,7 +1,7 @@
 #########################################################
 #... function for correcting CDO created netCDF
 #########################################################
-function cdocor {
+function cdocor() (
   # CALL: inparameter infile outparameter outfile
 
   inparameter=$1
@@ -35,7 +35,7 @@ function cdocor {
     # copy coordinates from old to new file
     ${NCO_BINDIR}/ncks -h -A -C -v ${COORDINATES} ${infile} ${outfile}
   fi
-}
+)
 
 #########################################################
 #... functions for building time series
@@ -44,36 +44,36 @@ function cdocor {
 #########################################################
 
 #... building a time series for a given quantity
-function timeseries {
+function timeseries() (
   PARAM=$1
-  cd ${INPDIR}/${YYYY_MM}/$2
+  cd ${INPDIR}
   # NWR 20210317
   # do only copy cell_method attribute from those vars already containing (--no_cell_methods)
-  ${NCO_BINDIR}/ncrcat --no_cell_methods -h -O -d rlon,${NBOUNDCUT},${IESPONGE} -d rlat,${NBOUNDCUT},${JESPONGE} -v $1 lffd*[!cpz].nc ${OUTDIR}/${YYYY_MM}/${PARAM}_ts.nc
-  #${NCO_BINDIR}/ncrcat -h -O -d rlon,${NBOUNDCUT},${IESPONGE} -d rlat,${NBOUNDCUT},${JESPONGE} -v $1 lffd*[!cpz].nc ${OUTDIR}/${YYYY_MM}/${PARAM}_ts.nc
-  ${NCO_BINDIR}/ncks -h -A -d rlon,${NBOUNDCUT},${IESPONGE} -d rlat,${NBOUNDCUT},${JESPONGE} -v lon,lat,rotated_pole lffd${CURRENT_DATE}.nc ${OUTDIR}/${YYYY_MM}/${PARAM}_ts.nc
+  ${NCO_BINDIR}/ncrcat --no_cell_methods -h -O -d rlon,${NBOUNDCUT},${IESPONGE} -d rlat,${NBOUNDCUT},${JESPONGE} -v $1 lffd*[!cpz].nc ${OUTDIR}/${PARAM}_ts.nc
+  #${NCO_BINDIR}/ncrcat -h -O -d rlon,${NBOUNDCUT},${IESPONGE} -d rlat,${NBOUNDCUT},${JESPONGE} -v $1 lffd*[!cpz].nc ${OUTDIR}/${PARAM}_ts.nc
+  ${NCO_BINDIR}/ncks -h -A -d rlon,${NBOUNDCUT},${IESPONGE} -d rlat,${NBOUNDCUT},${JESPONGE} -v lon,lat,rotated_pole lffd${CURRENT_DATE}.nc ${OUTDIR}/${PARAM}_ts.nc
   # in case cell_methods exists the value of the time variable is replaced by the value of middle of the time interval
-  if [ "$(${NC_BINDIR}/ncdump -h ${OUTDIR}/${YYYY_MM}/${PARAM}_ts.nc | grep ${PARAM}:cell_methods | grep time)" != "" ]
+  if [ "$(${NC_BINDIR}/ncdump -h ${OUTDIR}/${PARAM}_ts.nc | grep ${PARAM}:cell_methods | grep time)" != "" ]
   then
-    ${NCO_BINDIR}/ncwa -h -C -v time_bnds -a bnds ${OUTDIR}/${YYYY_MM}/${PARAM}_ts.nc tmp.nc
+    ${NCO_BINDIR}/ncwa -h -C -v time_bnds -a bnds ${OUTDIR}/${PARAM}_ts.nc tmp.nc
     ${NCO_BINDIR}/ncrename -h -v time_bnds,time tmp.nc
     ${NCO_BINDIR}/ncatted -h -a ,time,d,,, tmp.nc
-    ${NCO_BINDIR}/ncks -h -A tmp.nc ${OUTDIR}/${YYYY_MM}/${PARAM}_ts.nc
+    ${NCO_BINDIR}/ncks -h -A tmp.nc ${OUTDIR}/${PARAM}_ts.nc
     if [ ${CURRENT_DATE} -eq ${YDATE_START} ]
     then
-      ${NCO_BINDIR}/ncks -h -O -d time,1,  ${OUTDIR}/${YYYY_MM}/${PARAM}_ts.nc tmp.nc
-      mv tmp.nc ${OUTDIR}/${YYYY_MM}/${PARAM}_ts.nc
+      ${NCO_BINDIR}/ncks -h -O -d time,1,  ${OUTDIR}/${PARAM}_ts.nc tmp.nc
+      mv tmp.nc ${OUTDIR}/${PARAM}_ts.nc
     fi
     rm -f tmp.nc
   else
   # otherwise, i.e. for intantaneous values, time_bnds are deleted
-    ${NCO_BINDIR}/ncatted -h -a bounds,time,d,, ${OUTDIR}/${YYYY_MM}/${PARAM}_ts.nc
-    ${NCO_BINDIR}/ncks -h -x -v time_bnds ${OUTDIR}/${YYYY_MM}/${PARAM}_ts.nc tmp.nc
-    mv tmp.nc ${OUTDIR}/${YYYY_MM}/${PARAM}_ts.nc
+    ${NCO_BINDIR}/ncatted -h -a bounds,time,d,, ${OUTDIR}/${PARAM}_ts.nc
+    ${NCO_BINDIR}/ncks -h -x -v time_bnds ${OUTDIR}/${PARAM}_ts.nc tmp.nc
+    mv tmp.nc ${OUTDIR}/${PARAM}_ts.nc
   fi
-}
+)
 
-function timeseriesp {
+function timeseriesp() (
   PARAM=$1
   # NWR 20201130
   # the below command destroys the PLEV array... 
@@ -84,49 +84,49 @@ function timeseriesp {
   do
     PASCAL=$(python -c "print(${PLEVS[$NPLEV]} * 100.)")
     PLEV=$(python -c "print(int(${PLEVS[$NPLEV]}))")
-    cd ${INPDIR}/${YYYY_MM}/$2
+    cd ${INPDIR}
     # NWR 20210317
     # do also cut dim srlon and srlat and copy cell_method only from those vars already containing (--no_cell_methods)
-    ${NCO_BINDIR}/ncrcat --no_cell_methods -h -O -d srlon,${NBOUNDCUT},${IESPONGE} -d srlat,${NBOUNDCUT},${JESPONGE} -d rlon,${NBOUNDCUT},${IESPONGE} -d rlat,${NBOUNDCUT},${JESPONGE} -d pressure,${PASCAL},${PASCAL} -v ${PARAM} lffd*p.nc ${OUTDIR}/${YYYY_MM}/${PARAM}${PLEV}p_ts.nc
+    ${NCO_BINDIR}/ncrcat --no_cell_methods -h -O -d srlon,${NBOUNDCUT},${IESPONGE} -d srlat,${NBOUNDCUT},${JESPONGE} -d rlon,${NBOUNDCUT},${IESPONGE} -d rlat,${NBOUNDCUT},${JESPONGE} -d pressure,${PASCAL},${PASCAL} -v ${PARAM} lffd*p.nc ${OUTDIR}/${PARAM}${PLEV}p_ts.nc
     #${NCO_BINDIR}/ncrcat -h -O -d rlon,${NBOUNDCUT},${IESPONGE} -d rlat,${NBOUNDCUT},${JESPONGE} -d pressure,${PASCAL},${PASCAL} -v ${PARAM} lffd*p.nc ${OUTDIR}/${YYYY_MM}/${PARAM}${PLEV}p_ts.nc
     # NWR 20201204
     # do also cut dim srlon and srlat
-    ${NCO_BINDIR}/ncks -h -A -d srlon,${NBOUNDCUT},${IESPONGE} -d srlat,${NBOUNDCUT},${JESPONGE} -d rlon,${NBOUNDCUT},${IESPONGE} -d rlat,${NBOUNDCUT},${JESPONGE} -v lon,lat,rotated_pole lffd${CURRENT_DATE}p.nc ${OUTDIR}/${YYYY_MM}/${PARAM}${PLEV}p_ts.nc
+    ${NCO_BINDIR}/ncks -h -A -d srlon,${NBOUNDCUT},${IESPONGE} -d srlat,${NBOUNDCUT},${JESPONGE} -d rlon,${NBOUNDCUT},${IESPONGE} -d rlat,${NBOUNDCUT},${JESPONGE} -v lon,lat,rotated_pole lffd${CURRENT_DATE}p.nc ${OUTDIR}/${PARAM}${PLEV}p_ts.nc
     #${NCO_BINDIR}/ncks -h -A -d rlon,${NBOUNDCUT},${IESPONGE} -d rlat,${NBOUNDCUT},${JESPONGE} -v lon,lat,rotated_pole lffd${CURRENT_DATE}p.nc ${OUTDIR}/${YYYY_MM}/${PARAM}${PLEV}p_ts.nc
     # in case cell_methods exists the value of the time variable is replaced by the value of middle of the time interval
-   if [ "$(${NC_BINDIR}/ncdump -h ${OUTDIR}/${YYYY_MM}/${PARAM}${PLEV}p_ts.nc | grep ${PARAM}:cell_methods | grep time)" != "" ]
+   if [ "$(${NC_BINDIR}/ncdump -h ${OUTDIR}/${PARAM}${PLEV}p_ts.nc | grep ${PARAM}:cell_methods | grep time)" != "" ]
     then
-      ${NCO_BINDIR}/ncwa -h -C -v time_bnds -a bnds ${OUTDIR}/${YYYY_MM}/${PARAM}${PLEV}p_ts.nc tmp.nc
+      ${NCO_BINDIR}/ncwa -h -C -v time_bnds -a bnds ${OUTDIR}/${PARAM}${PLEV}p_ts.nc tmp.nc
       ${NCO_BINDIR}/ncrename -h -v time_bnds,time tmp.nc
       ${NCO_BINDIR}/ncatted -h -a ,time,d,,, tmp.nc
-      ${NCO_BINDIR}/ncks -h -A tmp.nc ${OUTDIR}/${YYYY_MM}/${PARAM}${PLEV}p_ts.nc
+      ${NCO_BINDIR}/ncks -h -A tmp.nc ${OUTDIR}/${PARAM}${PLEV}p_ts.nc
       if [ ${CURRENT_DATE} -eq ${YDATE_START} ]
       then
-        ${NCO_BINDIR}/ncks -h -O -d time,1,  ${OUTDIR}/${YYYY_MM}/${PARAM}${PLEV}p_ts.nc tmp.nc
-        mv tmp.nc ${OUTDIR}/${YYYY_MM}/${PARAM}${PLEV}p_ts.nc
+        ${NCO_BINDIR}/ncks -h -O -d time,1,  ${OUTDIR}/${PARAM}${PLEV}p_ts.nc tmp.nc
+        mv tmp.nc ${OUTDIR}/${PARAM}${PLEV}p_ts.nc
       fi
       rm -f tmp.nc
    else
   # otherwise, i.e. for intantaneous values, time_bnds are deleted
-      ${NCO_BINDIR}/ncatted -h -a bounds,time,d,, ${OUTDIR}/${YYYY_MM}/${PARAM}${PLEV}p_ts.nc
-      ${NCO_BINDIR}/ncks -h -x -v time_bnds ${OUTDIR}/${YYYY_MM}/${PARAM}${PLEV}p_ts.nc tmp.nc
-      mv tmp.nc ${OUTDIR}/${YYYY_MM}/${PARAM}${PLEV}p_ts.nc
+      ${NCO_BINDIR}/ncatted -h -a bounds,time,d,, ${OUTDIR}/${PARAM}${PLEV}p_ts.nc
+      ${NCO_BINDIR}/ncks -h -x -v time_bnds ${OUTDIR}/${PARAM}${PLEV}p_ts.nc tmp.nc
+      mv tmp.nc ${OUTDIR}/${PARAM}${PLEV}p_ts.nc
    fi
-    ${NCO_BINDIR}/ncwa -O -a pressure,$1 ${OUTDIR}/${YYYY_MM}/${PARAM}${PLEV}p_ts.nc tmp.nc
+    ${NCO_BINDIR}/ncwa -O -a pressure,$1 ${OUTDIR}/${PARAM}${PLEV}p_ts.nc tmp.nc
     ${NCO_BINDIR}/ncatted -O -a cell_methods,$1,d,, tmp.nc
     ${NCO_BINDIR}/ncatted -O -a cell_methods,pressure,d,, tmp.nc
     ${NCO_BINDIR}/ncatted -O -a coordinates,$1,o,c,'lon lat pressure' tmp.nc
-    cp tmp.nc ${OUTDIR}/${YYYY_MM}/${PARAM}${PLEV}p_ts.nc
+    cp tmp.nc ${OUTDIR}/${PARAM}${PLEV}p_ts.nc
     rm tmp.nc
     let "NPLEV = NPLEV + 1"
   done
-}
+)
 
-function timeseriesz {
+function timeseriesz() (
   PARAM=$1
   declare -a ZLEVS=("${!3}")
   set +e
-  ncdump -h ${INPDIR}/${YYYY_MM}/$2/lffd${CURRENT_DATE}z.nc | grep float\ ${PARAM} | grep height > /dev/null 2>&1
+  ncdump -h ${INPDIR}/lffd${CURRENT_DATE}z.nc | grep float\ ${PARAM} | grep height > /dev/null 2>&1
   ERROR_STATUS=$?
   set -e
   if [ ${ERROR_STATUS}  -eq 0 ]
@@ -141,40 +141,40 @@ function timeseriesz {
   while [ ${NZLEV} -le ${ZLEVS[0]} ]
   do
     ZLEV=$(python -c "print(int(${ZLEVS[$NZLEV]}))")
-    cd ${INPDIR}/${YYYY_MM}/$2
+    cd ${INPDIR}
     # NWR 20210317
     # do only copy cell_method attribute from those vars already containing (--no_cell_methods)
-    ${NCO_BINDIR}/ncrcat --no_cell_methods -h -O -d rlon,${NBOUNDCUT},${IESPONGE} -d rlat,${NBOUNDCUT},${JESPONGE} -d ${HEIGHT},${ZLEV}.,${ZLEV}. -v ${PARAM} lffd*z.nc ${OUTDIR}/${YYYY_MM}/${PARAM}${ZLEV}z${NN}_ts.nc
+    ${NCO_BINDIR}/ncrcat --no_cell_methods -h -O -d rlon,${NBOUNDCUT},${IESPONGE} -d rlat,${NBOUNDCUT},${JESPONGE} -d ${HEIGHT},${ZLEV}.,${ZLEV}. -v ${PARAM} lffd*z.nc ${OUTDIR}/${PARAM}${ZLEV}z${NN}_ts.nc
     #${NCO_BINDIR}/ncrcat -h -O -d rlon,${NBOUNDCUT},${IESPONGE} -d rlat,${NBOUNDCUT},${JESPONGE} -d ${HEIGHT},${ZLEV}.,${ZLEV}. -v ${PARAM} lffd*z.nc ${OUTDIR}/${YYYY_MM}/${PARAM}${ZLEV}z${NN}_ts.nc
-    ${NCO_BINDIR}/ncks -h -A -d rlon,${NBOUNDCUT},${IESPONGE} -d rlat,${NBOUNDCUT},${JESPONGE} -v lon,lat,rotated_pole lffd${CURRENT_DATE}z.nc ${OUTDIR}/${YYYY_MM}/${PARAM}${ZLEV}z${NN}_ts.nc
+    ${NCO_BINDIR}/ncks -h -A -d rlon,${NBOUNDCUT},${IESPONGE} -d rlat,${NBOUNDCUT},${JESPONGE} -v lon,lat,rotated_pole lffd${CURRENT_DATE}z.nc ${OUTDIR}/${PARAM}${ZLEV}z${NN}_ts.nc
     # in case cell_methods exists the value of the time variable is replaced by the value of middle of the time interval
-   if [ "$(${NC_BINDIR}/ncdump -h ${OUTDIR}/${YYYY_MM}/${PARAM}${ZLEV}z${NN}_ts.nc | grep ${PARAM}:cell_methods | grep time)" != "" ]
+   if [ "$(${NC_BINDIR}/ncdump -h ${OUTDIR}/${PARAM}${ZLEV}z${NN}_ts.nc | grep ${PARAM}:cell_methods | grep time)" != "" ]
     then
-      ${NCO_BINDIR}/ncwa -h -C -v time_bnds -a bnds ${OUTDIR}/${YYYY_MM}/${PARAM}${ZLEV}z${NN}_ts.nc tmp.nc
+      ${NCO_BINDIR}/ncwa -h -C -v time_bnds -a bnds ${OUTDIR}/${PARAM}${ZLEV}z${NN}_ts.nc tmp.nc
       ${NCO_BINDIR}/ncrename -h -v time_bnds,time tmp.nc
       ${NCO_BINDIR}/ncatted -h -a ,time,d,,, tmp.nc
-      ${NCO_BINDIR}/ncks -h -A tmp.nc ${OUTDIR}/${YYYY_MM}/${PARAM}${ZLEV}z${NN}_ts.nc
+      ${NCO_BINDIR}/ncks -h -A tmp.nc ${OUTDIR}/${PARAM}${ZLEV}z${NN}_ts.nc
       if [ ${CURRENT_DATE} -eq ${YDATE_START} ]
       then
-        ${NCO_BINDIR}/ncks -h -O -d time,1,  ${OUTDIR}/${YYYY_MM}/${PARAM}${ZLEV}z${NN}_ts.nc tmp.nc
-        mv tmp.nc ${OUTDIR}/${YYYY_MM}/${PARAM}${ZLEV}z${NN}_ts.nc
+        ${NCO_BINDIR}/ncks -h -O -d time,1,  ${OUTDIR}/${PARAM}${ZLEV}z${NN}_ts.nc tmp.nc
+        mv tmp.nc ${OUTDIR}/${PARAM}${ZLEV}z${NN}_ts.nc
       fi
       rm -f tmp.nc
    else
   # otherwise, i.e. for intantaneous values, time_bnds are deleted
-      ${NCO_BINDIR}/ncatted -h -a bounds,time,d,, ${OUTDIR}/${YYYY_MM}/${PARAM}${ZLEV}z${NN}_ts.nc
-      ${NCO_BINDIR}/ncks -h -x -v time_bnds ${OUTDIR}/${YYYY_MM}/${PARAM}${ZLEV}z${NN}_ts.nc tmp.nc
-      mv tmp.nc ${OUTDIR}/${YYYY_MM}/${PARAM}${ZLEV}z${NN}_ts.nc
+      ${NCO_BINDIR}/ncatted -h -a bounds,time,d,, ${OUTDIR}/${PARAM}${ZLEV}z${NN}_ts.nc
+      ${NCO_BINDIR}/ncks -h -x -v time_bnds ${OUTDIR}/${PARAM}${ZLEV}z${NN}_ts.nc tmp.nc
+      mv tmp.nc ${OUTDIR}/${PARAM}${ZLEV}z${NN}_ts.nc
    fi
-    ${NCO_BINDIR}/ncwa -O -a ${HEIGHT},$1 ${OUTDIR}/${YYYY_MM}/${PARAM}${ZLEV}z${NN}_ts.nc tmp.nc
+    ${NCO_BINDIR}/ncwa -O -a ${HEIGHT},$1 ${OUTDIR}/${PARAM}${ZLEV}z${NN}_ts.nc tmp.nc
     ${NCO_BINDIR}/ncatted -O -a cell_methods,$1,d,, tmp.nc
     ${NCO_BINDIR}/ncatted -O -a cell_methods,${HEIGHT},d,, tmp.nc
     ${NCO_BINDIR}/ncatted -O -a coordinates,$1,o,c,"lon lat ${HEIGHT}" tmp.nc
-    cp tmp.nc ${OUTDIR}/${YYYY_MM}/${PARAM}${ZLEV}z${NN}_ts.nc
+    cp tmp.nc ${OUTDIR}/${PARAM}${ZLEV}z${NN}_ts.nc
     rm tmp.nc
    let "NZLEV = NZLEV + 1"
   done
-}
+)
 
 #########################################################
 #... functions for calculating additional quantities
@@ -183,9 +183,9 @@ function timeseriesz {
 #########################################################
 
 #... wind speed in 10m height
-function windspeed10M {
+function windspeed10M() (
 echo calculate 10m wind speed ... 
-cd ${OUTDIR}/${YYYY_MM}
+cd ${OUTDIR}
 uvresfile=UV_10M_ts.nc
 varname=VABS_10M
 outfile=${varname}_ts.nc
@@ -205,12 +205,12 @@ if [ ! -e ${outfile} ] ; then
     echo "Input fields U_10 and V_10M for calculating wind speed at 10m height are missing"
   fi
 fi
-}
+)
 
 #... derotate 10m rotated wind components to geographical lat/lon
-function derotatewind10M {
+function derotatewind10M() (
 echo derotate 10m wind components ... 
-cd ${OUTDIR}/${YYYY_MM}
+cd ${OUTDIR}
 uvresfile=UV_10M_ts.nc
 outfile=UVlonlat_10M_ts.nc
 varnameUROT=U_10M
@@ -247,12 +247,12 @@ infile2=${varnameVROT}_ts.nc
     echo "Input fields" ${varnameUROT} "and" ${varnameVROT} "for rotating wind components at 10m height are missing"
   fi
 #fi
-}
+)
 
 #... wind direction in 10m height
-function winddir10M {
+function winddir10M() (
 echo calculate 10m wind direction ...
-cd ${OUTDIR}/${YYYY_MM}
+cd ${OUTDIR}
 varname=WDIRGEO_10M
 varnameULON=ULON_10M
 varnameVLAT=VLAT_10M
@@ -277,12 +277,12 @@ if [ ! -e ${outfile} ] ; then
     echo "The wind direction at 10m height was determined w.r.t. the geographical WGS84 system."
 #  fi
 fi
-}
+)
 
 #... snow fraction from W_SNOW values
-function snowfraction {
+function snowfraction() (
 echo calculate snow fraction ...
-cd ${OUTDIR}/${YYYY_MM}
+cd ${OUTDIR}
 varnamew=W_SNOW
 varnamef=FR_SNOW
 outfile=${varnamef}_ts.nc
@@ -300,12 +300,12 @@ if [ ! -e ${outfile} ] ; then
     echo "Input field " ${varnamew} " for calculating snow area fraction is missing"
   fi
 fi
-}
+)
 
 #... add to fields
-function addfields {
+function addfields() (
 echo calculate ${3}=${1}+${2} ...
-cd ${OUTDIR}/${YYYY_MM}
+cd ${OUTDIR}
 infile1=${1}_ts.nc
 infile2=${2}_ts.nc
 outfile=${3}_ts.nc
@@ -340,12 +340,12 @@ if [ ! -e ${outfile} ] ; then
 else
     echo $(basename ${outfile}) " already exists"
 fi
-}
+)
 
 #... substract two fields
-function subtractfields {
+function subtractfields() (
 echo calculate ${3}=${1}-${2} ...
-cd ${OUTDIR}/${YYYY_MM}
+cd ${OUTDIR}
 RETURN_VAL=0
 infile1=${1}_ts.nc
 infile2=${2}_ts.nc
@@ -369,10 +369,10 @@ if [ ! -e ${outfile} ] ; then
 else
     echo $(basename ${outfile}) " already exists"
 fi
-}
+)
 
 #... wind speed on pressure levels
-function windspeedp {
+function windspeedp() (
   echo calculate wind speed on p-levels ...
   # NWR 20201130
   # the below command destroys the PLEV array...
@@ -383,10 +383,10 @@ NPLEV=1
 while [ ${NPLEV} -le ${PLEVS[0]} ]
 do
   PLEV=$(python -c "print(int(${PLEVS[$NPLEV]}))")
-  infile1=${OUTDIR}/${YYYY_MM}/U${PLEV}p_ts.nc
-  infile2=${OUTDIR}/${YYYY_MM}/V${PLEV}p_ts.nc
-  outfile=${OUTDIR}/${YYYY_MM}/${varname}${PLEV}p_ts.nc
-  uvresfile=${OUTDIR}/${YYYY_MM}/UV${PLEV}p_ts.nc
+  infile1=${OUTDIR}/U${PLEV}p_ts.nc
+  infile2=${OUTDIR}/V${PLEV}p_ts.nc
+  outfile=${OUTDIR}/${varname}${PLEV}p_ts.nc
+  uvresfile=${OUTDIR}/UV${PLEV}p_ts.nc
   if [ -f ${infile1} -a -f ${infile2} ] ; then
     cp  ${infile1} ${uvresfile}
     ${NCO_BINDIR}/ncks -h -A -v V ${infile2} ${uvresfile}
@@ -401,15 +401,15 @@ do
   fi
   let "NPLEV = NPLEV + 1"
 done
-}
+)
 
 #... wind speed on z levels
-function windspeedz {
+function windspeedz() (
   echo calculate wind speed on height levels ...
   declare -a ZLEVS=("${!1}")
   ERROR_STATUS=$?
   set -e
-  if [ -f ${OUTDIR}/${YYYY_MM}/U${ZLEV}z_ts.nc ]
+  if [ -f ${OUTDIR}/U${ZLEV}z_ts.nc ]
   then
     HEIGHT=height
     NN=
@@ -422,10 +422,10 @@ function windspeedz {
   while [ ${NZLEV} -le ${ZLEVS[0]} ]
   do
     ZLEV=$(python -c "print(int(${ZLEVS[$NZLEV]}))") 
-    infile1=${OUTDIR}/${YYYY_MM}/U${ZLEV}z${NN}_ts.nc
-    infile2=${OUTDIR}/${YYYY_MM}/V${ZLEV}z${NN}_ts.nc
-    outfile=${OUTDIR}/${YYYY_MM}/${varname}${ZLEV}z${NN}_ts.nc
-    uvresfile=${OUTDIR}/${YYYY_MM}/UV${ZLEV}z${NN}_ts.nc
+    infile1=${OUTDIR}/U${ZLEV}z${NN}_ts.nc
+    infile2=${OUTDIR}/V${ZLEV}z${NN}_ts.nc
+    outfile=${OUTDIR}/${varname}${ZLEV}z${NN}_ts.nc
+    uvresfile=${OUTDIR}/UV${ZLEV}z${NN}_ts.nc
   if [ -f ${infile1} -a -f ${infile2} ] ; then
     cp  ${infile1} ${uvresfile}
     ${NCO_BINDIR}/ncks -h -A -v V ${infile2} ${uvresfile}
@@ -440,10 +440,10 @@ function windspeedz {
   fi
      let "NZLEV = NZLEV + 1"
   done
-}
+)
 
 #... derotate rotated wind components on p-level to geographical lat/lon
-function derotatewindp {
+function derotatewindp() (
   echo derotate wind speed on p-levels ...
   # NWR 20201130
   # the below command destroys the PLEV array...
@@ -457,11 +457,11 @@ function derotatewindp {
   while [ ${NPLEV} -le ${PLEVS[0]} ]
   do
     PLEV=$(python -c "print(int(${PLEVS[$NPLEV]}))")
-    outfile=${OUTDIR}/${YYYY_MM}/UVlonlat${PLEV}p_ts.nc
+    outfile=${OUTDIR}/UVlonlat${PLEV}p_ts.nc
     if [ ! -e ${outfile} ] ; then
       uvresfile=UV${PLEV}p_ts.nc
-      infile1=${OUTDIR}/${YYYY_MM}/U${PLEV}p_ts.nc
-      infile2=${OUTDIR}/${YYYY_MM}/V${PLEV}p_ts.nc
+      infile1=${OUTDIR}/U${PLEV}p_ts.nc
+      infile2=${OUTDIR}/V${PLEV}p_ts.nc
       if [ -f ${infile1} -a -f ${infile2} ] ; then
         cp  ${infile1} ${uvresfile}
         ${NCO_BINDIR}/ncks -h -A -v ${varnameVROT} ${infile2} ${uvresfile}
@@ -492,11 +492,11 @@ function derotatewindp {
     rm ${outfile}
     let "NPLEV = NPLEV + 1"
   done
-}
+)
 
 
 #... derotate rotated wind components on z-level to geographical lat/lon
-function derotatewindz {
+function derotatewindz() (
   echo derotate wind speed on z-levels ...
   varnameUROT=U
   varnameVROT=V
@@ -504,7 +504,7 @@ function derotatewindz {
   varnameVLAT=VLAT
   declare -a ZLEVS=("${!1}")
   #... height above ground
-  if [ -f ${OUTDIR}/${YYYY_MM}/U${ZLEV}z_ts.nc ]
+  if [ -f ${OUTDIR}/U${ZLEV}z_ts.nc ]
   then
     HEIGHT=height
     NN=
@@ -514,11 +514,11 @@ function derotatewindz {
   while [ ${NZLEV} -le ${ZLEVS[0]} ]
   do
     ZLEV=$(python -c "print(int(${ZLEVS[$NZLEV]}))")
-    outfile=${OUTDIR}/${YYYY_MM}/UVlonlat${ZLEV}z${NN}_ts.nc
+    outfile=${OUTDIR}/UVlonlat${ZLEV}z${NN}_ts.nc
     if [ ! -e ${outfile} ] ; then
       uvresfile=UV${ZLEV}z${NN}_ts.nc
-      infile1=${OUTDIR}/${YYYY_MM}/U${ZLEV}z${NN}_ts.nc
-      infile2=${OUTDIR}/${YYYY_MM}/V${ZLEV}z${NN}_ts.nc
+      infile1=${OUTDIR}/U${ZLEV}z${NN}_ts.nc
+      infile2=${OUTDIR}/V${ZLEV}z${NN}_ts.nc
       if [ -f ${infile1} -a -f ${infile2} ] ; then
         cp  ${infile1} ${uvresfile}
         ${NCO_BINDIR}/ncks -h -A -v ${varnameVROT} ${infile2} ${uvresfile}
@@ -554,7 +554,7 @@ function derotatewindz {
   fi
 
   #... height above NN  
-  if [ -f ${OUTDIR}/${YYYY_MM}/U${ZLEV}zNN_ts.nc ]
+  if [ -f ${OUTDIR}/U${ZLEV}zNN_ts.nc ]
   then
     HEIGHT=altitude
     NN=NN
@@ -564,11 +564,11 @@ function derotatewindz {
   while [ ${NZLEV} -le ${ZLEVS[0]} ]
   do
     ZLEV=$(python -c "print(int(${ZLEVS[$NZLEV]}))")
-    outfile=${OUTDIR}/${YYYY_MM}/UVlonlat${ZLEV}z${NN}_ts.nc
+    outfile=${OUTDIR}/UVlonlat${ZLEV}z${NN}_ts.nc
     if [ ! -e ${outfile} ] ; then
       uvresfile=UV${ZLEV}z${NN}_ts.nc
-      infile1=${OUTDIR}/${YYYY_MM}/U${ZLEV}z${NN}_ts.nc
-      infile2=${OUTDIR}/${YYYY_MM}/V${ZLEV}z${NN}_ts.nc
+      infile1=${OUTDIR}/U${ZLEV}z${NN}_ts.nc
+      infile2=${OUTDIR}/V${ZLEV}z${NN}_ts.nc
       if [ -f ${infile1} -a -f ${infile2} ] ; then
         cp  ${infile1} ${uvresfile}
         ${NCO_BINDIR}/ncks -h -A -v ${varnameVROT} ${infile2} ${uvresfile}
@@ -603,17 +603,17 @@ function derotatewindz {
     let "NZLEV = NZLEV + 1"
   done
   fi
-}
+)
 
 
 #... wind direction on p-level
-function winddirp {
+function winddirp() (
   echo calculate wind direction on p-levels ...
   # NWR 20201130
   # the below command destroys the PLEV array...
   # So I commented this out
   #declare -a PLEVS=("${!1}")
-   cd ${OUTDIR}/${YYYY_MM}
+   cd ${OUTDIR}
    varname=WDIRGEO
    varnameULON=ULON
    varnameVLAT=VLAT
@@ -645,11 +645,11 @@ function winddirp {
     fi
       let "NPLEV = NPLEV + 1"
    done
-}
+)
 
 
 #... wind direction on z-level
-function winddirz {
+function winddirz() (
   echo calculate wind direction on z-levels ...
   varname=WDIRGEO
   varnameULON=ULON
@@ -662,7 +662,7 @@ function winddirz {
     NN=
   ZLEV=$(python -c "print(int(${ZLEVS[1]}))")
   set +e
-   cd ${OUTDIR}/${YYYY_MM}
+   cd ${OUTDIR}
    uvlonlatfile=UVlonlat_ts.nc
 
    NZLEV=1
@@ -699,7 +699,7 @@ function winddirz {
     NN=NN
    ZLEV=$(python -c "print(int(${ZLEVS[1]}))")
   set +e
-   cd ${OUTDIR}/${YYYY_MM}
+   cd ${OUTDIR}
    uvlonlatfile=UVlonlat_ts.nc
 
    NZLEV=1
@@ -729,15 +729,15 @@ function winddirz {
       let "NZLEV = NZLEV + 1"
    done
    fi
-}
+)
 
 # Calculation of the diurnal temperature range
-function dtr {
+function dtr() (
 echo calculate the diurnal temperature range ...
-  cdo -s sub ${OUTDIR}/${YYYY_MM}/TMAX_2M_ts.nc ${OUTDIR}/${YYYY_MM}/TMIN_2M_ts.nc ${OUTDIR}/${YYYY_MM}/DTR_2M_ts.nc
-  ncrename -h -v TMAX_2M,DTR_2M ${OUTDIR}/${YYYY_MM}/DTR_2M_ts.nc
-  ncatted -h -a long_name,DTR_2M,m,c,"diurnal temperature range" ${OUTDIR}/${YYYY_MM}/DTR_2M_ts.nc
-  ncatted -h -a cell_methods,DTR_2M,d,, ${OUTDIR}/${YYYY_MM}/DTR_2M_ts.nc
-}
+  cdo -s sub ${OUTDIR}/TMAX_2M_ts.nc ${OUTDIR}/TMIN_2M_ts.nc ${OUTDIR}/DTR_2M_ts.nc
+  ncrename -h -v TMAX_2M,DTR_2M ${OUTDIR}/DTR_2M_ts.nc
+  ncatted -h -a long_name,DTR_2M,m,c,"diurnal temperature range" ${OUTDIR}/DTR_2M_ts.nc
+  ncatted -h -a cell_methods,DTR_2M,d,, ${OUTDIR}/DTR_2M_ts.nc
+)
 
 

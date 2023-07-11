@@ -196,7 +196,8 @@ saturSubSurfStor = []
 subSurfRunoff    = []
 for count, pressureFile in enumerate(pressureFiles):
     with nc.Dataset(pressureFile, 'r') as nc_file:
-        for t in range(nc_file['time'].shape[0]):
+        time_max = nc_file['time'].shape[0]
+        for t in range(time_max):
             press        = nc_file.variables[pressureVarName][t,...]
             nc_time      = nc_file.variables['time']
             nc_times     = nc_time[t]
@@ -205,7 +206,7 @@ for count, pressureFile in enumerate(pressureFiles):
             #dates        = nc.num2date(nc_time[:],units=nc_time.units,calendar=nc_time.calendar)
             nc_timeUnits = nc_time.units
 
-            print(f'-- count: {count} -- t {t}; press.shape: {press.shape}')
+            print(f'-- file count: {count} -- t={t} (of {time_max}); press.shape: {press.shape}')
 
             # convert press to ht-array as we deal with DIagnostcs.py
             press = ht.array(press)
@@ -214,7 +215,10 @@ for count, pressureFile in enumerate(pressureFiles):
             # Calculate subsurface flow in all 6 directions for each grid cell (L^3/T)
             flowleft,flowright,flowfront,flowback,flowbottom,flowtop = diag.SubsurfaceFlow(press,krel)
             # Calculate a ground water body mask (gwb_mask)
-            gwb_mask, wtd_z_index = sloth.analysis.get_3Dgroundwaterbody_mask(tmp_satur)
+            gwb_mask, wtd_z_index = sloth.analysis.get_3Dgroundwaterbody_mask_HT(tmp_satur)
+            # needed as Diagnostics is based on heat...
+            #gwb_mask    = ht.array(gwb_mask)
+            #wtd_z_index = ht.array(wtd_z_index)
             # Get surface pressure
             surfPress = diag.TopLayerPressure(press)
             # Calculate overlandFlow in [L^2/T]
@@ -225,7 +229,7 @@ for count, pressureFile in enumerate(pressureFiles):
             tmp_subSurfStor = diag.SubsurfaceStorage(press, tmp_satur)
             tmp_subSurfStor = tmp_subSurfStor / (dx*dy)
 
-            wtd.append(sloth.analysis.calc_wtd(press=press, cellDepths=dz*Dzmult))
+            wtd.append(sloth.analysis.calc_wtd_HT(press=press, cellDepths=dz*Dzmult))
             overlandFlow.append(tmp_overlandFlow)
             subSurfStor.append(tmp_subSurfStor)
             saturSubSurfStor.append(post.calc_ssss(sss=tmp_subSurfStor, 
@@ -289,9 +293,8 @@ saturSubSurfStor *= 1000
 subSurfRunoff    *= 1000
 
 
-print(f'DEBUG: get (mean) time value for netCDF output')
+print(f'DEBUG: get time value for netCDF output')
 times        = np.array(times)
-#time_mean    = np.mean(times)
 timeUnit     = nc_timeUnits
 timeCalendar = nc_calendar
 
@@ -311,7 +314,7 @@ print(f'DEBUG: writing to netCDF')
 ###############################################################################
 #### WTD
 ###############################################################################
-saveFile = f'{outDir}/{outPrepandName}_wtd.nc'
+saveFile = f'{outDir}/{outPrepandName}wtd.nc'
 if not os.path.exists(f'{outDir}'):
     os.makedirs(f'{outDir}')
 
@@ -344,7 +347,7 @@ with nc.Dataset(netCDFFileName, 'a') as nc_file:
 ###############################################################################
 #### overlandFlow
 ###############################################################################
-saveFile = f'{outDir}/{outPrepandName}_overlandFlow.nc'
+saveFile = f'{outDir}/{outPrepandName}overlandFlow.nc'
 if not os.path.exists(f'{outDir}'):
     os.makedirs(f'{outDir}')
 
@@ -377,7 +380,7 @@ with nc.Dataset(netCDFFileName, 'a') as nc_file:
 ###############################################################################
 #### Surface Storage
 ###############################################################################
-saveFile = f'{outDir}/{outPrepandName}_surfStor.nc'
+saveFile = f'{outDir}/{outPrepandName}surfStor.nc'
 if not os.path.exists(f'{outDir}'):
     os.makedirs(f'{outDir}')
 
@@ -410,7 +413,7 @@ with nc.Dataset(netCDFFileName, 'a') as nc_file:
 ###############################################################################
 #### Subsurface Storage
 ###############################################################################
-saveFile = f'{outDir}/{outPrepandName}_subSurfStor.nc'
+saveFile = f'{outDir}/{outPrepandName}subSurfStor.nc'
 if not os.path.exists(f'{outDir}'):
     os.makedirs(f'{outDir}')
 
@@ -443,7 +446,7 @@ with nc.Dataset(netCDFFileName, 'a') as nc_file:
 ###############################################################################
 #### Saturated Subsurface Storage
 ###############################################################################
-saveFile = f'{outDir}/{outPrepandName}_saturSubSurfStor.nc'
+saveFile = f'{outDir}/{outPrepandName}saturSubSurfStor.nc'
 if not os.path.exists(f'{outDir}'):
     os.makedirs(f'{outDir}')
 
@@ -476,7 +479,7 @@ with nc.Dataset(netCDFFileName, 'a') as nc_file:
 ###############################################################################
 #### Subsurface Runoff
 ###############################################################################
-saveFile = f'{outDir}/{outPrepandName}_subSurfRunoff.nc'
+saveFile = f'{outDir}/{outPrepandName}subSurfRunoff.nc'
 if not os.path.exists(f'{outDir}'):
     os.makedirs(f'{outDir}')
 

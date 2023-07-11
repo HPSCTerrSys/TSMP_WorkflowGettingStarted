@@ -149,6 +149,11 @@ datediff_inhour() {
   hours=$(( (d2 - d1) / 3600 ))
   echo "$hours"
 }
+datediff() {
+  d1=$(date -d "$1" +%s)
+  d2=$(date -d "$2" +%s)
+  echo $(( (d1 - d2) )) seconds
+}
 
 updatePathsForCASES() {
     # Author: Niklas WAGNER

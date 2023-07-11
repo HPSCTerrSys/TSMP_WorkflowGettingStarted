@@ -41,24 +41,24 @@ addTimeInfoAndSplitVar() {
     cdo -L -f nc4c -z zip_1 \
       -setcalendar,${tmp_Calendar} -selvar,time,pressure \
       "${tmp_OutDir}/${fileName_addTimeUnits}" \
-      "${tmp_OutDir}/${tmp_fileName}_pressure.nc"
+      "${tmp_OutDir}/${tmp_fileName}_pressure.nc_tmp"
     cdo -L -f nc4c -z zip_1 \
       -setcalendar,${tmp_Calendar} -selvar,time,saturation \
       "${tmp_OutDir}/${fileName_addTimeUnits}" \
-      "${tmp_OutDir}/${tmp_fileName}_saturation.nc"
+      "${tmp_OutDir}/${tmp_fileName}_saturation.nc_tmp"
   else
     cdo -L -f nc4c -z zip_1 \
       -setcalendar,${tmp_Calendar} -selvar,time,pressure \
       "${tmp_OutDir}/${fileName_addTimeUnits}" \
-      "${tmp_OutDir}/${tmp_fileName}_pressure.nc"
+      "${tmp_OutDir}/${tmp_fileName}_pressure.nc_tmp"
     cdo -L -f nc4c -z zip_1 \
       -setcalendar,${tmp_Calendar} -selvar,time,saturation \
       "${tmp_OutDir}/${fileName_addTimeUnits}" \
-      "${tmp_OutDir}/${tmp_fileName}_saturation.nc"
+      "${tmp_OutDir}/${tmp_fileName}_saturation.nc_tmp"
     cdo -L -f nc4c -z zip_1 \
       -setcalendar,${tmp_Calendar} -selvar,time,evaptrans \
       "${tmp_OutDir}/${fileName_addTimeUnits}" \
-      "${tmp_OutDir}/${tmp_fileName}_evaptrans.nc"
+      "${tmp_OutDir}/${tmp_fileName}_evaptrans.nc_tmp"
   fi
 }
 
