@@ -62,13 +62,16 @@ then
 # up, but keeping it sqeuential.  
 echo "- Start processing COSMO output"
 echo "--- Starting CCLM default output timeseries"
-# 3h output
-INPDIR="${SimresDir}/cosmo/3h" 
+# sfc output
+INPDIR="${SimresDir}/cosmo/sfc" 
 TS_PARAM=( \
-"RAIN_CON" "RAIN_GSP" "SNOW_CON" "SNOW_GSP" "TOT_PREC" "ALHFL_S" "ALWD_S" \
-"ALWU_S" "ASOB_S" "ASOB_T" "ASOD_T" "ATHB_S" "ATHB_T" "ASHFL_S" "ASWDIFD_S" \
-"ASWDIFU_S" "ASWDIR_S" "CLCT" "DURSUN" "PMSL" "PS" "QV_2M" "T_2M" "U_10M" \
-"V_10M" "RELHUM_2M" "ALB_RAD" \
+  'T_2M' 'TMAX_2M' 'TMIN_2M' 'TOT_PR' 'QV_2M' 'RELHUM_2M' 'PS' 'PMSL' 'U_10M' 'V_10M' 'CLCT' 'ASWDIR_S' 'ASWDIFD_S' 'ALWD_S' \
+  'RUNOFF_S' 'RUNOFF_G' 'SNOW_MELT' 'W_SO_ICE' 'W_SO' 'W_SNOW' 'H_SNOW' \
+  'HSURF' 'FR_LAND' \
+  'T_S' 'T_SO' 'PRR_CON' 'PRS_CON' 'PRS_GSP' 'AUMFL_S' 'AVMFL_S' 'VABSMX_10M' 'ASWDIFU_S' 'ALWU_S' 'ASOD_T' 'ATHB_T' 'ASOB_T' 'ASHFL_S' 'ALHFL_S' 'HPBL' 'TQV' 'TQC' 'TQI' 'SNOW_CON' 'SNOW_GSP' \
+  'VMAX_10M' 'CLCH' 'CLCM' 'CLCL' 'Z0' 'CAPE_ML' 'CAPE_MU' 'CIN_ML' 'CIN_MU' \
+  'TQG' \
+  'TQS' 'TQR' \
 )
 
 # set some helper-vars
@@ -81,11 +84,12 @@ done
 
 
 echo "--- Starting CCLM default output timeseriesp"
-PLEVS=(5 200. 500. 850. 925. 1000) # list of pressure levels. Must be the 
-                                   # same as or a subset of the plev list 
-                                   # in the specific GRIBOUT
-INPDIR="${SimresDir}/cosmo/3h" 
+# list of pressure levels. Must be the same as or a subset of the plev list 
+# in the specific GRIBOUT
+PLEVS=(50. 70. 100. 150. 200. 250. 300. 400. 500. 600. 700. 850. 925. 1000.) 
+INPDIR="${SimresDir}/cosmo/pl" 
 TS_PARAM=( \
+  'U' 'V' 'W' 'T' 'QV' 'FI' \
 )
 
 echo "DEBUG TS_PARAM ${TS_PARAM[@]}"
@@ -95,18 +99,6 @@ do
   echo "DEBUG: starting timeseriesp ${PARAM} PLEVS[@]"
   timeseriesp ${PARAM}
 done
-
-echo "--- Starting calculate further fields"
-#windspeed10M
-#derotatewind10M
-#winddir10M
-#snowfraction
-#addfields ASWDIR_S ASWDIFD_S ASWD_S
-#subtractfields ASOD_T ASOB_T ASOU_T
-#addfields RUNOFF_S RUNOFF_G RUNOFF_T
-#addfields RAIN_CON SNOW_CON PREC_CON
-#addfields SNOW_GSP SNOW_CON TOT_SNOW
-#addfields TQC TQI TQW
 
 # Copy ToPostPro to postpro dir (and clean before)
 rm -rv ${PostProStoreDir}/cosmo
