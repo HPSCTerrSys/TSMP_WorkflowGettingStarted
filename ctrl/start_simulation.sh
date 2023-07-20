@@ -104,7 +104,9 @@ for component in "${components[@]}"; do
   # COSMO
   if [[ "${component}" == cos? ]]; then
 	echo "--- -- - cos"
-	mkdir -vp ${rundir}/cosmo_out
+	mkdir -vp ${rundir}/cosmo_out/sfc
+	mkdir -vp ${rundir}/cosmo_out/pl
+	mkdir -vp ${rundir}/cosmo_out/ml
   mkdir -vp ${BASE_RUNDIR}/restarts/cosmo
 	cp -v ${BASE_NAMEDIR}/INPUT_* ${rundir}/
 	sed -i "s,__hstart__,${hstart},g" INPUT_IO
@@ -288,7 +290,7 @@ for component in "${components[@]}"; do
     # Save restart files for next simulation
     # -- COSMO does store the restart files in correct dir already
     # Move model-output to simres/
-    cp -v ${rundir}/cosmo_out/* $new_simres/cosmo
+    cp -vr ${rundir}/cosmo_out/* $new_simres/cosmo
     # COSMO writs restart direct to ${BASE_RUNDIR}/restarts/cosmo/
     cosmoRestartFileDate=$(date -u -d "${startDate_p1}" "+%Y%m%d%H")
     cp -v ${BASE_RUNDIR}/restarts/cosmo/lrfd${cosmoRestartFileDate}o $new_simres/restarts
