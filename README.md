@@ -136,7 +136,7 @@ In this example, we do run a simulation over the EUR-11 domain for the year
 1979, for which restart files could be taken from:
 
 ```
-/p/largedata2/detectdata/projects/Z04/ExampleCase_ForcingAndRestart/restarts
+/p/largedata2/detectdata/projects/Z04/SPINUP_TSMP_EUR-11/restarts
 ``` 
 
 If needed, do request access to the related data project via [JuDoor](https://judoor.fz-juelich.de/login).
@@ -147,9 +147,9 @@ restart files there:
 ``` bash
 cd $BASE_ROOT/rundir/MainRun/restarts
 # copy CLM restart file
-cp -r /p/largedata2/detectdata/projects/Z04/ExampleCase_ForcingAndRestart/restarts/clm ./
+cp -r /p/largedata2/detectdata/projects/Z04/SPINUP_TSMP_EUR-11/restarts/clm ./
 # copy ParFlow restart file
-cp -r /p/largedata2/detectdata/projects/Z04/ExampleCase_ForcingAndRestart/restarts/parflow ./
+cp -r /p/largedata2/detectdata/projects/Z04/SPINUP_TSMP_EUR-11/restarts/parflow ./
 ```
 **NOTE**: 
 ParFlow needs the previous model-outpt as a restart-file, whereas CLM needs a 
