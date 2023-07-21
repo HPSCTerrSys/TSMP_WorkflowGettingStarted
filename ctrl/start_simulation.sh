@@ -107,6 +107,7 @@ for component in "${components[@]}"; do
 	mkdir -vp ${rundir}/cosmo_out/sfc
 	mkdir -vp ${rundir}/cosmo_out/pl
 	mkdir -vp ${rundir}/cosmo_out/ml
+	mkdir -vp ${rundir}/cosmo_out/zl
   mkdir -vp ${BASE_RUNDIR}/restarts/cosmo
 	cp -v ${BASE_NAMEDIR}/INPUT_* ${rundir}/
 	sed -i "s,__hstart__,${hstart},g" INPUT_IO
@@ -274,6 +275,8 @@ wait
 echo "--- create SIMRES dir (and sub-dirs) to store simulation results"
 new_simres=${BASE_SIMRESDIR}/${formattedStartDate}
 echo "--- new_simres: $new_simres"
+# clean befor to avoid conflicts
+rm -rvf $new_simres
 mkdir -p "$new_simres/restarts"
 mkdir -p "$new_simres/log"
 

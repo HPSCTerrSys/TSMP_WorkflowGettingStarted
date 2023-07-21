@@ -65,13 +65,18 @@ echo "--- Starting CCLM default output timeseries"
 # sfc output
 INPDIR="${SimresDir}/cosmo/sfc" 
 TS_PARAM=( \
-  'T_2M' 'TMAX_2M' 'TMIN_2M' 'TOT_PR' 'QV_2M' 'RELHUM_2M' 'PS' 'PMSL' 'U_10M' 'V_10M' 'CLCT' 'ASWDIR_S' 'ASWDIFD_S' 'ALWD_S' \
-  'RUNOFF_S' 'RUNOFF_G' 'SNOW_MELT' 'W_SO_ICE' 'W_SO' 'W_SNOW' 'H_SNOW' \
-  'HSURF' 'FR_LAND' \
-  'T_S' 'T_SO' 'PRR_CON' 'PRS_CON' 'PRS_GSP' 'AUMFL_S' 'AVMFL_S' 'VABSMX_10M' 'ASWDIFU_S' 'ALWU_S' 'ASOD_T' 'ATHB_T' 'ASOB_T' 'ASHFL_S' 'ALHFL_S' 'HPBL' 'TQV' 'TQC' 'TQI' 'SNOW_CON' 'SNOW_GSP' \
-  'VMAX_10M' 'CLCH' 'CLCM' 'CLCL' 'Z0' 'CAPE_ML' 'CAPE_MU' 'CIN_ML' 'CIN_MU' \
-  'TQG' \
-  'TQS' 'TQR' \
+   'T_2M' 'TMAX_2M' 'TMIN_2M' 'TOT_PREC' 'QV_2M' 'RELHUM_2M' 'PS' 'PMSL' 'U_10M' 'V_10M' 'CLCT' 'ASWDIR_S' 'ASWDIFD_S' 'ALWD_S' \
+   'AEVAP_S' \
+   'FR_SNOW' \
+   'RUNOFF_S' 'RUNOFF_G' 'SNOW_MELT' 'W_SNOW' 'H_SNOW' 'W_SO' 'W_SO_ICE' \
+   'HSURF' 'FR_LAND' \
+   'T_SO' 'T_S' 'PRR_CON' 'PRS_CON' 'PRR_GSP' 'PRS_GSP' 'AUMFL_S' 'AVMFL_S' 'VABSMX_10M' 'ASWDIFU_S' 'ALWU_S' 'ASOD_T' 'ATHB_T' 'ASOB_T' 'ASHFL_S' 'ALHFL_S' 'HPBL' 'TQV' 'TQC' 'TQI' 'SNOW_CON' 'SNOW_GSP' 'DURSUN' \
+   'VMAX_10M' 'CLCH' 'CLCM' 'CLCL' 'Z0' 'CAPE_ML' 'CAPE_MU' 'CIN_ML' 'CIN_MU' \
+   'TQG' 'PRG_GSP' \
+   'TQS' 'TQR' 'FIS' 'TWATER' 'TOT_PR' 'RAIN_GSP' 'RAIN_CON' 'TD_2M' \
+   'TDIV_HUM' \
+   'TCM' 'TCH' 'HBAS_CON' 'HTOP_CON' 'CEILING' 'TKE_CON' 'CAPE_CON' 'LCL_ML' 'LFC_ML' 'DURSUN_M' 'DURSUN_R' 'QV_S' 'T_SNOW' 'ALB_RAD' 'ATHB_S' 'ASOB_S' \
+   'FRESHSNW', 'W_I' \
 )
 
 # set some helper-vars
@@ -99,6 +104,25 @@ do
   echo "DEBUG: starting timeseriesp ${PARAM} PLEVS[@]"
   timeseriesp ${PARAM}
 done
+
+
+echo "--- Starting CCLM default output timeseriesZ"
+# list of z-levels. Must be the same as or a subset of the zlev list 
+# in the specific GRIBOUT
+ZLEVS=(50. 100. 150. 200. 250. 300.) 
+INPDIR="${SimresDir}/cosmo/zl" 
+TS_PARAM=( \
+  'U' 'V' 'T' 'QV' \
+)
+
+echo "DEBUG TS_PARAM ${TS_PARAM[@]}"
+echo "--- using ZLEVS: ${ZLEVS[@]}"
+for PARAM in ${TS_PARAM[@]}
+do
+  echo "DEBUG: starting timeseriesp ${PARAM} ZLEVS[@]"
+  timeseriesz ${PARAM}
+done
+
 
 # Copy ToPostPro to postpro dir (and clean before)
 rm -rv ${PostProStoreDir}/cosmo
