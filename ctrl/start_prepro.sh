@@ -202,6 +202,7 @@ srun ./${INT2LM_EXNAME}
 if [[ $? != 0 ]] ; then exit 1 ; fi
 # Clean up
 rm -rf ${rundir}
+rm -rf ${tmpRawCafFiles}
 wait
 
 exit 0
