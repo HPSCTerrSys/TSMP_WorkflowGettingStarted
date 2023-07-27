@@ -66,7 +66,7 @@ echo "DEBUG NOW: numHours=$numHours"
 # Pre-Pro INT2LM
 ###############################################################################
 int2lm_LmCatDir="${BASE_FORCINGDIR}/laf_lbfd/${formattedStartDate}"
-tmpRawCafFiles="${BASE_FORCINGDIR}/tmpRawCafFiles/${formattedStartDate}"
+##tmpRawCafFiles="${BASE_FORCINGDIR}/tmpRawCafFiles/${formattedStartDate}"
 rundir="${BASE_RUNDIR}/INT2LM_${formattedStartDate}"
 # Remove rundir and int2lm_LmCatDir in case already exisit, to avoid conflicts.               
 # E.g. from some simulation before.                                             
@@ -76,12 +76,12 @@ fi
 if [[ -d ${int2lm_LmCatDir} ]]; then
   rm -rv ${int2lm_LmCatDir}
 fi
-if [[ -d ${tmpRawCafFiles} ]]; then
-  rm -rv ${tmpRawCafFiles}
-fi
+##if [[ -d ${tmpRawCafFiles} ]]; then
+##  rm -rv ${tmpRawCafFiles}
+##fi
 mkdir -pv ${int2lm_LmCatDir}
 mkdir -pv ${rundir}
-mkdir -pv ${tmpRawCafFiles}
+##mkdir -pv ${tmpRawCafFiles}
 
 # Copy, unzip, and change time.calendar of orig caf files to prepare to use by
 # INT2LM.
@@ -99,7 +99,8 @@ FILELIST=$(find ${cafFilesIn} -regextype posix-extended -regex '.*cas[0-9]{8}(00
 for FILE in ${FILELIST}
   do
     FILEBASE=$(basename ${FILE} .ncz)
-    nccopy -k 2 ${cafFilesIn}/${FILEBASE}.ncz ${tmpRawCafFiles}/${FILEBASE}.nc &
+    nccopy -k 2 ${cafFilesIn}/${FILEBASE}.ncz ${rundir}/${FILEBASE}.nc &
+    ##nccopy -k 2 ${cafFilesIn}/${FILEBASE}.ncz ${tmpRawCafFiles}/${FILEBASE}.nc &
     (( COUNTPP=COUNTPP+1 ))
     if [[ ${COUNTPP} -ge ${MAXPP} ]]
     then
@@ -109,7 +110,8 @@ for FILE in ${FILELIST}
   done
 wait
 # ... change time.calendar in parallel
-FILELIST=$(ls -1 ${tmpRawCafFiles}/*.nc)
+FILELIST=$(ls -1 ${rundir}/*.nc)
+##FILELIST=$(ls -1 ${tmpRawCafFiles}/*.nc)
 COUNTPP=0
 for FILE in ${FILELIST}
 do
@@ -173,7 +175,8 @@ echo "DEBUG: copy INT2LM executable to rundir"
 cp -v ${INT2LM_BINDIR}/${INT2LM_EXNAME} ${rundir}/
 int2lm_start_date=${y0}${m0}${d0}${h0}
 echo "DEBUG: int2lm_start_date: ${int2lm_start_date}"
-inExtFile=$(ls ${tmpRawCafFiles} | head -1)
+inExtFile=$(ls ${rundir}/*.nc | head -1)
+##inExtFile=$(ls ${tmpRawCafFiles} | head -1)
 echo "DEBUG: inExtFile=${inExtFile}"
 
 echo "DEBUG: copy namelist"
@@ -185,9 +188,11 @@ sed "s,__init_date__,${int2lm_start_date},g" -i ${rundir}/INPUT
 sed "s,__hstop__,${numHours},g" -i ${rundir}/INPUT
 sed "s,__lm_ext_dir__,${BASE_GEODIR}/int2lm,g" -i ${rundir}/INPUT
 sed "s,__lm_ext_file__,EUR-11_TSMP_FZJ-IBG3_464x452_EXTPAR.nc,g" -i ${rundir}/INPUT
-sed "s,__in_ext_dir__,${tmpRawCafFiles},g" -i ${rundir}/INPUT
+sed "s,__in_ext_dir__,${rundir},g" -i ${rundir}/INPUT
+##sed "s,__in_ext_dir__,${tmpRawCafFiles},g" -i ${rundir}/INPUT
 sed "s,__in_ext_file__,${inExtFile},g" -i ${rundir}/INPUT
-sed "s,__in_cat_dir__,${tmpRawCafFiles},g" -i ${rundir}/INPUT
+sed "s,__in_cat_dir__,${rundir},g" -i ${rundir}/INPUT
+##sed "s,__in_cat_dir__,${tmpRawCafFiles},g" -i ${rundir}/INPUT
 sed "s,__lm_cat_dir__,${int2lm_LmCatDir},g" -i ${rundir}/INPUT
 sed "s,__nprocx_int2lm__,${PROCX_INT2LM},g" -i ${rundir}/INPUT
 sed "s,__nprocy_int2lm__,${PROCY_INT2LM},g" -i ${rundir}/INPUT
@@ -202,7 +207,7 @@ srun ./${INT2LM_EXNAME}
 if [[ $? != 0 ]] ; then exit 1 ; fi
 # Clean up
 rm -rf ${rundir}
-rm -rf ${tmpRawCafFiles}
+##rm -rf ${tmpRawCafFiles}
 wait
 
 exit 0
