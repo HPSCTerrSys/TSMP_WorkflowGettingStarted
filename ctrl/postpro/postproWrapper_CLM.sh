@@ -19,7 +19,7 @@ mkdir -vp ${ToPostProDir}/clm_out
 # Do nothing nutil CMORizer is ready, no double work
 #ln -sf ${SimresDir}/clm/* ${ToPostProDir}/clm_out/
 # CMOR
-outVar="H2OSNO H2OSOI SOILLIQ FSH FSDS FLDS FGR FGEV FCTR FCEV FSR FIRA TBOT TSA QFLX_RAIN_GRND QFLX_SNOW_GRND QFLX_EVAP_TOT RAIN SNOW WIND THBOT QBOT ZBOT time time_bounds"
+outVar="RAIN SNOW TBOT THBOT WIND QBOT ZBOT FLDS FSDS FCTR FCEV FGEV FSH FSH_V FSH_G FGR FSM TSA TSOI TG TV TREFMNAV TREFMXAV FSNO SNOWDP SNOWLIQ SNOWICE QMELT H2OSNO SOILICE H2OSOI SOILLIQ Q2M FSR FSA FIRA QFLX_RAIN_GRND QFLX_SNOW_GRND QFLX_EVAP_TOT"
 python CLMpostpro.py --variables ${outVar} \
   --indir ${SimresDir}/clm \
   --outdir ${ToPostProDir}/clm_out \

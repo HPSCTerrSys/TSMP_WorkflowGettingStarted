@@ -79,20 +79,14 @@ function timeseriesp() (
   # the below command destroys the PLEV array... 
   # So I commented this out
   #declare -a PLEVS=("${!3}")
-  NPLEV=1
-  while [ ${NPLEV} -le ${PLEVS[0]} ]
+  NPLEV=0
+  while [ ${NPLEV} -lt ${#PLEVS[@]} ]
   do
     PASCAL=$(python -c "print(${PLEVS[$NPLEV]} * 100.)")
     PLEV=$(python -c "print(int(${PLEVS[$NPLEV]}))")
     cd ${INPDIR}
-    # NWR 20210317
-    # do also cut dim srlon and srlat and copy cell_method only from those vars already containing (--no_cell_methods)
-    ${NCO_BINDIR}/ncrcat --no_cell_methods -h -O -d srlon,${NBOUNDCUT},${IESPONGE} -d srlat,${NBOUNDCUT},${JESPONGE} -d rlon,${NBOUNDCUT},${IESPONGE} -d rlat,${NBOUNDCUT},${JESPONGE} -d pressure,${PASCAL},${PASCAL} -v ${PARAM} lffd*p.nc ${OUTDIR}/${PARAM}${PLEV}p_ts.nc
-    #${NCO_BINDIR}/ncrcat -h -O -d rlon,${NBOUNDCUT},${IESPONGE} -d rlat,${NBOUNDCUT},${JESPONGE} -d pressure,${PASCAL},${PASCAL} -v ${PARAM} lffd*p.nc ${OUTDIR}/${YYYY_MM}/${PARAM}${PLEV}p_ts.nc
-    # NWR 20201204
-    # do also cut dim srlon and srlat
-    ${NCO_BINDIR}/ncks -h -A -d srlon,${NBOUNDCUT},${IESPONGE} -d srlat,${NBOUNDCUT},${JESPONGE} -d rlon,${NBOUNDCUT},${IESPONGE} -d rlat,${NBOUNDCUT},${JESPONGE} -v lon,lat,rotated_pole lffd${CURRENT_DATE}p.nc ${OUTDIR}/${PARAM}${PLEV}p_ts.nc
-    #${NCO_BINDIR}/ncks -h -A -d rlon,${NBOUNDCUT},${IESPONGE} -d rlat,${NBOUNDCUT},${JESPONGE} -v lon,lat,rotated_pole lffd${CURRENT_DATE}p.nc ${OUTDIR}/${YYYY_MM}/${PARAM}${PLEV}p_ts.nc
+    ${NCO_BINDIR}/ncrcat -h -O -d rlon,${NBOUNDCUT},${IESPONGE} -d rlat,${NBOUNDCUT},${JESPONGE} -d pressure,${PASCAL},${PASCAL} -v ${PARAM} lffd*p.nc ${OUTDIR}/${YYYY_MM}/${PARAM}${PLEV}p_ts.nc
+    ${NCO_BINDIR}/ncks -h -A -d rlon,${NBOUNDCUT},${IESPONGE} -d rlat,${NBOUNDCUT},${JESPONGE} -v lon,lat,rotated_pole lffd${CURRENT_DATE}p.nc ${OUTDIR}/${YYYY_MM}/${PARAM}${PLEV}p_ts.nc
     # in case cell_methods exists the value of the time variable is replaced by the value of middle of the time interval
    if [ "$(${NC_BINDIR}/ncdump -h ${OUTDIR}/${PARAM}${PLEV}p_ts.nc | grep ${PARAM}:cell_methods | grep time)" != "" ]
     then
@@ -124,7 +118,7 @@ function timeseriesp() (
 
 function timeseriesz() (
   PARAM=$1
-  declare -a ZLEVS=("${!3}")
+  #declare -a ZLEVS=("${!3}")
   set +e
   ncdump -h ${INPDIR}/lffd${CURRENT_DATE}z.nc | grep float\ ${PARAM} | grep height > /dev/null 2>&1
   ERROR_STATUS=$?
@@ -137,8 +131,8 @@ function timeseriesz() (
     HEIGHT=altitude
     NN=NN
   fi
-  NZLEV=1
-  while [ ${NZLEV} -le ${ZLEVS[0]} ]
+  NZLEV=0
+  while [ ${NZLEV} -lt ${#ZLEVS[@]} ]
   do
     ZLEV=$(python -c "print(int(${ZLEVS[$NZLEV]}))")
     cd ${INPDIR}
@@ -379,8 +373,8 @@ function windspeedp() (
   # So I commented this out
   #declare -a PLEVS=("${!1}")
 varname=VABS
-NPLEV=1
-while [ ${NPLEV} -le ${PLEVS[0]} ]
+NPLEV=0
+while [ ${NPLEV} -lt ${#PLEVS[@]} ]
 do
   PLEV=$(python -c "print(int(${PLEVS[$NPLEV]}))")
   infile1=${OUTDIR}/U${PLEV}p_ts.nc
@@ -419,7 +413,7 @@ function windspeedz() (
   fi
   varname=VABS
   NZLEV=1
-  while [ ${NZLEV} -le ${ZLEVS[0]} ]
+  while [ ${NZLEV} -lt ${ZLEVS[0]} ]
   do
     ZLEV=$(python -c "print(int(${ZLEVS[$NZLEV]}))") 
     infile1=${OUTDIR}/U${ZLEV}z${NN}_ts.nc
@@ -453,8 +447,8 @@ function derotatewindp() (
   varnameVROT=V
   varnameULON=ULON
   varnameVLAT=VLAT
-  NPLEV=1
-  while [ ${NPLEV} -le ${PLEVS[0]} ]
+  NPLEV=0
+  while [ ${NPLEV} -lt ${#PLEVS[@]} ]
   do
     PLEV=$(python -c "print(int(${PLEVS[$NPLEV]}))")
     outfile=${OUTDIR}/UVlonlat${PLEV}p_ts.nc
@@ -511,7 +505,7 @@ function derotatewindz() (
   ZLEV=$(python -c "print(int(${ZLEVS[1]}))")
   set +e
   NZLEV=1
-  while [ ${NZLEV} -le ${ZLEVS[0]} ]
+  while [ ${NZLEV} -lt ${ZLEVS[0]} ]
   do
     ZLEV=$(python -c "print(int(${ZLEVS[$NZLEV]}))")
     outfile=${OUTDIR}/UVlonlat${ZLEV}z${NN}_ts.nc
@@ -561,7 +555,7 @@ function derotatewindz() (
   ZLEV=$(python -c "print(int(${ZLEVS[1]}))")
   set +e
   NZLEV=1
-  while [ ${NZLEV} -le ${ZLEVS[0]} ]
+  while [ ${NZLEV} -lt ${#ZLEVS[@]} ]
   do
     ZLEV=$(python -c "print(int(${ZLEVS[$NZLEV]}))")
     outfile=${OUTDIR}/UVlonlat${ZLEV}z${NN}_ts.nc
@@ -619,8 +613,8 @@ function winddirp() (
    varnameVLAT=VLAT
    uvlonlatfile=UVlonlat_ts.nc
 
-   NPLEV=1
-   while [ ${NPLEV} -le ${PLEVS[0]} ]
+   NPLEV=0
+   while [ ${NPLEV} -lt ${#PLEVS[@]} ]
    do
      PLEV=$(python -c "print(int(${PLEVS[$NPLEV]}))")
      infile1=${varnameULON}${PLEV}p_ts.nc
@@ -666,7 +660,7 @@ function winddirz() (
    uvlonlatfile=UVlonlat_ts.nc
 
    NZLEV=1
-   while [ ${NZLEV} -le ${ZLEVS[0]} ]
+   while [ ${NZLEV} -lt ${#ZLEVS[@]} ]
    do
      ZLEV=$(python -c "print(int(${ZLEVS[$NZLEV]}))")
      infile1=${varnameULON}${ZLEV}z${NN}_ts.nc
@@ -703,7 +697,7 @@ function winddirz() (
    uvlonlatfile=UVlonlat_ts.nc
 
    NZLEV=1
-   while [ ${NZLEV} -le ${ZLEVS[0]} ]
+   while [ ${NZLEV} -lt ${#ZLEVS[@]} ]
    do
      ZLEV=$(python -c "print(int(${ZLEVS[$NZLEV]}))")
      infile1=${varnameULON}${ZLEV}z${NN}_ts.nc

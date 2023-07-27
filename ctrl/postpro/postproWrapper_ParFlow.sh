@@ -16,8 +16,6 @@ timemeasure_startDate=$(date -u -Iseconds)
 echo "--- -- - pfl"
 echo "DEBUG: Create PFL subdir within ToPostPro"
 mkdir -vp ${ToPostProDir}/parflow_out
-#echo "DEBUG: link raw model output to ToPostPro"
-#ln -sf ${SimresDir}/parflow/* ${ToPostProDir}/parflow_out/
 
 # .pfb -> .nc
 # add correct grid
@@ -100,6 +98,7 @@ timemeasure_startDate=$(date -u -Iseconds)
 # Add time info (refdate and calendar) to ParFlow output, split for 
 # individual variables and merge for one file per simulation length.
 # Therefore loop over all files in simres/ and write output to ToPostPro/
+echo "DEBUG: run addTimeInfoAnsSplitVar.sh"
 pflFiles=$(ls ${SimresDir}/parflow/${pfidb}.out.?????.nc)
 bash ${BASE_CTRLDIR}/postpro/addTimeInfoAnsSplitVar.sh ${startDate} \
   ${CaseCalendar} "${ToPostProDir}/parflow_out" ${SLURM_NTASKS} \
@@ -109,18 +108,18 @@ echo "time measure after addTimeInfoAnsSplitVar.sh"
 datediff $(date -u -Iseconds) ${timemeasure_startDate}
 timemeasure_startDate=$(date -u -Iseconds)
 
-# merge raw parflow output into one file of length `simLength`?
-echo "DEBUG: start merging ParFlow output"
-cdo -L -f nc4c -z zip_4 mergetime "${ToPostProDir}/parflow_out/${pfidb}.out.?????_evaptrans.nc_tmp" \
-  "${ToPostProDir}/parflow_out/evaptrans.nc" &
-cdo -L -f nc4c -z zip_4 mergetime "${ToPostProDir}/parflow_out/${pfidb}.out.?????_pressure.nc_tmp" \
-  "${ToPostProDir}/parflow_out/pressure.nc" &
-cdo -L -f nc4c -z zip_4 mergetime "${ToPostProDir}/parflow_out/${pfidb}.out.?????_saturation.nc_tmp" \
-  "${ToPostProDir}/parflow_out/saturation.nc" &
-wait
-echo "time measure after mergetime"
-datediff $(date -u -Iseconds) ${timemeasure_startDate}
-timemeasure_startDate=$(date -u -Iseconds)
+## merge raw parflow output into one file of length `simLength`?
+#echo "DEBUG: start merging ParFlow output"
+#cdo -L -f nc4c -z zip_4 mergetime "${ToPostProDir}/parflow_out/${pfidb}.out.?????_evaptrans.nc_tmp" \
+#  "${ToPostProDir}/parflow_out/evaptrans.nc" &
+#cdo -L -f nc4c -z zip_4 mergetime "${ToPostProDir}/parflow_out/${pfidb}.out.?????_pressure.nc_tmp" \
+#  "${ToPostProDir}/parflow_out/pressure.nc" &
+#cdo -L -f nc4c -z zip_4 mergetime "${ToPostProDir}/parflow_out/${pfidb}.out.?????_saturation.nc_tmp" \
+#  "${ToPostProDir}/parflow_out/saturation.nc" &
+#wait
+#echo "time measure after mergetime"
+#datediff $(date -u -Iseconds) ${timemeasure_startDate}
+#timemeasure_startDate=$(date -u -Iseconds)
 
 # extract static vars from *.out.00000.nc
 cdo -L -f nc4c -z zip_4 \
@@ -144,7 +143,7 @@ datediff $(date -u -Iseconds) ${timemeasure_startDate}
 timemeasure_startDate=$(date -u -Iseconds)
 # calc water vars
 python calcParFlowDiagnosticVars.py \
-  --pressure "${ToPostProDir}/parflow_out/pressure.nc" \
+  --pressure "${ToPostProDir}/parflow_out/ParFlow_EU11_*.out.*_pressure.nc" \
   --pressureVarName "pressure" \
   --nFile "${ToPostProDir}/parflow_out/n.nc" \
   --alphaFile "${ToPostProDir}/parflow_out/alpha.nc" \

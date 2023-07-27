@@ -228,6 +228,9 @@ for count, pressureFile in enumerate(pressureFiles):
             # Calculate subsurface storage and convert to units of [L] 
             tmp_subSurfStor = diag.SubsurfaceStorage(press, tmp_satur)
             tmp_subSurfStor = tmp_subSurfStor / (dx*dy)
+            # Calculate surface storage and convert to units of [L] 
+            tmp_surfStor = diag.SurfaceStorage(surfPress)
+            tmp_surfStor = tmp_surfStor / (dx*dy)
 
             wtd.append(sloth.analysis.calc_wtd_HT(press=press, cellDepths=dz*Dzmult))
             overlandFlow.append(tmp_overlandFlow)
@@ -235,7 +238,7 @@ for count, pressureFile in enumerate(pressureFiles):
             saturSubSurfStor.append(post.calc_ssss(sss=tmp_subSurfStor, 
                 press_t=press, poro=porosity, gwb_mask=gwb_mask, 
                 wtd_z_index=wtd_z_index))
-            surfStor.append(post.calc_ss(surfPress))
+            surfStor.append(tmp_surfStor)
             subSurfRunoff.append(post.calc_netLateralSubSurFlow(
                 flowleft=flowleft, flowright=flowright,
                 flowfront=flowfront, flowback=flowback,
