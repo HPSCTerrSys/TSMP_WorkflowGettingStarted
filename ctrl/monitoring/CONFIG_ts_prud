@@ -15,7 +15,7 @@ cmapName:   Spectral
 # ParFlow
 [pfl_subSurfStor_ts]
 varName:    subSurfStor
-fileName:   ParFlow_EU11_*_subSurfStor.nc
+fileName:   subSurfStor.nc
 unitsOrig:  [mm]
 unitsPlot:  [mm] 
 unitCoef:   None

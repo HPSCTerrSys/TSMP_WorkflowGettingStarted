@@ -107,13 +107,13 @@ for configSection in configSections:
                 # special treatment to flexible pass how to slice
                 tmp_data   = nc_var.__getitem__(Slices)
                 data.append(tmp_data)
-        # if one element in list only, do not concatanate or stack
         if len(data) == 1:
+            # if one element in list only, do not concatanate or stack
             print(f'found: len(data) = {len(data)}')
             data = data[0]
-        # if elements in data are 3D:
-        #   assuming (t,y,x) and concatanate
         elif len(data[0].shape) == 3:
+            # if elements in data are 3D:
+            #   assuming (t,y,x) and concatanate
             print(f'found: len(data[0].shape) = {len(data[0].shape)}')
             data = np.concatenate(data, axis=0)
         else:

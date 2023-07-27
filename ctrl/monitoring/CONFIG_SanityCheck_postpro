@@ -118,7 +118,7 @@ cmapName:   precip3_16lev
 # ParFlow
 [pfl_SurfLayerPressure]
 varName:    pressure
-fileName:   parflow/pressure.nc
+fileName:   parflow/ParFlow_EU11_*.out.?????_pressure.nc
 unitsOrig:  [m]
 unitsPlot:  [mm]
 unitCoef:   1000
@@ -131,7 +131,7 @@ valueRange: -1500 -1000 -500 0 10 100
 
 [pfl_MidLayerPressure]
 varName:    pressure
-fileName:   parflow/pressure.nc
+fileName:   parflow/ParFlow_EU11_*.out.?????_pressure.nc
 unitsOrig:  [m]
 unitsPlot:  [mm]
 unitCoef:   1000
@@ -144,7 +144,7 @@ valueRange: -1500 -1000 -500 0 500 1000 1500
 
 [pfl_evaptrans]
 varName:    evaptrans
-fileName:   parflow/evaptrans.nc
+fileName:   parflow/ParFlow_EU11_*.out.?????_evaptrans.nc
 unitsOrig:  [1/h]
 unitsPlot:  [mm]
 unitCoef:   20
@@ -157,7 +157,7 @@ cmapName:   GMT_no_green_r
 
 [pfl_SurfLayerSaturation]
 varName:    saturation
-fileName:   parflow/saturation.nc
+fileName:   parflow/ParFlow_EU11_*.out.?????_saturation.nc
 unitsOrig:  [-]
 unitsPlot:  [-]
 unitCoef:   None
