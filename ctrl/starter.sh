@@ -51,7 +51,7 @@ PROCIO_INT2LM=0
 pre_NODES=1
 pre_NTASKS=128
 pre_NTASKSPERNODE=128
-pre_WALLCLOCK=04:59:00
+pre_WALLCLOCK=11:59:00
 pre_PARTITION=dc-cpu
 pre_MAILTYPE=FAIL
 # def SBATCH for simulation
@@ -63,17 +63,17 @@ sim_PARTITION=dc-cpu #dc-cpu, mem192, batch, esm
 sim_MAILTYPE=ALL
 # def SBATCH for postpro
 pos_NODES=1
-pos_NTASKS=128
-pos_NTASKSPERNODE=128
-pos_WALLCLOCK=04:59:00
-pos_PARTITION=dc-cpu
+pos_NTASKS=24
+pos_NTASKSPERNODE=24
+pos_WALLCLOCK=23:59:00
+pos_PARTITION=dc-cpu #dc-cpu-devel
 pos_MAILTYPE=FAIL
 # def SBATCH for finishing
 fin_NODES=1
 fin_NTASKS=128
 fin_NTASKSPERNODE=128
-fin_WALLCLOCK=23:59:00
-fin_PARTITION=dc-cpu
+fin_WALLCLOCK=05:59:00
+fin_PARTITION=dc-cpu #dc-cpu-devel
 fin_MAILTYPE=FAIL
 ###############################################################################
 #### Adjust according to your need ABOVE

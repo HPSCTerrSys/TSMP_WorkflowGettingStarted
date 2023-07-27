@@ -277,7 +277,6 @@ new_simres=${BASE_SIMRESDIR}/${formattedStartDate}
 echo "--- new_simres: $new_simres"
 # clean befor to avoid conflicts
 rm -rvf $new_simres
-mkdir -p "$new_simres/restarts"
 mkdir -p "$new_simres/log"
 
 echo "--- Moving model-output to simres/ and restarts/"
@@ -288,6 +287,7 @@ for component in "${components[@]}"; do
   if [[ "${component}" == cos? ]]; then
     echo "--- - COSMO"
     # Create component subdir
+    mkdir -p "$new_simres/restarts/cosmo"
     mkdir -p "$new_simres/cosmo"
     mkdir -p -v ${BASE_RUNDIR}/restarts/cosmo
     # Save restart files for next simulation
@@ -296,7 +296,7 @@ for component in "${components[@]}"; do
     cp -vr ${rundir}/cosmo_out/* $new_simres/cosmo
     # COSMO writs restart direct to ${BASE_RUNDIR}/restarts/cosmo/
     cosmoRestartFileDate=$(date -u -d "${startDate_p1}" "+%Y%m%d%H")
-    cp -v ${BASE_RUNDIR}/restarts/cosmo/lrfd${cosmoRestartFileDate}o $new_simres/restarts
+    cp -v ${BASE_RUNDIR}/restarts/cosmo/lrfd${cosmoRestartFileDate}o $new_simres/restarts/cosmo
     check4error $? "--- ERROR while moving COSMO model output to simres-dir"
     # Move COSMO logs to simres/log
     cp -v ${rundir}/YU* ${new_simres}/log/
@@ -304,6 +304,7 @@ for component in "${components[@]}"; do
   elif [[ "${component}" == clm? ]]; then
     echo "--- - CLM"
     # Create component subdir
+    mkdir -p "$new_simres/restarts/clm"
     mkdir -p "$new_simres/clm"
     mkdir -p -v ${BASE_RUNDIR}/restarts/clm
 
@@ -324,7 +325,7 @@ for component in "${components[@]}"; do
     # Move model-output to simres/
     cp -v ${rundir}/clmoas.clm2.h?.*.nc $new_simres/clm/
     check4error $? "--- ERROR while moving CLM model output to simres-dir"
-    cp -v ${BASE_RUNDIR}/restarts/clm/${clm_restart_fiel_p1} $new_simres/restarts/
+    cp -v ${BASE_RUNDIR}/restarts/clm/${clm_restart_fiel_p1} $new_simres/restarts/clm
     check4error $? "--- ERROR while moving CLM model output to simres-dir"
     # Move CLM logs to simres/log
     cp -v ${rundir}/timing_all ${new_simres}/log/
@@ -332,6 +333,7 @@ for component in "${components[@]}"; do
   elif [[ "${component}" == pfl ]]; then
     echo "--- - PFL"
     # Create component subdir
+    mkdir -p "$new_simres/restarts/parflow"
     mkdir -p "$new_simres/parflow"
     mkdir -p -v ${BASE_RUNDIR}/restarts/parflow
     # Save restart files for next simulation
@@ -339,7 +341,7 @@ for component in "${components[@]}"; do
     cp -v ${pfl_restart} ${BASE_RUNDIR}/restarts/parflow/
     # Move model-output to simres/
     cp -v ${rundir}/${pfidb}.out.* $new_simres/parflow
-    cp -v ${BASE_RUNDIR}/restarts/parflow/${pfidb}.out.?????.nc $new_simres/restarts
+    cp -v ${BASE_RUNDIR}/restarts/parflow/${pfidb}.out.?????.nc $new_simres/restarts/parflow
     check4error $? "--- ERROR while moving ParFlow model output to simres-dir"
     # Move *kinsol.log to simres/log
     cp -v ${rundir}/*out.kinsol.log ${new_simres}/log/
@@ -375,10 +377,11 @@ cp ${TSMPLogFile} ${new_simres}/log/TSMP_BuildLog.txt
 echo "--- Moving SLURM log to simres/"
 cp -v ${BASE_CTRLDIR}/logs/${CaseID}_simulation-??? $new_simres/log/
 
-histfile=${new_simres}/log/HISTORY.txt
+histfile="HISTORY.txt"
+logdir="${new_simres}/log"
 
 cd ${BASE_CTRLDIR}
-git diff HEAD > ${new_simres}/log/GitDiffHead_workflow.diff
+git diff HEAD > ${logdir}/GitDiffHead_workflow.diff
 TAG_WORKFLOW=$(git describe --tags)
 COMMIT_WORKFLOW=$(git log --pretty=format:'commit: %H' -n 1)
 AUTHOR_WORKFLOW=$(git log --pretty=format:'author: %an' -n 1)
@@ -386,30 +389,16 @@ DATE_WORKFLOW=$(git log --pretty=format:'date: %ad' -n 1)
 SUBJECT_WORKFLOW=$(git log --pretty=format:'subject: %s' -n 1)
 URL_WORKFLOW=$(git config --get remote.origin.url)
 
-cd ${BASE_SRCDIR}/TSMP
-git diff HEAD > ${new_simres}/log/GitDiffHead_model.diff
-TAG_MODEL=$(git describe --tags)
-COMMIT_MODEL=$(git log --pretty=format:'commit: %H' -n 1)
-AUTHOR_MODEL=$(git log --pretty=format:'author: %an' -n 1)
-DATE_MODEL=$(git log --pretty=format:'date: %ad' -n 1)
-SUBJECT_MODEL=$(git log --pretty=format:'subject: %s' -n 1)
-URL_MODEL=$(git config --get remote.origin.url)
-
-cd ${BASE_GEODIR}
-git diff HEAD > ${new_simres}/log/GitDiffHead_geo.diff
-TAG_GEO=$(git describe --tags)
-COMMIT_GEO=$(git log --pretty=format:'commit: %H' -n 1)
-AUTHOR_GEO=$(git log --pretty=format:'author: %an' -n 1)
-DATE_GEO=$(git log --pretty=format:'date: %ad' -n 1)
-SUBJECT_GEO=$(git log --pretty=format:'subject: %s' -n 1)
-URL_GEO=$(git config --get remote.origin.url)
-
-/bin/cat <<EOM >$histfile
+/bin/cat <<EOM >"${logdir}/${histfile}"
 ###############################################################################
 Author: ${AUTHOR_NAME}
 e-mail: ${AUTHOR_MAIL}
 version: $(date)
-
+###############################################################################
+MACHINE: $(cat /etc/FZJ/systemname)
+PARTITION: ${SIM_PARTITION}
+CaseID: ${CaseID}
+Total runtime: ${totalRunTime}
 ###############################################################################
 The following setup was used: 
 ###############################################################################
@@ -426,40 +415,11 @@ ${SUBJECT_WORKFLOW}
 To check if no uncommited change is made to above repo, bypassing this tracking,
 the output of \`git diff HEAD\` is printed to \`GitDiffHead_workflow.diff\`.
 ###############################################################################
-MODEL
--- REPO:
-${URL_MODEL}
--- LOG:
-tag: ${TAG_MODEL}
-${COMMIT_MODEL}
-${AUTHOR_MODEL}
-${DATE_MODEL}
-${SUBJECT_MODEL}
-
-To check if no uncommited change is made to above repo, bypassing this tracking,
-the output of \`git diff HEAD\` is printed to \`GitDiffHead_model.diff\`.
-The specific TSMP build log is stored in \`TSMP_BuildLog.txt\`, enableing to 
-exactly reproduce the TSMP build command and sued component versions.
-###############################################################################
-GEO
--- REPO:
-${URL_GEO}
--- LOG:
-tag: ${TAG_GEO}
-${COMMIT_GEO}
-${AUTHOR_GEO}
-${DATE_GEO}
-${SUBJECT_GEO}
-
-To check if no uncommited change is made to above repo, bypassing this tracking,
-the output of \`git diff HEAD\` is printed to \`GitDiffHead_geo.diff\`.
-###############################################################################
-MACHINE: $(cat /etc/FZJ/systemname)
-PARTITION: ${SIM_PARTITION}
-CaseID: ${CaseID}
-Total runtime: ${totalRunTime}
-###############################################################################
 EOM
+check4error $? "--- ERROR while creating HISTORY.txt"
+# We need to escape \$path and \$toplevel as those variables are part of the 
+# namespace from `git submodule foreach` and not from this script.
+git submodule foreach "logSubmodule \$path ${logdir} TestHistfile.txt || :"
 check4error $? "--- ERROR while creating HISTORY.txt"
 
 echo "###################################################"

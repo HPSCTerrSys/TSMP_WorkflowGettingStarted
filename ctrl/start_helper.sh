@@ -189,3 +189,42 @@ updatePathsForCASES() {
     CaseCombination=$(git config -f ${ConfigFile} --get ${CaseID}.CASE-COMBINATION)
     export COMBINATION="${CaseCombination}"
 }
+
+logSubmodule() (
+  # This function is aimed to be caleld from within 
+  # `git submodule foreach CALL`
+  # to track all submodules used within this workflow without prior knowledge 
+  # of which submodule is used.
+  path=$1
+  outdir=$2
+  histfile=$3
+
+  subModuleName="${path##*/}"
+  cwd=$(pwd)
+
+  git diff HEAD > "${outdir}/GitDiffHead_${subModuleName}.diff"
+  TAG=$(git describe --tags)
+  COMMIT=$(git log --pretty=format:'commit: %H' -n 1)
+  AUTHOR=$(git log --pretty=format:'author: %an' -n 1)
+  DATE=$(git log --pretty=format:'date: %ad' -n 1)
+  SUBJECT=$(git log --pretty=format:'subject: %s' -n 1)
+  URL=$(git config --get remote.origin.url)
+
+/bin/cat <<EOM >>"${outdir}/${histfile}"
+###############################################################################
+Submodule: ${path}
+remote: ${URL}
+tag: ${TAG}
+${COMMIT}
+${AUTHOR}
+${DATE}
+${SUBJECT}
+
+To check if no uncommited change is made to above repo, bypassing this tracking,
+the output of \`git diff HEAD\` is printed to \`GitDiffHead_${subModuleName}.diff\`.
+EOM
+
+)
+# Exporting this function is needed, to call this from within all following
+# shells and subshells
+export -f logSubmodule
