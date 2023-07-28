@@ -175,7 +175,7 @@ echo "DEBUG: copy INT2LM executable to rundir"
 cp -v ${INT2LM_BINDIR}/${INT2LM_EXNAME} ${rundir}/
 int2lm_start_date=${y0}${m0}${d0}${h0}
 echo "DEBUG: int2lm_start_date: ${int2lm_start_date}"
-inExtFile=$(ls ${rundir}/*.nc | head -1)
+inExtFile=$(cd ${rundir} && ls *.nc | head -1)
 ##inExtFile=$(ls ${tmpRawCafFiles} | head -1)
 echo "DEBUG: inExtFile=${inExtFile}"
 
