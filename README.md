@@ -156,6 +156,15 @@ ParFlow needs the previous model-outpt as a restart-file, whereas CLM needs a
 special restart-file from the current time-step. This is why the date within 
 the file name is different.
 
+## Provide forcing files for atmosphere
+
+**TBE**
+```
+${BASE_ROOT}/forcing
+ln -sf /p/largedata2/detectdata/CentralDB/era5/ ./cafFilesIn
+```
+**TBE**
+
 ## Start a simulation
 
 To start a simulation simply execute `starter.sh` from `ctrl` directory:
