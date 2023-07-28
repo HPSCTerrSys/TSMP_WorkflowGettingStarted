@@ -28,7 +28,7 @@ CLM, and Oasis) into `src/TSMP/`,
 cd ${BASE_ROOT}/src/TSMP
 export TSMP_DIR=$(pwd)
 git clone https://icg4geo.icg.kfa-juelich.de/ModelSystems/tsmp_src/cosmo5.01_fresh.git  cosmo5_1
-git clone -b UseMaskNc https://github.com/niklaswr/parflow.git                          parflow
+git clone -b UseMaskNc https://github.com/HPSCTerrSys/parflow.git                       parflow
 git clone https://icg4geo.icg.kfa-juelich.de/ModelSystems/tsmp_src/clm3.5_fresh.git     clm3_5
 git clone https://icg4geo.icg.kfa-juelich.de/ModelSystems/tsmp_src/oasis3-mct.git       oasis3-mct
 ```
