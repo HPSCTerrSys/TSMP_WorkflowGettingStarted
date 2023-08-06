@@ -1,11 +1,202 @@
 # DETECT_EUR-11_ECMWF-ERA5_evaluation_r1i1p1_FZJ-COSMO5-01-CLM3-5-0-ParFlow3-12-0_vBaseline 
 
 > :warning: **Warning**  
-> Though the current version / tag of this repository is > v1.0.0 and the i
+> Though the current version / tag of this repository is > v1.0.0 and the
 > experiment is under production, minor adjustments are ongoing and an
 > extension of this experiment description is underway.
 
-## Set up the TSMP_WorkflowStarter
+**This is the experiment leaflet for the simulation experiment with the 
+experiment-ID as in the heading.**
+
+## Context
+
+- Baseline simulation of the DETECT D02 project (S. Kollet)
+- Contribution to CORDEX-CMIP6 climate change RCM ensemble through CLM-Community
+
+## Experiment version and status
+
+> Background and concept:
+> A "simulation experiment" is identified by an experiment-ID. Such a 
+> "simulation experiment" consists of modular components. The components are 
+> themselves git repositories; they may also be integrated as git submodules.
+> A specific combination of the modular components is combined with each other 
+> in a single git repository constituting the "experiment repository". This 
+> repository is characterized by its commits and major releases are assigned 
+> a git tag, i.e. its a specific release of an experiment. Aside from the git
+> commits of the indivual model system components, the [CHANGELOG](./CHANGELOG) 
+> of the experiment shows the major steps of the evolution of the experiment. 
+> Once running stable an experiment usually does not change anymore. Smaller 
+> adjustments are still possible and are reflected by patches or minor version 
+> changes (semantic versioning scheme). Some components are interchangeable 
+> between different experiments (e.g., static fields), others are not.
+
+Version: see tags (`git tag -n`)
+Status: production runs ongoing
+Simulation progress: see `$rootdir/simres/`, `$rootdir` as in `ctrl/export_paths.ksh`
+
+## Components used
+
+The simulation experiment v1.0.1 consists of these components:  
+- TSMP_Workflow-Engine, https://icg4geo.icg.kfa-juelich.de, c01884b (v1.0.1), master, 2023-08-06
+  - static fields (`geo/`), https://gitlab.jsc.fz-juelich.de/detect, 5fbc818, master, 2023-06-22
+  - namelists (`ctrl/namelists`), https://icg4geo.icg.kfa-juelich.de, 703d8b7, master, 2023-08-02
+  - int2lm (`src/int2lm3.00`), https://gitlab.jsc.fz-juelich.de/detect/, 4ba1598, master, 2023-02-17
+  - SLOTH (`src/SLOTH`), https://github.com/HPSCTerrSys, 9d7ee2b, master, 2023-07-12
+    - ParFlow Diagnostics (`src/SLOTH/extern/ParFlowDiagnostics`), https://github.com/HPSCTerrSys, af0a2c8, master, 2022-03-29
+    - colormaps (`src/SLOTH/extern/colormaps`), https://github.com/pratiman-91, ce4320c, 2023-02-15
+  - TSMP (`src/TSMP`), https://github.com/HPSCTerrSys, dad9a4c4 (v1.4.0), 2023-04-26
+    - COSMO (`src/TSMP/cosmo5_1`), https://icg4geo.icg.kfa-juelich.de, f407b9b, master, 2020-01-21
+    - CLM (`src/TSMP/clm3_5`), https://icg4geo.icg.kfa-juelich.de, 801b530, master, 2020-01-21
+    - ParFlow (`src/TSMP/parflow`), https://github.com/HPSCTerrSys, 1eb4c44, UseMaskNc, 2023-05-31 (will become part of the main ParFlow repo https://github.com/parflow)
+
+Each experiment is put together by starting off with the TSMP_Workflow-Engine, see below.
+
+https://gitlab.jsc.fz-juelich.de/detect repos are are mirrors of 
+https://icg4geo.icg.kfa-juelich.de
+
+These components might be automatically cloned as they are configred as git 
+submodules (see `git submodule status`), when cloning a git submodule always 
+the latest HEAD is pulled. Hence it might be needed to set the HEAD to a 
+specific commit to reproduce the exact simulation experiment.
+
+Follow the setup instructions below to obtain these repos. But make sure you 
+have the correct commit and branch checked out. To set the HEAD to a specific 
+commit in the commit history:
+
+```bash
+git reset --hard 1eb4c447
+```
+
+or do a 
+
+```bach
+git clone -n <repo_name> 
+git checkout <commit_sha>
+```
+
+(To revover from a ['Deteched HEAD' state](https://circleci.com/blog/git-detached-head-state/?utm_source=google&utm_medium=sem&utm_campaign=sem-google-dg--emea-en-dsa-tROAS-auth-nb&utm_term=g_-_c__dsa_&utm_content=&gclid=CjwKCAjwt52mBhB5EiwA05YKowS4Lli89cXh6W4sT_CTlGJH1rdKN8JX7QSSHG-zZmK5v36JSldJohoCgGkQAvD_BwE))
+
+Fixes and improvements in the respective repos might be ingested in different 
+ways (see additional documentation link below), and might lead to release
+changes (as documented in the CHANGELOG and with the `HISTORY.txt` file with
+each simulation. In case of a major change the use CASE might change, e.g.,
+from "ProductionV1" to "ProductionV2" make this obvious. If a major change is 
+needed, it might lead also to a complete new experiment.
+
+## Setup
+
+- ERA5.1 atmospheric forcing (via caf files form CLM-Community at DKRZ)
+- One-way single nest dynamical downscaling 
+- EUR-11 (pan European, about 12km) model domain
+- TSMPv1 model system 
+- 1979-2023 simulation timespan, 1979 counts as spinup
+- x3 1970-1979 spinup beforehand, see seperate infomration by NWagner
+- JURECA-DC CPU
+- stage2023
+- cjjsc39 compute + jjsc39 data projects
+- 1979/01 start of main experiment (COSMO coldstart), CLM+ParFLow: restart from 
+SPINUP03
+ 
+## Configuration
+
+- RCP4.5 GHGs (observed)
+- Tanre constant aerosols
+- GLC2000 static land cover
+- Soil grids and IHME hydrogeology
+- Especially the COSMO configuration is by and large (a) compliant to the 
+CLM-Community reference version for COSMO v5 from the COPAT1 initiative, (b) the
+namelists used in CORDEX-CMIP5 downscaling with COSMO only, (c) previous TSMPv1 
+runsi, (d) DETECT requiremnets, (e) new CORDEX-CMIP6 variable lists.
+
+For details, see namelists: https://icg4geo.icg.kfa-juelich.de/Configurations/TSMP_namelists/TSMP_EUR-11_eval
+
+## Implementation and checks
+
+in CASES "MainRun" and "ProductionTest" (see ./ctrl/CASES.conf ./ctrl/CASES.conf
+- Takeover experiment and TSMP_Workflow-Engine from NWagner on 2023-07-28 with commit 0265916a (master), 
+- Check functionality of Workflow-Engine, adjustment to new use case
+- Refinements and fixes
+- Exact reproduction after implementation of test and developer simulations by NWagner (checking 1979/01), forcing files, simulation results, postprocessing, monitoring, logfiles; restarts work properly, also in 1979/01
+- Check of setup and configuration once more: check of compatibility with and suitability for DETECT and CORDEX; check of correct static fields (land cover, indicator file, ParFlow slopes); various cross checks (static input equals static output)
+
+## Related experiments
+
+exp-ID:
+- https://icg4geo.icg.kfa-juelich.de/Configurations/TSMP/DETECT_EUR-11_ECMWF-ERA5_evaluation_r1i1p1_FZJ-COSMO5-01-CLM3-5-0-ParFlow3-12-0_vBaselineHwu
+
+## Responsibilities
+
+- Current owner: k.goergen@fz-juelich.de
+- Simulations and monitoring: k.goergen@fz-juelich.de
+- Current implementation: k.goergen@fz-juelich.de
+- Development of experiment: n.wagner@fz-juelich.de, c.hartick@fz-juelich.de, 
+  s.poll.fz-juelich.de, k.goergen@fz-juelich.de, s.kollet@fz-juelich.de 
+
+## Known and open issues
+
+There are some things to be observed, however they do not prevent from going to
+to enter production mode.
+
+- CLM runs at the beginning with fixed CO2 concentrations. Later we activate a 
+  transient CO2 being passed form COSMO to CLM.
+- HeAT is still not used from its github repo but from local JSC install, neded in
+  th postprocessing and therein the ParFlow Diagnostics.
+- Runtime optimisation is pending.
+- Reduction of output frequency with ParFlow from 15min to 60min
+- Reduction of COSMO variables, zl variables might be calculated from ml
+- In portprocessing 3D CLM soil temperature is missing still
+- COSMO might be set to run at sec with I/O -> allows for sub-hourly outputs
+- COSMO some addons to the vartab file will allow more variables to be output 
+  (not needed immediately), e.g., durting standaline run (FR_SNOW), or at 3km 
+  (QG with different microphysics scheme)
+- Runtime optimisation in fully coupled mode (ParFlow seems to slow down), 
+  towards 1 SYPD
+- SW-corner excess rainfall
+- Get SSP trabnsient CO2 forcing in to COSMO v5.01 (`src_radiation.f90`)
+- No seaice setting in COSMO (COPAT2 with C2C316=False as well)
+- aerosol treatment is not in line with EURO-CORDEX CMIP6 EUR-11 protocol
+
+## Notes
+
+- `$BASE_ROOT/geo/TSMP_EUR-11/static/int2lm/EUR-11_TSMP_FZJ-IBG3_464x452_EXTPAR.nc` 
+contains GLOBCOVER2009 land cover data; the experiment uses GLC2000; if boundary
+conditions are generated with `int2lm`for COSMO, then this LULC dataset is used; 
+albeit CLM uses GLC2000; but in case a COSMO-only simulation is to be done, this
+needs to be observed. In that case a new extpar file needs to be generated for 
+COSMO.
+- Note `$BASE_ROOT` and `$TSMP_DIR` are just used in this README.md, they are not
+needed for any part of the workflow later on.
+- Parflow shows in layer 0 saturation < 1 at 1979-01-01_00
+- `subSurfStor_ts_*` in `monitoring/` does not contain timeseries from SPINUP
+- Postprocessing: time-vector is missing in CLM output
+- Postprocessing: pCMORizer.f90 not yet activated
+- ParFlow had to be set back by 2 commits to prevent runtime error (`ifdef readclm`)
+
+## Runtime behaviour
+
+See `starter.sh` for resource allocation.
+
+Preprocessing
+- About 25min wallclock time
+
+Simulation
+- Between 3.5h and 5.5h wall clock time
+
+Postprocessing
+- After 30min ParFlow and CLM are done, even with very high resolution ParFlow output
+- **1:25 is needed for ProductionV1 1979/01** COSMO needs most
+- 5.5GB, 35 files, CLM
+- 73GB, 118 files, ParFlow
+- 67GB, 182 files, COSMO
+
+Monitoring
+- Use `gpicview` to check monitoring png files on HPC front nodes.
+
+Finalisation
+- 
+- Reduces about 450GB to about 200GB per month.
+
+## Set up the TSMP_Workflow-Engine
 
 **First**, clone this repository into your project-directory with its 
 dependencies provided as git submodules, 
@@ -162,7 +353,7 @@ Within this workflow, the component models expect the individual restart files
 to be located at:
 
 ```
-$BASE_ROOT/rundir/MainRun/restarts/{clm,cosmo,parflow}
+$BASE_ROOT/rundir/ProductionV1/restarts/{clm,cosmo,parflow}
 ``` 
 
 (these directories need are best created manually)
@@ -200,7 +391,7 @@ ParFlow: restart
 Due to the importance of the restart files they are also kept in
 
 ```
-$BASE_ROOT/rundir/MainRun/restarts/restarts_SPINUP03_197812
+$BASE_ROOT/rundir/ProductionV1/restarts/restarts_SPINUP03_197812
 ```
 
 (For completeness also a COSMO restart file is stored. Not provided from Z04 
@@ -213,7 +404,7 @@ To make the restart files available, go to the restart directory, and copy the
 restart files there:
 
 ``` bash
-cd $BASE_ROOT/rundir/MainRun/restarts
+cd $BASE_ROOT/rundir/ProductioonV1/restarts
 # copy CLM restart file
 cp -r /p/largedata2/detectdata/projects/Z04/SPINUP_TSMP_EUR-11/restarts/clm ./
 # copy ParFlow restart file
@@ -258,8 +449,27 @@ vi ./starter.sh
 The COSMO cold-start or restart is simply triggered by the `starter.sh` 
 `startDate` and `initDate`.
 
-## Exercice
-To become a little bit famillar with this workflow, work on the following tasks:
+## Archiving of simulation results
+
+After postprocessing and finalization (gzip) this is done manually:
+
+```bash
+cd ctrl/
+bash ./aux_MigrateFromScratch.sh /p/largedata/jjsc39/goergen1/sim/DETECT_EUR-11_ECMWF-ERA5_evaluation_r1i1p1_FZJ-COSMO5-01-CLM3-5-0-ParFlow3-12-0_vBaseline/simres/ProductionV1/ /p/scratch/cjjsc39/goergen1/sim/DETECT_EUR-11_ECMWF-ERA5_evaluation_r1i1p1_FZJ-COSMO5-01-CLM3-5-0-ParFlow3-12-0_vBaseline/simres/ProductionV1/19790[1,2]*
+```
+
+Any filename matching pattern can be used; granularity of the tar-balls: about 
+200GB / month. All stored data are in a single tar-ball.
+
+Store initially not on archive (tape) but on largedata.
+
+## Further documentation
+Please find further and more general information about the TSMP Workflow-Engine 
+in [the doc/ directory](./doc/Content) and a [rendered version is here](https://niklaswr.github.io/TSMP_WorkflowStarter/content/introduction.html).
+
+## Exercise
+To become a little bit familiar with the TSMP Workflow-Engine before and actual
+run, work on the following tasks:
 
 1) Do simulate the compleat year of 2020.
 2) Plot a time serie of the spatial averaged 2m temperature for 2020.
@@ -267,22 +477,3 @@ To become a little bit famillar with this workflow, work on the following tasks:
    repoduce the simulation.
 4) Think about how you could check the simulation is running fine during 
    runtime.
-
-## Further documentation
-Please find further and more general information about the workflow [here](https://niklaswr.github.io/TSMP_WorkflowStarter/content/introduction.html)
-
-## Known issues
-- `$BASE_ROOT/geo/TSMP_EUR-11/static/int2lm/EUR-11_TSMP_FZJ-IBG3_464x452_EXTPAR.nc` 
-contains GLOBCOVER2009 land cover data; rhe experiment uses GLC2000; if boundary
-conditions are generated with `int2lm`for COSMO, then this LULC dataset is used; 
-albeit CLM uses GLC2000; but in case a COSMO-only simulation is to be done, this
-needs to be observed. In that case a new extpar file needs to be generated for 
-COSMO.
-- Note `$BASE_ROOT` and `$TSMP_DIR` are just used in this README.md, they are not
-needed for any part of the workflow later on.
-- CLM runs at the beginning with fixed CO2 concentrations. Later we activateA 
-transient CO2 being passed form COSMO to CLM.
-- HeAT is still not used from its github repo but from local JSC install, neded in
-th postprocessing and therein the ParFlow Diagnostics.
-- Runtime optimisation is pending.
-- ...
