@@ -1,8 +1,9 @@
 # DETECT_EUR-11_ECMWF-ERA5_evaluation_r1i1p1_FZJ-COSMO5-01-CLM3-5-0-ParFlow3-12-0_vBaseline 
 
 > :warning: **Warning**  
-> The current version / tag of this repository is < v1.0.0 and is therefore 
-> still under testing, so use it with caution.
+> Though the current version / tag of this repository is > v1.0.0 and the i
+> experiment is under production, minor adjustments are ongoing and an
+> extension of this experiment description is underway.
 
 ## Set up the TSMP_WorkflowStarter
 

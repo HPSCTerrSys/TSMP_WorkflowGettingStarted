@@ -202,7 +202,7 @@ echo "DEBUG: enter INT2LM rundir and start INT2LM"
 cd ${rundir}
 # just to be sure, clean rundir before starting (e.g. in case of restart)
 rm -rf YU*  
-srun ./${INT2LM_EXNAME}
+srun --threads-per-core=1 ./${INT2LM_EXNAME}
 # exit script, if something crashed int2lm
 if [[ $? != 0 ]] ; then exit 1 ; fi
 # Clean up

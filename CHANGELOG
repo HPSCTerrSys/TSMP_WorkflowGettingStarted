@@ -1,3 +1,10 @@
+CHANGELOG of experiment configuration and setup and workflow engine
+
+v1.0.1 
+  date: "2023-08-04"
+  changes:
+    - Adjustment to affinity-related settings of sbatch and srun
+    - In effect with 1979/07
 v1.0.0 
   date: "2023-08-02"
   changes:

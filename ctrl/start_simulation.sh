@@ -213,7 +213,7 @@ for component in "${components[@]}"; do
 	sed -i "s,__nprocx_pfl_bldsva__,${PROC_PARFLOW_P},g" ascii2pfb_SoilInd.tcl
 	sed -i "s,__nprocy_pfl_bldsva__,${PROC_PARFLOW_Q},g" ascii2pfb_SoilInd.tcl
 	tclsh ascii2pfb_SoilInd.tcl
-  srun -N 1 -n 1 tclsh coup_oas.tcl
+  srun --nodes=1 --ntasks=1 --threads-per-core=1 tclsh coup_oas.tcl
   #
 	cp -v ${TSMP_BINDIR}/parflow ${rundir}/
   
@@ -263,7 +263,7 @@ fi
 ################################################################################
 rm -rf YU*
 echo "DEBUG: start simulation"
-srun --multi-prog slm_multiprog_mapping.conf
+srun  --threads-per-core=1 --multi-prog slm_multiprog_mapping.conf
 if [[ $? != 0 ]] ; then exit 1 ; fi
 date
 wait

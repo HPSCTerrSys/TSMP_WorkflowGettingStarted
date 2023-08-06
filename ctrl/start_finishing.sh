@@ -31,9 +31,21 @@ formattedStartDate=$(date -u -d "${startDate}" ${dateString})
 SimresDir=${BASE_SIMRESDIR}/${formattedStartDate}
 
 echo "--- gzip and sha512sum individual files in simresdir"
-cd ${SimresDir}/cosmo
+cd ${SimresDir}/cosmo/ml
 wrap_calc_sha512sum ${FIN_NTASKS} ./*
-parallelGzip ${FIN_NTASKS} ${SimresDir}/cosmo/*
+parallelGzip ${FIN_NTASKS} ${SimresDir}/cosmo/ml/*
+wait
+cd ${SimresDir}/cosmo/pl
+wrap_calc_sha512sum ${FIN_NTASKS} ./*
+parallelGzip ${FIN_NTASKS} ${SimresDir}/cosmo/pl/*
+wait
+cd ${SimresDir}/cosmo/sfc
+wrap_calc_sha512sum ${FIN_NTASKS} ./*
+parallelGzip ${FIN_NTASKS} ${SimresDir}/cosmo/sfc/*
+wait
+cd ${SimresDir}/cosmo/zl
+wrap_calc_sha512sum ${FIN_NTASKS} ./*
+parallelGzip ${FIN_NTASKS} ${SimresDir}/cosmo/zl/*
 wait
 cd ${SimresDir}/parflow
 wrap_calc_sha512sum ${FIN_NTASKS} ./*
@@ -43,9 +55,17 @@ cd ${SimresDir}/clm
 wrap_calc_sha512sum ${FIN_NTASKS} ./*
 parallelGzip ${FIN_NTASKS} ${SimresDir}/clm/*
 wait
-cd ${SimresDir}/restarts
+cd ${SimresDir}/restarts/clm
 wrap_calc_sha512sum 1 ./*
-parallelGzip ${FIN_NTASKS} ${SimresDir}/restarts/*
+parallelGzip ${FIN_NTASKS} ${SimresDir}/restarts/clm/*
+wait
+cd ${SimresDir}/restarts/cosmo
+wrap_calc_sha512sum 1 ./*
+parallelGzip ${FIN_NTASKS} ${SimresDir}/restarts/cosmo/*
+wait
+cd ${SimresDir}/restarts/parflow
+wrap_calc_sha512sum 1 ./*
+parallelGzip ${FIN_NTASKS} ${SimresDir}/restarts/parflow/*
 wait
 cd ${SimresDir}/log
 wrap_calc_sha512sum 1 ./*

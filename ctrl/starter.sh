@@ -11,8 +11,8 @@ simLength='1 month'  # length of one simulaiton. Has to be a valid `date`
                      # option like '1 month', '10 days', etc. (number is 
                      # IMPORTANT!)
                      # AT THE MOMENT simLength>=1day IS NEEDED!
-NoS=1                # number of simulations 
-startDate="1979-01-01T00:00Z" # start date - is changing while simulation is
+NoS=6               # number of simulations / or rather jobs?
+startDate="1979-07-01T00:00Z" # start date - is changing while simulation is
                      # progressing.
 initDate="1979-01-01T00:00Z"  # init date - is fix for entre simulation 
                      # The format of `startDate` and `initDate` hast to follow 
@@ -20,21 +20,21 @@ initDate="1979-01-01T00:00Z"  # init date - is fix for entre simulation
 		                 # This is importat to ensure `date` is working properly!
 dateString='+%Y%m%d%H' # The date string used to name simulation results etc.
                      # Again, this has to be a valid `date` option
-dependency=1205746  # JOBID to depend the following jobs at
+dependency=1205746  # JOBID to depend the following jobs on
                      # if set JOBID is below latest JOBID the job starts without
 		                 # dependency automatically
-simPerJob=4          # number of simulaitons to run within one job (less queuing 
-                     # time?)
+simPerJob=1          # number of simulaitons to run within one job (less queuing 
+                     # time?), default by NWa is 4
                      # -> 6: run 6 simulaitons within one big job
-pre=true             # Define which substeps (PREprocessing, SIMulation, 
-sim=true             # POStprocessing, FINishing) should be run. Default is to
-pos=true             # set each substep to 'true', if one need to run individual 
-fin=true             # steps exclude other substeps by setting to 'false'
+pre=false # Define which substeps (PREprocessing, SIMulation, 
+sim=true # POStprocessing, FINishing) should be run. Default is to
+pos=false # set each substep to 'true', if one need to run individual 
+fin=false # steps exclude other substeps by setting to 'false'
 computeAcount='jjsc39' # jjsc39, slts, esmtst
 CTRLDIR=$(pwd)       # assuming one is executing this script from the 
                      # BASE_CTRLDIR, what is the cast most of the time
 
-CaseID="MainRun"     # Which case to run? Cases are defined in ctrl/CASES.conf
+CaseID="ProductionV1"     # Which case to run? Cases are defined in ctrl/CASES.conf
                      # Available are: "ActiveLakes", "HetTen", "NoPfsol", 
                      #   "TestHincrad05", "SeepageFace", "SeepageFaceAndHetTen"
 
@@ -51,32 +51,31 @@ PROCIO_INT2LM=0
 pre_NODES=1
 pre_NTASKS=128
 pre_NTASKSPERNODE=128
-pre_WALLCLOCK=11:59:00
+pre_WALLCLOCK=00:45:00
 pre_PARTITION=dc-cpu
 pre_MAILTYPE=FAIL
 # def SBATCH for simulation
-# sim_NODES and sim_NTASKS are set automatically based on
-# PROC_* further below.
+# sim_NODES and sim_NTASKS are set automatically based on PROC_* further below
 sim_NTASKSPERNODE=128 # 128, 48 
-sim_WALLCLOCK=23:59:00
+sim_WALLCLOCK=06:00:00
 sim_PARTITION=dc-cpu #dc-cpu, mem192, batch, esm
 sim_MAILTYPE=ALL
-# def SBATCH for postpro
+# def SBATCH for postpro (was set to 24 tasks)
 pos_NODES=1
-pos_NTASKS=24
-pos_NTASKSPERNODE=24
-pos_WALLCLOCK=23:59:00
+pos_NTASKS=128
+pos_NTASKSPERNODE=128
+pos_WALLCLOCK=02:00:00
 pos_PARTITION=dc-cpu #dc-cpu-devel
-pos_MAILTYPE=FAIL
+pos_MAILTYPE=ALL
 # def SBATCH for finishing
 fin_NODES=1
 fin_NTASKS=128
 fin_NTASKSPERNODE=128
-fin_WALLCLOCK=05:59:00
+fin_WALLCLOCK=01:00:00
 fin_PARTITION=dc-cpu #dc-cpu-devel
-fin_MAILTYPE=FAIL
+fin_MAILTYPE=ALL
 ###############################################################################
-#### Adjust according to your need ABOVE
+#### Adjust according to your needs ABOVE
 ###############################################################################
 # Export those variables set above which are needed in all scripts:
 export simLength=${simLength}
@@ -137,7 +136,6 @@ for component in "${components[@]}"; do
 done
 sim_NODES=$(((${sim_NTASKS}+${sim_NTASKSPERNODE}-1)/${sim_NTASKSPERNODE}))
 
-
 # echo for logfile
 echo "###################################################"
 echo "START Logging ($(date)):"
@@ -149,8 +147,8 @@ echo "---              start-data: ${startDate}"
 echo "---                  CaseID: ${CaseID}"
 echo "---            CaseCalendar: ${CaseCalendar}"
 echo "---             COMBINATION: ${COMBINATION}"
-echo "---              sim_NTASKS: ${sim_NTASKS}"
-echo "---               sim_NODES: ${sim_NODES}"
+#echo "---              sim_NTASKS: ${sim_NTASKS}"
+#echo "---               sim_NODES: ${sim_NODES}"
 echo "--- HOST:  $(hostname)"
 
 cd $BASE_CTRLDIR
@@ -178,6 +176,7 @@ do
     submit_prepro_return=$(sbatch \
           --job-name="${CaseID}_prepro" \
           --constraint=largedata \
+          --threads-per-core=1 \
           --export=ALL,startDate=$startDate,CTRLDIR=$BASE_CTRLDIR,NoS=$simPerJob \
           -o "${BASE_LOGDIR}/%x-out" -e "${BASE_LOGDIR}/%x-err" \
           --mail-user=${AUTHOR_MAIL} --account=$computeAcount \
@@ -202,6 +201,7 @@ do
   else
     submit_simulation_return=$(sbatch -d afterok:${submit_prepro}:${submit_simulation} \
           --job-name="${CaseID}_simulation" \
+          --threads-per-core=1 \
           --export=ALL,startDate=$startDate,CTRLDIR=$BASE_CTRLDIR,NoS=$simPerJob \
           -o "${BASE_LOGDIR}/%x-out" -e "${BASE_LOGDIR}/%x-err" \
           --mail-user=${AUTHOR_MAIL} --account=$computeAcount \
@@ -222,6 +222,7 @@ do
   else
     submit_postpro_return=$(sbatch -d afterok:${submit_simulation} \
           --job-name="${CaseID}_postpro" \
+          --threads-per-core=1 \
           --export=ALL,startDate=$startDate,CTRLDIR=$BASE_CTRLDIR,NoS=$simPerJob \
           -o "${BASE_LOGDIR}/%x-out" -e "${BASE_LOGDIR}/%x-err" \
           --mail-user=${AUTHOR_MAIL} --account=$computeAcount \
@@ -267,5 +268,5 @@ do
   done
 
 done
-exit 0
 
+exit 0
