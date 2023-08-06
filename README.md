@@ -1,10 +1,5 @@
 # DETECT_EUR-11_ECMWF-ERA5_evaluation_r1i1p1_FZJ-COSMO5-01-CLM3-5-0-ParFlow3-12-0_vBaseline 
 
-> :warning: **Warning**  
-> Though the current version / tag of this repository is > v1.0.0 and the
-> experiment is under production, minor adjustments are ongoing and an
-> extension of this experiment description is underway.
-
 **This is the experiment leaflet for the simulation experiment with the 
 experiment-ID as in the heading.**
 
@@ -14,6 +9,10 @@ experiment-ID as in the heading.**
 - Contribution to CORDEX-CMIP6 climate change RCM ensemble through CLM-Community
 
 ## Experiment version and status
+
+- Version: see tags (`git tag -n`)
+- Status: production runs ongoing
+- Simulation progress: see `$rootdir/simres/`, `$rootdir` as in `ctrl/export_paths.ksh`
 
 > Background and concept:
 > A "simulation experiment" is identified by an experiment-ID. Such a 
@@ -30,24 +29,20 @@ experiment-ID as in the heading.**
 > changes (semantic versioning scheme). Some components are interchangeable 
 > between different experiments (e.g., static fields), others are not.
 
-Version: see tags (`git tag -n`)
-Status: production runs ongoing
-Simulation progress: see `$rootdir/simres/`, `$rootdir` as in `ctrl/export_paths.ksh`
-
 ## Components used
 
 The simulation experiment v1.0.1 consists of these components:  
-- TSMP_Workflow-Engine, https://icg4geo.icg.kfa-juelich.de, c01884b (v1.0.1), master, 2023-08-06
-  - static fields (`geo/`), https://gitlab.jsc.fz-juelich.de/detect, 5fbc818, master, 2023-06-22
-  - namelists (`ctrl/namelists`), https://icg4geo.icg.kfa-juelich.de, 703d8b7, master, 2023-08-02
-  - int2lm (`src/int2lm3.00`), https://gitlab.jsc.fz-juelich.de/detect/, 4ba1598, master, 2023-02-17
-  - SLOTH (`src/SLOTH`), https://github.com/HPSCTerrSys, 9d7ee2b, master, 2023-07-12
-    - ParFlow Diagnostics (`src/SLOTH/extern/ParFlowDiagnostics`), https://github.com/HPSCTerrSys, af0a2c8, master, 2022-03-29
+- TSMP_Workflow-Engine, https://icg4geo.icg.kfa-juelich.de/Configurations/TSMP/DETECT_EUR-11_ECMWF-ERA5_evaluation_r1i1p1_FZJ-COSMO5-01-CLM3-5-0-ParFlow3-12-0_vBaseline.git, c01884b (v1.0.1), master, 2023-08-06
+  - static fields (`geo/`), https://gitlab.jsc.fz-juelich.de/detect/detect_z03_z04/constant_fields/TSMP_EUR-11.git, 5fbc818, master, 2023-06-22
+  - namelists (`ctrl/namelists`), https://icg4geo.icg.kfa-juelich.de/Configurations/TSMP_namelists/TSMP_EUR-11_eval.git, 703d8b7, master, 2023-08-02
+  - int2lm (`src/int2lm3.00`), https://gitlab.jsc.fz-juelich.de/detect/detect_z03_z04/software_tools/tools_mirrors/int2lm3.00.git, 4ba1598, master, 2023-02-17
+  - SLOTH (`src/SLOTH`), https://github.com/HPSCTerrSys/SLOTH.git, 9d7ee2b, master, 2023-07-12
+    - ParFlow Diagnostics (`src/SLOTH/extern/ParFlowDiagnostics`), https://github.com/HPSCTerrSys/ParFlowDiagnostics.git, af0a2c8, master, 2022-03-29
     - colormaps (`src/SLOTH/extern/colormaps`), https://github.com/pratiman-91, ce4320c, 2023-02-15
-  - TSMP (`src/TSMP`), https://github.com/HPSCTerrSys, dad9a4c4 (v1.4.0), 2023-04-26
-    - COSMO (`src/TSMP/cosmo5_1`), https://icg4geo.icg.kfa-juelich.de, f407b9b, master, 2020-01-21
-    - CLM (`src/TSMP/clm3_5`), https://icg4geo.icg.kfa-juelich.de, 801b530, master, 2020-01-21
-    - ParFlow (`src/TSMP/parflow`), https://github.com/HPSCTerrSys, 1eb4c44, UseMaskNc, 2023-05-31 (will become part of the main ParFlow repo https://github.com/parflow)
+  - TSMP (`src/TSMP`), https://github.com/HPSCTerrSys/TSMP.git, dad9a4c4 (v1.4.0), 2023-04-26
+    - COSMO (`src/TSMP/cosmo5_1`), https://icg4geo.icg.kfa-juelich.de/ModelSystems/tsmp_src/cosmo5.01_fresh.git, f407b9b, master, 2020-01-21
+    - CLM (`src/TSMP/clm3_5`), https://icg4geo.icg.kfa-juelich.de/ModelSystems/tsmp_src/clm3.5_fresh.git, 801b530, master, 2020-01-21
+    - ParFlow (`src/TSMP/parflow`), https://github.com/HPSCTerrSys/parflow.git, 1eb4c44, UseMaskNc, 2023-05-31 (will become part of the main ParFlow repo https://github.com/parflow)
 
 Each experiment is put together by starting off with the TSMP_Workflow-Engine, see below.
 
@@ -74,7 +69,7 @@ git clone -n <repo_name>
 git checkout <commit_sha>
 ```
 
-(To revover from a ['Deteched HEAD' state](https://circleci.com/blog/git-detached-head-state/?utm_source=google&utm_medium=sem&utm_campaign=sem-google-dg--emea-en-dsa-tROAS-auth-nb&utm_term=g_-_c__dsa_&utm_content=&gclid=CjwKCAjwt52mBhB5EiwA05YKowS4Lli89cXh6W4sT_CTlGJH1rdKN8JX7QSSHG-zZmK5v36JSldJohoCgGkQAvD_BwE))
+(See here on how to revover from a ['Deteched HEAD' state](https://circleci.com/blog/git-detached-head-state/?utm_source=google&utm_medium=sem&utm_campaign=sem-google-dg--emea-en-dsa-tROAS-auth-nb&utm_term=g_-_c__dsa_&utm_content=&gclid=CjwKCAjwt52mBhB5EiwA05YKowS4Lli89cXh6W4sT_CTlGJH1rdKN8JX7QSSHG-zZmK5v36JSldJohoCgGkQAvD_BwE))
 
 Fixes and improvements in the respective repos might be ingested in different 
 ways (see additional documentation link below), and might lead to release
@@ -130,12 +125,12 @@ exp-ID:
 - Simulations and monitoring: k.goergen@fz-juelich.de
 - Current implementation: k.goergen@fz-juelich.de
 - Development of experiment: n.wagner@fz-juelich.de, c.hartick@fz-juelich.de, 
-  s.poll.fz-juelich.de, k.goergen@fz-juelich.de, s.kollet@fz-juelich.de 
+  s.poll@fz-juelich.de, k.goergen@fz-juelich.de, s.kollet@fz-juelich.de 
 
 ## Known and open issues
 
-There are some things to be observed, however they do not prevent from going to
-to enter production mode.
+There are some things to be observed, however they do not prevent going to
+production mode.
 
 - CLM runs at the beginning with fixed CO2 concentrations. Later we activate a 
   transient CO2 being passed form COSMO to CLM.
@@ -154,7 +149,7 @@ to enter production mode.
 - SW-corner excess rainfall
 - Get SSP trabnsient CO2 forcing in to COSMO v5.01 (`src_radiation.f90`)
 - No seaice setting in COSMO (COPAT2 with C2C316=False as well)
-- aerosol treatment is not in line with EURO-CORDEX CMIP6 EUR-11 protocol
+- Aerosol treatment is not in line with EURO-CORDEX CMIP6 EUR-11 protocol
 
 ## Notes
 
@@ -465,14 +460,14 @@ Store initially not on archive (tape) but on largedata.
 
 ## Further documentation
 Please find further and more general information about the TSMP Workflow-Engine 
-in [the doc/ directory](./doc/Content) and a [rendered version is here](https://niklaswr.github.io/TSMP_WorkflowStarter/content/introduction.html).
+in [the doc/ directory](https://icg4geo.icg.kfa-juelich.de/Configurations/TSMP/DETECT_EUR-11_ECMWF-ERA5_evaluation_r1i1p1_FZJ-COSMO5-01-CLM3-5-0-ParFlow3-12-0_vBaseline/-/tree/master/doc/content) and a [rendered version is here](https://niklaswr.github.io/TSMP_WorkflowStarter/content/introduction.html), might be outdated due to rendering date and time.
 
 ## Exercise
 To become a little bit familiar with the TSMP Workflow-Engine before and actual
 run, work on the following tasks:
 
-1) Do simulate the compleat year of 2020.
-2) Plot a time serie of the spatial averaged 2m temperature for 2020.
+1) Do simulate the complete year of 2020.
+2) Plot a time series of the spatial averaged 2m temperature for 2020.
 3) Write down which information / data / files you might think are needed to 
    repoduce the simulation.
 4) Think about how you could check the simulation is running fine during 
