@@ -4,13 +4,14 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=128
 #SBATCH --ntasks-per-node=128
+#SBATCH --threads-per-core=1
 #SBATCH --time=01:00:00
-#SBATCH --partition=dc-cpu-devel
-#SBATCH --account=slts
+#SBATCH --partition=dc-cpu
+#SBATCH --account=jjsc39
 #
 # USAGE: 
 # >> sbatch ./$0 TARGET/FILES/WILDCARDS/ARE/POSSIBL*
-# >> sbatch ./aux_gzip_general.ksh /p/scratch/cjibg35/tsmpforecast/ERA5Climat_EUR11_ECMWF-ERA5_analysis_FZJ-IBG3/run_TSMP/laf_lbfd/201[8,9]
+# >> sbatch ./aux_gzip_general.sh /p/scratch/cjibg35/tsmpforecast/ERA5Climat_EUR11_ECMWF-ERA5_analysis_FZJ-IBG3/run_TSMP/laf_lbfd/201[8,9]
 
 parallelGzip() (
   # Simple run gzip on inFile

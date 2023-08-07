@@ -12,6 +12,7 @@ experiment-ID as in the heading.**
 
 - Version: see tags (`git tag -n`)
 - Status: production runs ongoing, CASE-ID: "ProductionV1"
+- Experiment `$rootdir`: `/p/scratch/cjjsc39/goergen1/sim/DETECT_EUR-11_ECMWF-ERA5_evaluation_r1i1p1_FZJ-COSMO5-01-CLM3-5-0-ParFlow3-12-0_vBaseline`
 - Simulation progress: see `$rootdir/simres/`, `$rootdir` as in `ctrl/export_paths.ksh`
 
 > Background and concept:

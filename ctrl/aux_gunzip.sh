@@ -4,13 +4,16 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=128
 #SBATCH --ntasks-per-node=128
+#SBATCH --threads-per-core=1
 #SBATCH --time=01:00:00
-#SBATCH --partition=dc-cpu-devel
-#SBATCH --account=slts
+#SBATCH --partition=dc-cpu
+#SBATCH --account=jjsc39
 #
 # USAGE: 
 # >> sbatch ./$0 TARGET/FILES/WILDCARDS/ARE/POSSIBL*
-# >> sbatch ./aux_gzip_general.ksh /p/scratch/cjibg35/tsmpforecast/ERA5Climat_EUR11_ECMWF-ERA5_analysis_FZJ-IBG3/run_TSMP/laf_lbfd/201[8,9]
+# >> sbatch ./aux_gunzip.sh /p/scratch/cjibg35/tsmpforecast/ERA5Climat_EUR11_ECMWF-ERA5_analysis_FZJ-IBG3/run_TSMP/laf_lbfd/201[8,9]
+# for i in $(find /p/scratch/cjjsc39/goergen1/sim/DETECT_EUR-11_ECMWF-ERA5_evaluation_r1i1p1_FZJ-COSMO5-01-CLM3-5-0-ParFlow3-12-0_vBaseline/simres/ProductionV1/REMOVE_1979010100 -type f -name '*.gz') ; do echo $i ; done
+# recurseiveness is missing with subdirs with COSMO
 
 parallelGzip() (
   # Simple run gzip on inFile
