@@ -11,7 +11,7 @@ experiment-ID as in the heading.**
 ## Experiment version and status
 
 - Version: see tags (`git tag -n`)
-- Status: production runs ongoing
+- Status: production runs ongoing, CASE-ID: "ProductionV1"
 - Simulation progress: see `$rootdir/simres/`, `$rootdir` as in `ctrl/export_paths.ksh`
 
 > Background and concept:
@@ -55,8 +55,15 @@ the latest HEAD is pulled. Hence it might be needed to set the HEAD to a
 specific commit to reproduce the exact simulation experiment.
 
 Follow the setup instructions below to obtain these repos. But make sure you 
-have the correct commit and branch checked out. To set the HEAD to a specific 
-commit in the commit history:
+have the correct commit and branch checked out. For example do a:
+
+```bash
+git log --oneline -1
+```
+
+to see which commit you are dealing with.
+
+To set the HEAD to a specific commit in the commit history:
 
 ```bash
 git reset --hard 1eb4c447
@@ -122,7 +129,7 @@ exp-ID:
 ## Responsibilities
 
 - Current owner: k.goergen@fz-juelich.de
-- Simulations and monitoring: k.goergen@fz-juelich.de
+- Current Simulations and monitoring: k.goergen@fz-juelich.de
 - Current implementation: k.goergen@fz-juelich.de
 - Development of experiment: n.wagner@fz-juelich.de, c.hartick@fz-juelich.de, 
   s.poll@fz-juelich.de, k.goergen@fz-juelich.de, s.kollet@fz-juelich.de 
@@ -136,7 +143,6 @@ production mode.
   transient CO2 being passed form COSMO to CLM.
 - HeAT is still not used from its github repo but from local JSC install, neded in
   th postprocessing and therein the ParFlow Diagnostics.
-- Runtime optimisation is pending.
 - Reduction of output frequency with ParFlow from 15min to 60min
 - Reduction of COSMO variables, zl variables might be calculated from ml
 - In portprocessing 3D CLM soil temperature is missing still
@@ -145,9 +151,9 @@ production mode.
   (not needed immediately), e.g., durting standaline run (FR_SNOW), or at 3km 
   (QG with different microphysics scheme)
 - Runtime optimisation in fully coupled mode (ParFlow seems to slow down), 
-  towards 1 SYPD
+  towards 1 SYPD -- if possible at all, without MSA
 - SW-corner excess rainfall
-- Get SSP trabnsient CO2 forcing in to COSMO v5.01 (`src_radiation.f90`)
+- Get SSP transient CO2 forcing in to COSMO v5.01 (`src_radiation.f90`)
 - No seaice setting in COSMO (COPAT2 with C2C316=False as well)
 - Aerosol treatment is not in line with EURO-CORDEX CMIP6 EUR-11 protocol
 
@@ -162,7 +168,7 @@ COSMO.
 - Note `$BASE_ROOT` and `$TSMP_DIR` are just used in this README.md, they are not
 needed for any part of the workflow later on.
 - Parflow shows in layer 0 saturation < 1 at 1979-01-01_00
-- `subSurfStor_ts_*` in `monitoring/` does not contain timeseries from SPINUP
+- `subSurfStor_ts_*` in `monitoring/` does not contain timeseries from SPINUP03
 - Postprocessing: time-vector is missing in CLM output
 - Postprocessing: pCMORizer.f90 not yet activated
 - ParFlow had to be set back by 2 commits to prevent runtime error (`ifdef readclm`)
