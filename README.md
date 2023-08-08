@@ -138,12 +138,18 @@ exp-ID:
 ## Known and open issues
 
 There are some things to be observed, however they do not prevent going to
-production mode.
+production mode:
 
 - CLM runs at the beginning with fixed CO2 concentrations. Later we activate a 
   transient CO2 being passed form COSMO to CLM.
-- HeAT is still not used from its github repo but from local JSC install, neded in
-  th postprocessing and therein the ParFlow Diagnostics.
+- SW-corner excess rainfall
+- No seaice setting in COSMO (COPAT2 with C2C316=False as well)
+- Aerosol treatment is not in line with EURO-CORDEX CMIP6 EUR-11 protocol
+- Get SSP transient CO2 forcing in to COSMO v5.01 (`src_radiation.f90`)
+
+Technical:
+- HeAT is still not used from its github repo but from local JSC install, neded 
+  in the postprocessing and therein the ParFlow Diagnostics.
 - Reduction of output frequency with ParFlow from 15min to 60min
 - Reduction of COSMO variables, zl variables might be calculated from ml
 - In portprocessing 3D CLM soil temperature is missing still
@@ -153,10 +159,9 @@ production mode.
   (QG with different microphysics scheme)
 - Runtime optimisation in fully coupled mode (ParFlow seems to slow down), 
   towards 1 SYPD -- if possible at all, without MSA
-- SW-corner excess rainfall
-- Get SSP transient CO2 forcing in to COSMO v5.01 (`src_radiation.f90`)
-- No seaice setting in COSMO (COPAT2 with C2C316=False as well)
-- Aerosol treatment is not in line with EURO-CORDEX CMIP6 EUR-11 protocol
+- COSMO postprocessing not as efficient as possible (cosmo trailing behind when 
+  others are done already).
+- HISTORY.txt does not contain commit-information other than workflow engine.
 
 ## Notes
 
@@ -179,14 +184,14 @@ needed for any part of the workflow later on.
 See `starter.sh` for resource allocation.
 
 Preprocessing
-- About 25min wallclock time
+- About 25min wall clock time
 
 Simulation
 - Between 3.5h and 5.5h wall clock time
 
 Postprocessing
+- About 1:00 to 1:15 wall clock time, purely for the postprocessing
 - After 30min ParFlow and CLM are done, even with very high resolution ParFlow output
-- **1:25 is needed for ProductionV1 1979/01** COSMO needs most
 - 5.5GB, 35 files, CLM
 - 73GB, 118 files, ParFlow
 - 67GB, 182 files, COSMO
@@ -195,7 +200,7 @@ Monitoring
 - Use `gpicview` to check monitoring png files on HPC front nodes.
 
 Finalisation
-- 
+- About 10min wall clock time
 - Reduces about 450GB to about 200GB per month.
 
 ## Set up the TSMP_Workflow-Engine
@@ -451,6 +456,13 @@ vi ./starter.sh
 The COSMO cold-start or restart is simply triggered by the `starter.sh` 
 `startDate` and `initDate`.
 
+## Postpro and monitoring
+
+These two operations are within one script. Monitoring takes postprocessed 
+data. One can also run monitoring independently. Postpro+monitoring should be 
+done in chronilogical order as timeseries of subsurface storage are generated, 
+whose values are appended (ts netCDF files).
+
 ## Archiving of simulation results
 
 After postprocessing and finalization (gzip) this is done manually:
@@ -463,7 +475,7 @@ bash ./aux_MigrateFromScratch.sh /p/largedata/jjsc39/goergen1/sim/DETECT_EUR-11_
 Any filename matching pattern can be used; granularity of the tar-balls: about 
 200GB / month. All stored data are in a single tar-ball.
 
-Store initially not on archive (tape) but on largedata.
+Store initially not on archive (tape) but on largedata. `$largedata`-storage can be done by different users; tape storage should be done only by a single user (e.g., goergen1 or kollet1).
 
 ## Further documentation
 Please find further and more general information about the TSMP Workflow-Engine 
