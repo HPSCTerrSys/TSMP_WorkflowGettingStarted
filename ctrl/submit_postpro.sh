@@ -28,9 +28,11 @@ echo "--- HOST:  $(hostname)"
 # Post-Pro
 ###############################################################################
 loop_counter=1
-while [ $loop_counter -le $NoS ]
+#while [ $loop_counter -le $NoS ]
+while [ $loop_counter -le $simPerJob ]
 do
   cd $BASE_CTRLDIR
+  echo $loop_counter $simPerJob $startDate
   ./start_postpro.sh $startDate
   if [[ $? != 0 ]] ; then exit 1 ; fi
   # forward startDate by simLength
@@ -38,5 +40,5 @@ do
   loop_counter=$((loop_counter+1))
   wait
 done
-exit 0
 
+exit 0

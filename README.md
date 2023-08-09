@@ -40,7 +40,7 @@ experiment-ID as in the heading.**
 The simulation experiment v1.0.1 consists of these components:  
 - TSMP_Workflow-Engine, https://icg4geo.icg.kfa-juelich.de/Configurations/TSMP/DETECT_EUR-11_ECMWF-ERA5_evaluation_r1i1p1_FZJ-COSMO5-01-CLM3-5-0-ParFlow3-12-0_vBaseline.git, c01884b (v1.0.1), master, 2023-08-06
   - static fields (`geo/`), https://gitlab.jsc.fz-juelich.de/detect/detect_z03_z04/constant_fields/TSMP_EUR-11.git, 5fbc818, master, 2023-06-22
-  - namelists (`ctrl/namelists`), https://icg4geo.icg.kfa-juelich.de/Configurations/TSMP_namelists/TSMP_EUR-11_eval.git, 703d8b7, master, 2023-08-02
+  - namelists (`ctrl/namelists`), https://icg4geo.icg.kfa-juelich.de/Configurations/TSMP_namelists/TSMP_EUR-11_eval.git, 703d8b7 (v1.0.1), master, 2023-08-02
   - int2lm (`src/int2lm3.00`), https://gitlab.jsc.fz-juelich.de/detect/detect_z03_z04/software_tools/tools_mirrors/int2lm3.00.git, 4ba1598, master, 2023-02-17
   - SLOTH (`src/SLOTH`), https://github.com/HPSCTerrSys/SLOTH.git, 9d7ee2b, master, 2023-07-12
     - ParFlow Diagnostics (`src/SLOTH/extern/ParFlowDiagnostics`), https://github.com/HPSCTerrSys/ParFlowDiagnostics.git, af0a2c8, master, 2022-03-29
@@ -140,8 +140,8 @@ For details, see namelists: https://icg4geo.icg.kfa-juelich.de/Configurations/TS
 
 in CASES "MainRun" and "ProductionTest" (see ./ctrl/CASES.conf ./ctrl/CASES.conf
 - Takeover experiment and TSMP_Workflow-Engine from NWagner on 2023-07-28 with commit 0265916a (master), 
-- Check functionality of Workflow-Engine, adjustment to new use case
-- Refinements and fixes
+- Check functionality of Workflow-Engine, different operating modes, etc.; adjustment to new use case
+- Smaller refinements and fixes, extend doc in README.md
 - Exact reproduction after implementation of test and developer simulations by NWagner (checking 1979/01), forcing files, simulation results, postprocessing, monitoring, logfiles; restarts work properly, also in 1979/01
 - Check of setup and configuration once more: check of compatibility with and suitability for DETECT and CORDEX; check of correct static fields (land cover, indicator file, ParFlow slopes); various cross checks (static input equals static output); etc.
 
@@ -217,11 +217,6 @@ needed for any part of the workflow later on.
   lots of spatial spinup zone
 - Perhaps nco tools need additional attention, `-O` flag, in in `ctrl/postpro/*.sh`
   as I/O vs script operations may lead to conflicts and stalling abort of nco
-- Unclear whether the starter.sh -> submit -> start_process combination is ideal:
-  in submit_postpro.sh NoS counter submits all jobs in a row without dependency,
-  hence when running several postpro jobs, they do not wait for each other, which
-  is mixing up the TWS timeseries in the monitoring, as the values get appended and
-  not sorted into the netCDF files.
 
 ## Runtime behaviour
 
@@ -555,7 +550,9 @@ as data is arcjived in tar-balls eithe ron $largedata or $archive.
   (`start_propro.sh` needs manual modification); when starting 
   postprocessing only, all jobs start running in parallel. If
   the monitoring is not commented then, this leads to a mix up of the TWS
-  timeseries in `monitoring/`.
+  timeseries in `monitoring/`. This happens only if $NoS>1 and $simPerJob=1,
+  if $NoS=1 and $simPerJob>1, then different passes are done sequentially
+  within the submit_postpro.sh script, within one sbatch job.
 - There is `$rootdir/tmp`, which does not belong to the dir-structure of the 
   Workflow-Engine, but contains a few very specific files and tools from tests.
   Could also be removed, but handy to have this. Shall not grow large. If
@@ -567,15 +564,41 @@ as data is arcjived in tar-balls eithe ron $largedata or $archive.
   independently; 3 run postprocessing incl. monitoring and finalisation 
   together. 4 Archiving can be manually triggered. Good alternative might also 
   be to run  2+3 together, keeps the storage footprint small. Interplay of:
-  `startDate`, `NoS`, `dependency`, `pre / sim / pos / fin` in `starter.sh`
-  If a combination is run, then 3 runs in the background while the next
+  `startDate`, `NoS`, `dependency`, `pre / sim / pos / fin` and `simPerJob` in 
+  `starter.sh`.
+  If a combination is run, then 3 and 4 run in the background while the next
   simulation already starts.
 
+Four operating modes:
+1) If you want to run multiple instances (months) of a single processing step
+   (e.g., postprocessing), set NoS=simPerJob=number_of_months_to_process
+   beginning at the start time, then there is no dependency in sbatch, but there
+   is a time loop in the submitted submit_postpro.sh, e.g.; 
+2) If the complete modelling chain (sim, pos, fin) is run in multiple batch jobs 
+   with dependencies and one month per Job, set NoS>=1 (number of months) and 
+   simPerJob=1. Simlation depends on itself, hence, if it ran successful next one
+   will start; the pos and fin can run asounchronously in the background; they are
+   always slower than the simulation, hence there is no piling up of jobs.
+3) If, e.g., NoS=20 (total number of months) and simPerJob=5, then the all is done 
+   block-wise, multiple sims, after that multiple postpro, etc., then the complete
+   chain repeats itself, 4 times in total with dependencies.
+   In this case the wallclocktime per sbatch job has to accomodate all substeps, 
+   if longer wall clock and fwer sbatch jobs is efficient, then this is a good
+   option; if shorter jobs are faster in the queue, Nr2 is better (=KGo choice).
+4) If simPerJob=1, but NoS>1 and only a single processing step is run, then all
+   steps are run in parallel, as there is no dependency, e.g., with pos or fin;
+   this can be super efficient (messes up the monitoring though), hence this is
+   for the steps of finalisation or preprocessing.
+   **Only for simulations, due to the dependency setting, one waits for 
+   the other.**
+
 ## Further documentation
+
 Please find further and more general information about the TSMP Workflow-Engine 
 in [the doc/ directory](https://icg4geo.icg.kfa-juelich.de/Configurations/TSMP/DETECT_EUR-11_ECMWF-ERA5_evaluation_r1i1p1_FZJ-COSMO5-01-CLM3-5-0-ParFlow3-12-0_vBaseline/-/tree/master/doc/content) and a [rendered version is here](https://niklaswr.github.io/TSMP_WorkflowStarter/content/introduction.html), might be outdated due to rendering date and time.
 
 ## Exercise
+
 To become a little bit familiar with the TSMP Workflow-Engine before and actual
 run, work on the following tasks:
 

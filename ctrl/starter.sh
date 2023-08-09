@@ -11,8 +11,8 @@ simLength='1 month'  # length of one simulaiton. Has to be a valid `date`
                      # option like '1 month', '10 days', etc. (number is 
                      # IMPORTANT!)
                      # AT THE MOMENT simLength>=1day IS NEEDED!
-NoS=9              # number of simulations / or rather jobs?
-startDate="1980-01-01T00:00Z" # start date - is changing while simulation is
+NoS=3              # total number of tasks (NoS/simPerJob=numberof sbatch jobs)
+startDate="1980-10-01T00:00Z" # start date - is changing while simulation is
                      # progressing.
 initDate="1979-01-01T00:00Z"  # init date - is fix for entre simulation 
                      # The format of `startDate` and `initDate` hast to follow 
@@ -23,7 +23,7 @@ dateString='+%Y%m%d%H' # The date string used to name simulation results etc.
 dependency=12200000  # JOBID to depend the following jobs on
                      # if set JOBID is below latest JOBID the job starts without
 		                 # dependency automatically
-simPerJob=1          # number of simulaitons to run within one job (less queuing 
+simPerJob=3          # number of simulaitons to run within one job (less queuing 
                      # time?), default by NWa is 4
                      # -> 6: run 6 simulaitons within one big job
 pre=false # Define which substeps (PREprocessing, SIMulation, 
@@ -64,8 +64,8 @@ sim_MAILTYPE=ALL
 pos_NODES=1
 pos_NTASKS=128
 pos_NTASKSPERNODE=128
-pos_WALLCLOCK=02:00:00 # data + vis / data only
-#pos_WALLCLOCK=00:30:00 # vis only
+#pos_WALLCLOCK=02:15:00 # (vis is about 10min, only for single month)
+pos_WALLCLOCK=07:00:00
 pos_PARTITION=dc-cpu #dc-cpu-devel
 pos_MAILTYPE=ALL
 # def SBATCH for finishing
@@ -163,8 +163,11 @@ do
   echo "loop_counter $loop_counter / NoS $NoS"
   # if there are not enough simmulations left to fill the job
   # reduce $simPerJob to number of jobs left
+  # if total NoS cannot be divided by simPerJob to an integer
+  # at the end of a simulation or with days instead of 
+  # months run daily until the end of a month
   if [[ $((loop_counter+simPerJob)) -gt $NoS ]]; then
-      echo "-- to less simulations left, to run last job with $simPerJob simulations"
+      echo "-- too few simulations left, to run last job with $simPerJob simulations"
       simPerJob=$((NoS-loop_counter))
   fi
 
@@ -224,7 +227,7 @@ do
     submit_postpro_return=$(sbatch -d afterok:${submit_simulation} \
           --job-name="${CaseID}_postpro" \
           --threads-per-core=1 \
-          --export=ALL,startDate=$startDate,CTRLDIR=$BASE_CTRLDIR,NoS=$simPerJob \
+          --export=ALL,startDate=$startDate,CTRLDIR=$BASE_CTRLDIR,simPerJob=$simPerJob \
           -o "${BASE_LOGDIR}/%x-out" -e "${BASE_LOGDIR}/%x-err" \
           --mail-user=${AUTHOR_MAIL} --account=$computeAcount \
           --nodes=${pos_NODES} --ntasks=${pos_NTASKS} \
@@ -258,10 +261,13 @@ do
   fi
   
   # UPDATE INCREMENTS
-  # Itterate 'simPerJob' times and increment `startDate` to calculate the 
+  # Iterate 'simPerJob' times and increment `startDate` to calculate the 
   # new startDate of the next job. This loops to me seems the easyest solution
   # to make use of native `date` increments like ''1 month', '10 days', etc.  
   # And increment `loop_counter` as well...
+  # KGo: Because per NoS job multiple operations are possible within one sbatch
+  # command, set by the simPerJob, the date has to be corrected here
+  # as NoS=SimPerJobxNrOfSbatchJobs (SbatchJobs can be multiple dependencies)
   i=1; while [ $i -le $simPerJob ]; do
     startDate=$(date -u -d "${startDate} +${simLength}" "+%Y-%m-%dT%H:%MZ")
     ((loop_counter++))
