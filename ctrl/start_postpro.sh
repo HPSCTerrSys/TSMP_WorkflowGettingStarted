@@ -42,6 +42,9 @@ SimresDir="${BASE_SIMRESDIR}/${formattedStartDate}"
 ToPostProDir="${BASE_RUNDIR}/ToPostPro/${formattedStartDate}"
 PostProStoreDir="${BASE_POSTPRODIR}/${formattedStartDate}"
 SLOTHDIR="${BASE_SRCDIR}/SLOTH/sloth"
+
+
+# comment start here to only run monitoring
 # Remove ToPostProDir in case already exisit, to avoid conflicts.
 # E.g. from some simulation before.
 if [[ -d ${ToPostProDir} ]]; then
@@ -79,8 +82,11 @@ wait
 
 # clean up temp-files
 rm -rv ${ToPostProDir}
+# comment end here to only run monitoring
 
 
+
+# comment start here to only run postpro processing
 echo "-- START monitoring and monitoring-ts"
 newMonitoringDir="${BASE_MONITORINGDIR}/${formattedStartDate}"
 # Clean up if already exist, to avoid conflicts.
@@ -108,5 +114,6 @@ python monitoring_SanityCheck.py \
   --runName ${CaseID} &
 wait
 echo "--- END monitoring"
+# comment endhere to only run postpro processing
 
 exit 0

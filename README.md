@@ -3,6 +3,11 @@
 **This is the experiment leaflet for the simulation experiment with the 
 experiment-ID as in the heading.**
 
+> :warning: **Warning**  
+> cjjsc39 is after an incident in July 2023 on fixed budget until the end of 
+> August, hence ALL compute time might be used at once; only a limited number 
+> of people are therefore allowed access to cjjsc39 and use compute time.
+
 ## Context
 
 - Baseline simulation of the DETECT D02 project (S. Kollet)
@@ -55,8 +60,14 @@ submodules (see `git submodule status`), when cloning a git submodule always
 the latest HEAD is pulled. Hence it might be needed to set the HEAD to a 
 specific commit to reproduce the exact simulation experiment.
 
-Follow the setup instructions below to obtain these repos. But make sure you 
-have the correct commit and branch checked out. For example do a:
+Follow the setup instructions below (generic Workflow-Engine setup)) to obtain 
+these repos, either as a submodule, or by cloning them one by one. But make 
+sure you have the correct commit and branch checked out. 
+
+`cd` into every repo directory and check whether you have the right components
+as listed above (branch OK?, commit OK?).
+
+For example do a:
 
 ```bash
 git log --oneline -1
@@ -72,19 +83,28 @@ git reset --hard 1eb4c447
 
 or do a 
 
-```bach
+```bash
 git clone -n <repo_name> 
 git checkout <commit_sha>
 ```
 
 (See here on how to revover from a ['Deteched HEAD' state](https://circleci.com/blog/git-detached-head-state/?utm_source=google&utm_medium=sem&utm_campaign=sem-google-dg--emea-en-dsa-tROAS-auth-nb&utm_term=g_-_c__dsa_&utm_content=&gclid=CjwKCAjwt52mBhB5EiwA05YKowS4Lli89cXh6W4sT_CTlGJH1rdKN8JX7QSSHG-zZmK5v36JSldJohoCgGkQAvD_BwE))
 
-Fixes and improvements in the respective repos might be ingested in different 
-ways (see additional documentation link below), and might lead to release
-changes (as documented in the CHANGELOG and with the `HISTORY.txt` file with
-each simulation. In case of a major change the use CASE might change, e.g.,
-from "ProductionV1" to "ProductionV2" make this obvious. If a major change is 
-needed, it might lead also to a complete new experiment.
+**IMPORTANT**: Parflow is cloned from https://github.com/HPSCTerrSys/parflow.git
+but there is a bug in one of the latest commits before system hand-over on
+2023-07-28; default commit on which the HEAD is pointing does not run. 
+In branch UseMaskNc the HEAD is on 1b6071fa of 2023-07-13, this causes issues
+due to the implementation of "ifdef readclm"; hence use 
+`git reset --hard 1eb4c447` to go upstream 2 commits to 2023-05-31; this is also
+the version used for testing and implementation of the NWagner implementation 
+of 2023-07-28. (See also "Notes" section below.)
+
+> Fixes and improvements in the respective repos might be ingested in different 
+> ways (see additional documentation link below), and might lead to release
+> changes (as documented in the CHANGELOG and with the `HISTORY.txt` file with
+> each simulation. In case of a major change the use CASE might change, e.g.,
+> from "ProductionV1" to "ProductionV2" make this obvious. If a major change is 
+> needed, it might lead also to a complete new experiment.
 
 ## Setup
 
@@ -94,9 +114,7 @@ needed, it might lead also to a complete new experiment.
 - TSMPv1 model system 
 - 1979-2023 simulation timespan, 1979 counts as spinup
 - x3 1970-1979 spinup beforehand, see seperate infomration by NWagner
-- JURECA-DC CPU
 - stage2023
-- cjjsc39 compute + jjsc39 data projects
 - 1979/01 start of main experiment (COSMO coldstart), CLM+ParFLow: restart from 
 SPINUP03
  
@@ -113,6 +131,11 @@ runsi, (d) DETECT requiremnets, (e) new CORDEX-CMIP6 variable lists.
 
 For details, see namelists: https://icg4geo.icg.kfa-juelich.de/Configurations/TSMP_namelists/TSMP_EUR-11_eval
 
+## HPC
+
+- JURECA-DC CPU
+- cjjsc39 compute + jjsc39 data projects
+
 ## Implementation and checks
 
 in CASES "MainRun" and "ProductionTest" (see ./ctrl/CASES.conf ./ctrl/CASES.conf
@@ -120,12 +143,20 @@ in CASES "MainRun" and "ProductionTest" (see ./ctrl/CASES.conf ./ctrl/CASES.conf
 - Check functionality of Workflow-Engine, adjustment to new use case
 - Refinements and fixes
 - Exact reproduction after implementation of test and developer simulations by NWagner (checking 1979/01), forcing files, simulation results, postprocessing, monitoring, logfiles; restarts work properly, also in 1979/01
-- Check of setup and configuration once more: check of compatibility with and suitability for DETECT and CORDEX; check of correct static fields (land cover, indicator file, ParFlow slopes); various cross checks (static input equals static output)
+- Check of setup and configuration once more: check of compatibility with and suitability for DETECT and CORDEX; check of correct static fields (land cover, indicator file, ParFlow slopes); various cross checks (static input equals static output); etc.
 
 ## Related experiments
 
+With this expeirment the TSMPv1 Workflow Engine has been refined to production
+readiness for DETECT D02 runs. Form this expeirment other experiments will be 
+derived ("baseline" refers to it as a reference simulaiton for DETECT but also
+as a reference for the configuration and setup for other expeirmnets). Also the 
+3km eval runs will be derived (and adjusted) from this experiment. A generic 
+version of the TSMPv1 Workflow Engine will also be derived.
+
 exp-ID:
 - https://icg4geo.icg.kfa-juelich.de/Configurations/TSMP/DETECT_EUR-11_ECMWF-ERA5_evaluation_r1i1p1_FZJ-COSMO5-01-CLM3-5-0-ParFlow3-12-0_vBaselineHwu
+- also the 1D subsurface flow eval ERA5.1 EUR-11 will be derived
 
 ## Responsibilities
 
@@ -146,6 +177,8 @@ production mode:
 - No seaice setting in COSMO (COPAT2 with C2C316=False as well)
 - Aerosol treatment is not in line with EURO-CORDEX CMIP6 EUR-11 protocol
 - Get SSP transient CO2 forcing in to COSMO v5.01 (`src_radiation.f90`)
+- Switch from RCP4.5 to SSP3-7.0, this is required as GHG forcing from
+  2015 to the end in 2022 of the eval runs, so perhaps adjust to this.
 
 Technical:
 - HeAT is still not used from its github repo but from local JSC install, neded 
@@ -175,16 +208,27 @@ COSMO.
 needed for any part of the workflow later on.
 - Parflow shows in layer 0 saturation < 1 at 1979-01-01_00
 - `subSurfStor_ts_*` in `monitoring/` does not contain timeseries from SPINUP03
+  but this is OK
 - Postprocessing: time-vector is missing in CLM output
 - Postprocessing: pCMORizer.f90 not yet activated
 - ParFlow had to be set back by 2 commits to prevent runtime error (`ifdef readclm`)
+- `llb_qii=True` in COSMO `INPUT_IO` namelist may better be `False`, as in default,
+  large model domain, mostly only specific humidity is available from GCM; 
+  lots of spatial spinup zone
+- Perhaps nco tools need additional attention, `-O` flag, in in `ctrl/postpro/*.sh`
+  as I/O vs script operations may lead to conflicts and stalling abort of nco
+- Unclear whether the starter.sh -> submit -> start_process combination is ideal:
+  in submit_postpro.sh NoS counter submits all jobs in a row without dependency,
+  hence when running several postpro jobs, they do not wait for each other, which
+  is mixing up the TWS timeseries in the monitoring, as the values get appended and
+  not sorted into the netCDF files.
 
 ## Runtime behaviour
 
 See `starter.sh` for resource allocation.
 
 Preprocessing
-- About 25min wall clock time
+- About 25min wall clock time per month
 
 Simulation
 - Between 3.5h and 5.5h wall clock time
@@ -196,14 +240,17 @@ Postprocessing
 - 73GB, 118 files, ParFlow
 - 67GB, 182 files, COSMO
 
+(depends on number of days per month)
+
 Monitoring
+- About 10min wall clock time per month.
 - Use `gpicview` to check monitoring png files on HPC front nodes.
 
 Finalisation
-- About 10min wall clock time
+- About 10min wall clock time per month
 - Reduces about 450GB to about 200GB per month.
 
-## Set up the TSMP_Workflow-Engine
+## Set up the TSMP_Workflow-Engine (generic)
 
 **First**, clone this repository into your project-directory with its 
 dependencies provided as git submodules, 
@@ -463,19 +510,65 @@ data. One can also run monitoring independently. Postpro+monitoring should be
 done in chronilogical order as timeseries of subsurface storage are generated, 
 whose values are appended (ts netCDF files).
 
+When posatpro or minitoring is started without any other dependency they are 
+run in parallel. For monitoring this is a problem as the ts files get mixed up.
+For postprocessing it does not matter.
+
 ## Archiving of simulation results
 
 After postprocessing and finalization (gzip) this is done manually:
 
 ```bash
 cd ctrl/
-bash ./aux_MigrateFromScratch.sh /p/largedata/jjsc39/goergen1/sim/DETECT_EUR-11_ECMWF-ERA5_evaluation_r1i1p1_FZJ-COSMO5-01-CLM3-5-0-ParFlow3-12-0_vBaseline/simres/ProductionV1/ /p/scratch/cjjsc39/goergen1/sim/DETECT_EUR-11_ECMWF-ERA5_evaluation_r1i1p1_FZJ-COSMO5-01-CLM3-5-0-ParFlow3-12-0_vBaseline/simres/ProductionV1/19790[1,2]*
+nohup bash ./aux_MigrateFromScratch.sh /p/largedata/jjsc39/goergen1/sim/DETECT_EUR-11_ECMWF-ERA5_evaluation_r1i1p1_FZJ-COSMO5-01-CLM3-5-0-ParFlow3-12-0_vBaseline/simres/ProductionV1/ /p/scratch/cjjsc39/goergen1/sim/DETECT_EUR-11_ECMWF-ERA5_evaluation_r1i1p1_FZJ-COSMO5-01-CLM3-5-0-ParFlow3-12-0_vBaseline/simres/ProductionV1/19790[1,2]* &
 ```
 
 Any filename matching pattern can be used; granularity of the tar-balls: about 
 200GB / month. All stored data are in a single tar-ball.
 
-Store initially not on archive (tape) but on largedata. `$largedata`-storage can be done by different users; tape storage should be done only by a single user (e.g., goergen1 or kollet1).
+Store initially not on archive (tape) but on largedata. `$largedata`-storage 
+can be done by different users; tape storage should be done only by a single 
+user (e.g., goergen1 or kollet1).
+
+At the start of the model runs, data is still kept oin scartch in 
+`simres/ProductionV1/REMOVE_*` dirs for easier acces in case something 
+needs checking; these directories might be removed once space becpomes an issue
+as data is arcjived in tar-balls eithe ron $largedata or $archive.
+
+## General remarks daily operation
+
+(see also the "Further dokcumenattion" below)
+
+- Consider only `ProductionV1/`; the CASE dirs MainRun and ProductionTest are 
+  from implementation and testing and can be removed. They are kept in case 
+  anything needs additional checking. All checks are documented though.
+- Run in monthly chunks, `NoS`in `starter.sh` determines for how many.
+- `simPerJob` is not used
+- All is run, processed, stored under jjsc39 and cjjsc39.
+- Fellow users iof the cjjsc39 and jjsc39 from Uni Graz, Wegener Center in case
+  there is an issue with quota etc.: heimo.truhetz@uni-graz.at (PI), 
+  leander.lezameta@edu.uni-graz.at aditya.mishra@uni-graz.at
+- Checking data and inode quotas for cjjsc39 and jjsc39:
+  `cd /p/project/cjjsc39 && ./quota_usage_by_proj_members.sh`
+- Postprocessing and monitoring might be done in seperate steps 
+  (`start_propro.sh` needs manual modification); when starting 
+  postprocessing only, all jobs start running in parallel. If
+  the monitoring is not commented then, this leads to a mix up of the TWS
+  timeseries in `monitoring/`.
+- There is `$rootdir/tmp`, which does not belong to the dir-structure of the 
+  Workflow-Engine, but contains a few very specific files and tools from tests.
+  Could also be removed, but handy to have this. Shall not grow large. If
+  somethign is needed longer-term it must go into `ctrl/`.
+- Aside form checking slurm queue, `ctrl/logs` and `monitoring/`; good check
+  is also on the number of files and data volume of `simres/` and 
+  `postpro`. E.g.: `cd ${rootdir}/postpro/ProductionV1 && for i in 1980{01..11}* ; do echo $i && du -sh $i/* && ls -1 $i/clm | wc -l && ls -1R $i/cosmo | wc -l && ls -1 $i/parflow | wc -l ; done`
+- **Usual procedure:** 1 run preprocessing independently; 2 run simulations 
+  independently; 3 run postprocessing incl. monitoring and finalisation 
+  together. 4 Archiving can be manually triggered. Good alternative might also 
+  be to run  2+3 together, keeps the storage footprint small. Interplay of:
+  `startDate`, `NoS`, `dependency`, `pre / sim / pos / fin` in `starter.sh`
+  If a combination is run, then 3 runs in the background while the next
+  simulation already starts.
 
 ## Further documentation
 Please find further and more general information about the TSMP Workflow-Engine 

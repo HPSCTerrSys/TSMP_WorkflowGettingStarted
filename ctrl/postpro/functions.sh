@@ -144,7 +144,7 @@ function timeseriesz() (
     # in case cell_methods exists the value of the time variable is replaced by the value of middle of the time interval
    if [ "$(${NC_BINDIR}/ncdump -h ${OUTDIR}/${PARAM}${ZLEV}z${NN}_ts.nc | grep ${PARAM}:cell_methods | grep time)" != "" ]
     then
-      ${NCO_BINDIR}/ncwa -h -C -v time_bnds -a bnds ${OUTDIR}/${PARAM}${ZLEV}z${NN}_ts.nc tmp.nc
+      ${NCO_BINDIR}/ncwa -h -O -C -v time_bnds -a bnds ${OUTDIR}/${PARAM}${ZLEV}z${NN}_ts.nc tmp.nc # first time tmp.nc is created, if still exists, code fails
       ${NCO_BINDIR}/ncrename -h -v time_bnds,time tmp.nc
       ${NCO_BINDIR}/ncatted -h -a ,time,d,,, tmp.nc
       ${NCO_BINDIR}/ncks -h -A tmp.nc ${OUTDIR}/${PARAM}${ZLEV}z${NN}_ts.nc
@@ -157,7 +157,7 @@ function timeseriesz() (
    else
   # otherwise, i.e. for intantaneous values, time_bnds are deleted
       ${NCO_BINDIR}/ncatted -h -a bounds,time,d,, ${OUTDIR}/${PARAM}${ZLEV}z${NN}_ts.nc
-      ${NCO_BINDIR}/ncks -h -x -v time_bnds ${OUTDIR}/${PARAM}${ZLEV}z${NN}_ts.nc tmp.nc
+      ${NCO_BINDIR}/ncks -h -O -x -v time_bnds ${OUTDIR}/${PARAM}${ZLEV}z${NN}_ts.nc tmp.nc
       mv tmp.nc ${OUTDIR}/${PARAM}${ZLEV}z${NN}_ts.nc
    fi
     ${NCO_BINDIR}/ncwa -O -a ${HEIGHT},$1 ${OUTDIR}/${PARAM}${ZLEV}z${NN}_ts.nc tmp.nc

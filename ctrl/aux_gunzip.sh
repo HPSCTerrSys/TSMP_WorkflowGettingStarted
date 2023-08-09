@@ -15,6 +15,9 @@
 # for i in $(find /p/scratch/cjjsc39/goergen1/sim/DETECT_EUR-11_ECMWF-ERA5_evaluation_r1i1p1_FZJ-COSMO5-01-CLM3-5-0-ParFlow3-12-0_vBaseline/simres/ProductionV1/REMOVE_1979010100 -type f -name '*.gz') ; do echo $i ; done
 # recurseiveness is missing with subdirs with COSMO
 
+# Some hardcoding due to COSMO subdirectories needed in conjunction with 
+# the passing of positional parameters to the script
+
 parallelGzip() (
   # Simple run gzip on inFile
   tmpInFile=$1
@@ -23,11 +26,11 @@ parallelGzip() (
 
 MAX_PARALLEL=${SLURM_NTASKS}
 echo "MAX_PARALLEL: $MAX_PARALLEL"
-inFiles=$@
-echo "${inFiles[@]}"
-# set some helper-vars
+##inFiles=$@
+##echo "${inFiles[@]}"
 tmp_parallel_counter=0
-for inFile in $inFiles
+##for inFile in $inFiles
+for inFile in $(find /p/scratch/cjjsc39/goergen1/sim/DETECT_EUR-11_ECMWF-ERA5_evaluation_r1i1p1_FZJ-COSMO5-01-CLM3-5-0-ParFlow3-12-0_vBaseline/simres/ProductionV1/1979100100 -type f -name '*.gz')
 do
   echo "DEBUG: inFile ${inFile}"
   parallelGzip ${inFile} &
@@ -41,3 +44,5 @@ do
   fi
 done
 wait
+
+exit 0
