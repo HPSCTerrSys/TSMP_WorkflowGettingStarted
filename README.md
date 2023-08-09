@@ -60,9 +60,9 @@ submodules (see `git submodule status`), when cloning a git submodule always
 the latest HEAD is pulled. Hence it might be needed to set the HEAD to a 
 specific commit to reproduce the exact simulation experiment.
 
-Follow the setup instructions below (generic Workflow-Engine setup)) to obtain 
-these repos, either as a submodule, or by cloning them one by one. But make 
-sure you have the correct commit and branch checked out. 
+Follow the setup instructions below (generic Workflow-Engine setup) to obtain 
+these repos, either as a submodule, or by cloning them one by one. **But make 
+sure you have the correct commit and branch checked out!**
 
 `cd` into every repo directory and check whether you have the right components
 as listed above (branch OK?, commit OK?).
@@ -212,7 +212,7 @@ needed for any part of the workflow later on.
 - Postprocessing: time-vector is missing in CLM output
 - Postprocessing: pCMORizer.f90 not yet activated
 - ParFlow had to be set back by 2 commits to prevent runtime error (`ifdef readclm`)
-- `llb_qii=True` in COSMO `INPUT_IO` namelist may better be `False`, as in default,
+- `llb_qi=True` in COSMO `INPUT_IO` namelist may better be `False`, as in default,
   large model domain, mostly only specific humidity is available from GCM; 
   lots of spatial spinup zone
 - Perhaps nco tools need additional attention, `-O` flag, in in `ctrl/postpro/*.sh`
@@ -244,7 +244,7 @@ Postprocessing
 
 Monitoring
 - About 10min wall clock time per month.
-- Use `gpicview` to check monitoring png files on HPC front nodes.
+- Use `gpicview` or `display` to check monitoring png files on HPC front nodes.
 
 Finalisation
 - About 10min wall clock time per month
@@ -297,8 +297,8 @@ git reset --hard 1eb4c447 # with latest commits code does not run
 With UseMaskNc and commits `1eb4c447c68c547217e18c4d2a2b00866b641bd3`,
 `5f0d24d8bcee4b4300494f07d92d7f6d563a86ef` ParFlow does not run.
 
-Todo: Specify commits or tags of all repos to be used and list respective 
-commands here.
+See above what needs to be done to set the current git HEAD to the commit with
+which ParFLow is running. So this before the built.
 
 Build the binaries (uses software stage 2023):.
 
@@ -477,7 +477,9 @@ We use caf-files from the CLM-Community as a basis to generate
 ${BASE_ROOT}/forcing
 ln -sf /p/largedata2/detectdata/CentralDB/era5/ ./cafFilesIn
 ```
-**TBE**
+
+Run the starter.sh with the `pre=True` flag. All is in place to produce the 
+right forcing files.
 
 ## Start a simulation
 
@@ -488,15 +490,14 @@ during compilation.
 `$BASE_DIR/ctrl/envs/env_simulation` needs to be the same as 
 `$BASE_DIR/src/TSMP/bldsva/machines/loadenvs.Intel`
 
-
 ``` bash
 cd $BASE_ROOT/ctrl
-# adjust according to you need between 
+# adjust according to you needs between the following lines
 # 'Adjust according to your need BELOW'
-# and
+# and this line
 # 'Adjust according to your need ABOVE'
-vi ./starter.sh 
-# start the simulation
+vim ./starter.sh 
+# then you may start the simulation or a part thereof
 ./starter.sh 
 ```
 
