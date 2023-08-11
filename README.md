@@ -199,16 +199,17 @@ Technical:
 ## Notes
 
 - `$BASE_ROOT/geo/TSMP_EUR-11/static/int2lm/EUR-11_TSMP_FZJ-IBG3_464x452_EXTPAR.nc` 
-contains GLOBCOVER2009 land cover data; the experiment uses GLC2000; if boundary
-conditions are generated with `int2lm`for COSMO, then this LULC dataset is used; 
-albeit CLM uses GLC2000; but in case a COSMO-only simulation is to be done, this
-needs to be observed. In that case a new extpar file needs to be generated for 
-COSMO.
+  contains GLOBCOVER2009 land cover data; the experiment uses GLC2000; if boundary
+  conditions are generated with `int2lm`for COSMO, then this LULC dataset is used; 
+  albeit CLM uses GLC2000; but in case a COSMO-only simulation is to be done, this
+  needs to be observed. In that case a new extpar file needs to be generated for 
+  COSMO.
 - Note `$BASE_ROOT` and `$TSMP_DIR` are just used in this README.md, they are not
-needed for any part of the workflow later on.
+  needed for any part of the workflow later on.
 - Parflow shows in layer 0 saturation < 1 at 1979-01-01_00
 - `subSurfStor_ts_*` in `monitoring/` does not contain timeseries from SPINUP03
-  but this is OK
+  but this is OK, even if entries in the `ts_` are double, the plots are fine in 
+  monitoring
 - Postprocessing: time-vector is missing in CLM output
 - Postprocessing: pCMORizer.f90 not yet activated
 - ParFlow had to be set back by 2 commits to prevent runtime error (`ifdef readclm`)
@@ -574,7 +575,7 @@ as data is arcjived in tar-balls eithe ron $largedata or $archive.
   `pre / sim / pos / fin` and `simPerJob` in `starter.sh`.
 - Remember: Keep all nice and tidy, do not clutter!
 
-Four operating modes:
+Four operating modes (just use starter.shh settings, no need to change the code):
 1) If you want to run multiple instances (months) of a single processing step
    (e.g., postprocessing), set NoS=simPerJob=number_of_months_to_process
    beginning at the start time, then there is no dependency in sbatch, but there
