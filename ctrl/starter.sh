@@ -11,8 +11,8 @@ simLength='1 month'  # length of one simulaiton. Has to be a valid `date`
                      # option like '1 month', '10 days', etc. (number is 
                      # IMPORTANT!)
                      # AT THE MOMENT simLength>=1day IS NEEDED!
-NoS=3              # total number of tasks (NoS/simPerJob=numberof sbatch jobs)
-startDate="1980-10-01T00:00Z" # start date - is changing while simulation is
+NoS=9            # total number of tasks (NoS/simPerJob=numberof sbatch jobs)
+startDate="1981-04-01T00:00Z" # start date - is changing while simulation is
                      # progressing.
 initDate="1979-01-01T00:00Z"  # init date - is fix for entre simulation 
                      # The format of `startDate` and `initDate` hast to follow 
@@ -23,13 +23,13 @@ dateString='+%Y%m%d%H' # The date string used to name simulation results etc.
 dependency=12200000  # JOBID to depend the following jobs on
                      # if set JOBID is below latest JOBID the job starts without
 		                 # dependency automatically
-simPerJob=3          # number of simulaitons to run within one job (less queuing 
+simPerJob=1          # number of simulaitons to run within one job (less queuing 
                      # time?), default by NWa is 4
                      # -> 6: run 6 simulaitons within one big job
 pre=false # Define which substeps (PREprocessing, SIMulation, 
-sim=false # POStprocessing, FINishing) should be run. Default is to
+sim=true # POStprocessing, FINishing) should be run. Default is to
 pos=true # set each substep to 'true', if one need to run individual 
-fin=false # steps exclude other substeps by setting to 'false'
+fin=true # steps exclude other substeps by setting to 'false'
 computeAcount='jjsc39' # jjsc39, slts, esmtst
 CTRLDIR=$(pwd)       # assuming one is executing this script from the 
                      # BASE_CTRLDIR, what is the cast most of the time
@@ -64,8 +64,7 @@ sim_MAILTYPE=ALL
 pos_NODES=1
 pos_NTASKS=128
 pos_NTASKSPERNODE=128
-#pos_WALLCLOCK=02:15:00 # (vis is about 10min, only for single month)
-pos_WALLCLOCK=07:00:00
+pos_WALLCLOCK=01:30:00 # (vis is about 10min, only for single month)
 pos_PARTITION=dc-cpu #dc-cpu-devel
 pos_MAILTYPE=ALL
 # def SBATCH for finishing

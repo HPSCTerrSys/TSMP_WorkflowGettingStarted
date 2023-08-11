@@ -426,12 +426,12 @@ the year 1979, for which restart files must copied from (observe checksums):
 /p/largedata2/detectdata/projects/Z04/SPINUP_TSMP_EUR-11/restarts/parflow
 ``` 
 
-Highly important: TSMP in this setup and configuration has been run from 1970 to 
+**Highly important: TSMP in this setup and configuration has been run from 1970 to 
 1979 three times to spinup the sub-surface; hence these restart files need to be
 used; these restart runs were done with the static fields and ERA5 boundary 
 conditions; COSMO needs to cold-start as 1979 is the official spinup year of 
 CORDEX and the atmosphere has only a short-term memory as opposed to the 
-sub-surface.
+sub-surface.**
 1979-01-01_00:00:00
 COSMO: cold-start
 CLM: restart
@@ -543,7 +543,9 @@ as data is arcjived in tar-balls eithe ron $largedata or $archive.
 - All is run, processed, stored under jjsc39 and cjjsc39.
 - Fellow users iof the cjjsc39 and jjsc39 from Uni Graz, Wegener Center in case
   there is an issue with quota etc.: heimo.truhetz@uni-graz.at (PI), 
-  leander.lezameta@edu.uni-graz.at aditya.mishra@uni-graz.at
+  leander.lezameta@edu.uni-graz.at, aditya.mishra@uni-graz.at
+- Watch out: aux-scripts for gzip and gunzip have some hardcoded dir names.
+  Only used for manual operation only anyway.
 - Checking data and inode quotas for cjjsc39 and jjsc39:
   `cd /p/project/cjjsc39 && ./quota_usage_by_proj_members.sh`
 - Postprocessing and monitoring might be done in seperate steps 
@@ -552,7 +554,8 @@ as data is arcjived in tar-balls eithe ron $largedata or $archive.
   the monitoring is not commented then, this leads to a mix up of the TWS
   timeseries in `monitoring/`. This happens only if $NoS>1 and $simPerJob=1,
   if $NoS=1 and $simPerJob>1, then different passes are done sequentially
-  within the submit_postpro.sh script, within one sbatch job.
+  within the submit_postpro.sh script, within one sbatch job. Normally
+  do not change these scripts, keep the combination postpro and monitoring.
 - There is `$rootdir/tmp`, which does not belong to the dir-structure of the 
   Workflow-Engine, but contains a few very specific files and tools from tests.
   Could also be removed, but handy to have this. Shall not grow large. If
@@ -560,35 +563,44 @@ as data is arcjived in tar-balls eithe ron $largedata or $archive.
 - Aside form checking slurm queue, `ctrl/logs` and `monitoring/`; good check
   is also on the number of files and data volume of `simres/` and 
   `postpro`. E.g.: `cd ${rootdir}/postpro/ProductionV1 && for i in 1980{01..11}* ; do echo $i && du -sh $i/* && ls -1 $i/clm | wc -l && ls -1R $i/cosmo | wc -l && ls -1 $i/parflow | wc -l ; done`
-- **Usual procedure:** 1 run preprocessing independently; 2 run simulations 
-  independently; 3 run postprocessing incl. monitoring and finalisation 
-  together. 4 Archiving can be manually triggered. Good alternative might also 
-  be to run  2+3 together, keeps the storage footprint small. Interplay of:
-  `startDate`, `NoS`, `dependency`, `pre / sim / pos / fin` and `simPerJob` in 
-  `starter.sh`.
-  If a combination is run, then 3 and 4 run in the background while the next
-  simulation already starts.
+- **Usual procedure:** run preprocessing independentlyi and in parallel 
+  (see 4 below); run simulations together with postprocessing incl. monitoring 
+  and finalisation together (see 2 below). Archiving is manually triggered. 
+  This keeps the storage footprint small. Forcing files are kepti, will be used.
+  for other experiments (via `ln -s`); if some problems needs fixing and the 
+  is not wanted, this is done later with 4 from below. If postpro issues occur,
+  then only Sims are run via 2, psotpro+monitor are run via 1 from below.
+- Run-control is an interplay of: `startDate`, `NoS`, `dependency`, 
+  `pre / sim / pos / fin` and `simPerJob` in `starter.sh`.
+- Remember: Keep all nice and tidy, do not clutter!
 
 Four operating modes:
 1) If you want to run multiple instances (months) of a single processing step
    (e.g., postprocessing), set NoS=simPerJob=number_of_months_to_process
    beginning at the start time, then there is no dependency in sbatch, but there
-   is a time loop in the submitted submit_postpro.sh, e.g.; 
+   is a time loop in the submitted submit_postpro.sh, e.g.; adjust the overall
+   wallclock time, the individual steps, like processing month1, then month2 if 1
+   has finished, will be done in succession.
 2) If the complete modelling chain (sim, pos, fin) is run in multiple batch jobs 
    with dependencies and one month per Job, set NoS>=1 (number of months) and 
    simPerJob=1. Simlation depends on itself, hence, if it ran successful next one
    will start; the pos and fin can run asounchronously in the background; they are
-   always slower than the simulation, hence there is no piling up of jobs.
+   always slower than the simulation, hence there is no piling up of jobs. The 
+   simulations depend on each other (and on preprocessing), the postprio and the 
+   finalisation depends on each individual simulation, hence, once a simulation has 
+   been successful, the postprto and finalisation of this simulation start and the 
+   next simulation as well.
 3) If, e.g., NoS=20 (total number of months) and simPerJob=5, then the all is done 
-   block-wise, multiple sims, after that multiple postpro, etc., then the complete
+   block-wise, 5 sims first, after that 5 postpro, etc., then the complete
    chain repeats itself, 4 times in total with dependencies.
-   In this case the wallclocktime per sbatch job has to accomodate all substeps, 
-   if longer wall clock and fwer sbatch jobs is efficient, then this is a good
-   option; if shorter jobs are faster in the queue, Nr2 is better (=KGo choice).
+   In this case, like with 1, the wallclocktime per sbatch job has to accomodate 
+   all substeps, if longer wall clock and fwer sbatch jobs is efficient, then 
+   this is a good option; if shorter jobs are faster in the queue, Nr2 is 
+   better (=KGo choice).
 4) If simPerJob=1, but NoS>1 and only a single processing step is run, then all
-   steps are run in parallel, as there is no dependency, e.g., with pos or fin;
-   this can be super efficient (messes up the monitoring though), hence this is
-   for the steps of finalisation or preprocessing.
+   sub-steps (=months) are run in parallel, as there is no dependency, e.g., 
+   with pos or fin; this can be super efficient (messes up the monitoring though), 
+   hence this is for the steps of finalisation or preprocessing.
    **Only for simulations, due to the dependency setting, one waits for 
    the other.**
 
