@@ -419,7 +419,7 @@ EOM
 check4error $? "--- ERROR while creating HISTORY.txt"
 # We need to escape \$path and \$toplevel as those variables are part of the 
 # namespace from `git submodule foreach` and not from this script.
-git submodule foreach "logSubmodule \$path ${logdir} TestHistfile.txt || :"
+git submodule foreach "logSubmodule \$path ${logdir} ${histfile} || :"
 check4error $? "--- ERROR while creating HISTORY.txt"
 
 echo "###################################################"

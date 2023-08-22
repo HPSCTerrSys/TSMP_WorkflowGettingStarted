@@ -194,7 +194,7 @@ Technical:
   towards 1 SYPD -- if possible at all, without MSA
 - COSMO postprocessing not as efficient as possible (cosmo trailing behind when 
   others are done already).
-- HISTORY.txt does not contain commit-information other than workflow engine.
+- Until 19851201 commit information is seperated in two files HISTORY.txt (workflow engine) and TestHistfile.txt (submodules). Unified in HISTORY.txt from 19860101.
 
 ## Notes
 
