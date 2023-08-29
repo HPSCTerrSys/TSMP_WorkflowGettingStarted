@@ -28,4 +28,9 @@ Than use links like:
 
 ## How to CI/CD
 
+Enable pages in GitHub:
+Settings --> 
+Source: deply from a branch
+Branch: gh-pages (auto generated)
+
 [TBE]

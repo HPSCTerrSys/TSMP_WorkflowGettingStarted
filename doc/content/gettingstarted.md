@@ -1,19 +1,19 @@
 # Getting Started 
 
-## Set up the TSMP_WorkflowStarter
+## Set up the TSMP_WorkflowGettingStarted
 
 **First**, clone this repository into your project-directory with its 
 dependencies marked with Git submodules, 
 
 ``` bash
 cd $PROJECT_DIR
-git clone --recurse-submodules https://github.com/niklaswr/TSMP_WorkflowStarter.git
+git clone --recurse-submodules https://github.com/HPSCTerrSys/TSMP_WorkflowGettingStarted.git
 ```
 
 and export the following path to an environment variable for later use.
 
 ``` bash
-cd $PROJECT_DIR/TSMP_WorkflowStarter
+cd $PROJECT_DIR/TSMP_WorkflowGettingStarted
 export BASE_ROOT=$(pwd)
 ```
 
@@ -24,7 +24,7 @@ CLM, and Oasis) into `src/TSMP/`,
 cd ${BASE_ROOT}/src/TSMP
 export TSMP_DIR=$(pwd)
 git clone https://icg4geo.icg.kfa-juelich.de/ModelSystems/tsmp_src/cosmo5.01_fresh.git  cosmo5_1
-git clone -b v3.12.0 https://github.com/parflow/parflow.git                             parflow
+git clone -b UseMaskNc https://github.com/HPSCTerrSys/parflow.git                             parflow
 git clone https://icg4geo.icg.kfa-juelich.de/ModelSystems/tsmp_src/clm3.5_fresh.git     clm3_5
 git clone https://icg4geo.icg.kfa-juelich.de/ModelSystems/tsmp_src/oasis3-mct.git       oasis3-mct
 ```
@@ -33,7 +33,6 @@ and build the binaries.
 
 ``` bash
 cd $TSMP_DIR/bldsva
-git apply ${BASE_ROOT}/ctrl/externals/TSMP_Patch/ClmSendZero.patch
 ./build_tsmp.ksh --readclm=true -v 3.1.0MCT -c clm-cos-pfl -m JURECA -O Intel
 ```
 
@@ -46,7 +45,7 @@ vi export_paths.sh
 ```
 
 Within this file change the line   
-`rootdir="/p/scratch/cesmtst/wagner6/${expid}"`   
+`rootdir="/PATH/TO/YOUR/EXPDIR/${expid}"`   
 according to you `$PROJECT_DIR` from above. To verify `rootdir` is set properly 
 do   
 `source $BASE_ROOT/ctrl/export_paths.sh && echo "$rootdir" && ls -l $rootdir`.    
@@ -94,10 +93,10 @@ cold-start, while CLM and ParFlow always expect restart-files. So the user
 only needs to provide restart-files for ParFlow and CLM only.
 
 In this example, we do run a simulation over the EUR-11 domain for the year 
-1970, for which restart files could be taken from:
+1979, for which restart files could be taken from:
 
 ```
-/p/project/cslts/wagner6/TempForcAndRestFileFor_TSMP_WorkflowStarter/restarts
+/p/largedata2/detectdata/projects/Z04/SPINUP_TSMP_EUR-11/restarts
 ``` 
 
 If needed, do request access to the related data project via [JuDoor](https://judoor.fz-juelich.de/login).
@@ -108,9 +107,9 @@ restart files there:
 ``` bash
 cd $BASE_ROOT/rundir/MainRun/restarts
 # copy CLM restart file
-cp -r /p/project/cslts/wagner6/TempForcAndRestFileFor_TSMP_WorkflowStarter/restarts/clm ./
+cp -r /p/largedata2/detectdata/projects/Z04/SPINUP_TSMP_EUR-11/restarts/clm ./
 # copy ParFlow restart file
-cp -r /p/project/cslts/wagner6/TempForcAndRestFileFor_TSMP_WorkflowStarter/restarts/parflow ./
+cp -r /p/largedata2/detectdata/projects/Z04/SPINUP_TSMP_EUR-11/restarts/parflow ./
 ```
 **NOTE**: 
 ParFlow needs the previous model-outpt as a restart-file, whereas CLM needs a 
@@ -135,26 +134,25 @@ are expected by the workflow under:
 $BASE_ROOT/forcing/laf_lbfd/all
 ```
 
-In this example, we do run a simulation over the EUR-11 domain for the year 
-1970, for which forcing files could be taken from:
-
+In the pre-processing step of this workflow the `laf_lbfd` files are generated
+by `INT2LM` automatically wherefore on has to provide the raw meterological data
+only, which are provided under:
 ```
-/p/project/cslts/wagner6/TempForcAndRestFileFor_TSMP_WorkflowStarter/forcing/laf_lbfd/1970
-``` 
-
+/p/largedata2/detectdata/CentralDB/era5/
+```
+and have to be linked to 
+```
+${BASE_ROOT}/forcing
+```
+to be found by the workflow.   
 If needed, do request access to the data project via [JuDoor](https://judoor.fz-juelich.de/login).
 
-To properly provide these files, do copy the directory from above to your 
-workflow and link all files to `$BASE_ROOT/forcing/laf_lbfd/all`
+To properly provide these files, do link the directory from above to your 
+workflow under `forcing/`
 ``` bash
-# move to forcing dir and copy forcing files
-cd $BASE_ROOT/forcing/laf_lbfd/
-cp -rv /p/project/cslts/wagner6/TempForcAndRestFileFor_TSMP_WorkflowStarter/forcing/laf_lbfd/1970 ./
-# link boundary files to all/
-cd $BASE_ROOT/forcing/laf_lbfd/
-mkdir all
-cd all
-ln -sf ../1970/l* ./
+# move to forcing dir and link forcing files
+${BASE_ROOT}/forcing
+ln -sf /p/largedata2/detectdata/CentralDB/era5/ ./cafFilesIn
 ```
 
 ## Start a simulation
@@ -175,8 +173,8 @@ vi ./starter.sh
 ## Exercice
 To become a little bit famillar with this workflow, work on the following tasks:
 
-1) Do simulate the compleat year of 2020.
-2) Plot a time serie of the spatial averaged 2m temperature for 2020.
+1) Do simulate the compleat year of 1979.
+2) Plot a time serie of the spatial averaged 2m temperature for 1979.
 3) Write down which information / data / files you might think are needed to 
    repoduce the simulation.
 4) Think about how you could check the simulation is running fine during 

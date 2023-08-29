@@ -1,6 +1,6 @@
 # Introdction
 
-[TSMP_WorkflowStarter]() provides an example of how to run bigger simulations. 
+[TSMP_WorkflowGettingStarted](https://github.com/HPSCTerrSys/TSMP_WorkflowGettingStarted) provides an example of how to run bigger simulations. 
 Bigger simulations, such as long lasting climate simulations, require a bit more 
 effort to run than the TSMP included test-cases.
 This extra effort ranges from a proper directory structure, to some helper 

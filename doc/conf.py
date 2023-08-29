@@ -6,7 +6,7 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project   = 'TSMP_WorkflowStarter'
+project   = 'TSMP_WorkflowGettingStarted'
 copyright = '2023, Niklas WAGNER'
 author    = 'Niklas WAGNER'
 version   = '1.1.0'
