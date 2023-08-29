@@ -33,22 +33,23 @@ and build the binaries.
 
 ``` bash
 cd $TSMP_DIR/bldsva
-./build_tsmp.ksh --readclm=true -v 3.1.0MCT -c clm-cos-pfl -m JURECA -O Intel
+./build_tsmp.ksh --readclm=true --maxpft=4 -c clm3-cos5-pfl -m JURECA -O Intel
 ```
 
-**Finally**, adapt `ctrl/export_paths.sh` to correctly determine the root 
-directory of this workflow:
+**Finally**, adapt `ctrl/export_paths.ksh` to correctly determine the root 
+directory of this workflow and `SimInfo.sh` to set the correct author dates:
 
 ``` bash
 cd $BASE_ROOT/ctrl
-vi export_paths.sh
+vi export_paths.ksh
+vi SimInfo.sh
 ```
 
-Within this file change the line   
+Within `export_paths.ksh` change the line   
 `rootdir="/PATH/TO/YOUR/EXPDIR/${expid}"`   
 according to you `$PROJECT_DIR` from above. To verify `rootdir` is set properly 
 do   
-`source $BASE_ROOT/ctrl/export_paths.sh && echo "$rootdir" && ls -l $rootdir`.    
+`source $BASE_ROOT/ctrl/export_paths.ksh && echo "$rootdir" && ls -l $rootdir`.    
 You should see the following content:
 
 ```
@@ -65,6 +66,11 @@ rundir/
 simres/
 src/
 ```
+
+Within `SimInfo.sh` change the lines `export AUTHOR_NAME="AUTHOR NAME"`, 
+`export AUTHOR_MAIL="AUTHOR EMAIL"`, and `export AUTHOR_INSTITUTE="INSTITUTE"`. 
+Those infromation are used to be loged and saved with the simulation results and
+the email is used to send `SLURM` notifications.
 
 The setup is now complete, and can be run after providing proper restart and 
 forcing files. 
@@ -151,7 +157,7 @@ To properly provide these files, do link the directory from above to your
 workflow under `forcing/`
 ``` bash
 # move to forcing dir and link forcing files
-${BASE_ROOT}/forcing
+cd ${BASE_ROOT}/forcing
 ln -sf /p/largedata2/detectdata/CentralDB/era5/ ./cafFilesIn
 ```
 
