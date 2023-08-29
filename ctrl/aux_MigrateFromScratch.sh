@@ -26,8 +26,7 @@ for SOURCE in $SOURCES; do
   tar -cvf ${TARGET}/${source_name}.tar ${source_name}
   if [[ $? != 0 ]] ; then echo "ERROR" && exit 1 ; fi
   echo "-- remove source"
-  mv ${source_name} REMOVE_${source_name} 
-  ###rm -rf ${source_name}
+  rm -rf ${source_name}
   echo "-- linking"
   ln -sf ${TARGET}/${source_name}.tar ./
   echo "-- done"

@@ -1,17 +1,6 @@
-CHANGELOG of experiment configuration and setup and workflow engine
+CHANGELOG of TSMP_WorkfloGettingStarted
 
-v1.0.1 
-  date: "2023-08-04"
+vMAJOR.MINOR.PATCH 
+  date: "DATE OF CHANGE"
   changes:
-    - Adjustment to affinity-related settings of sbatch and srun
-    - In effect with 1979/07
-v1.0.0 
-  date: "2023-08-02"
-  changes:
-    - Production version, multiple adjustments to the TSMPv1 WorkFlowEngine,
-      extensively tested system, used for production runs.
-v0.1.0
-  date: "2023-03-27"
-  changes:
-    - Pre-release version for testing. Please collect feedback in the issues 
-      section of this repository. 
+    - EXPLAIN WHAT CHANGED TO PREVIOUS VERSION

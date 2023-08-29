@@ -1,10 +1,10 @@
 #!/bin/bash
 # Owner / author
-export AUTHOR_NAME="Klaus GOERGEN"
-export AUTHOR_MAIL="k.goergen@fz-juelich.de"
-export AUTHOR_INSTITUTE="FZJ"
+export AUTHOR_NAME="AUTHOR NAME"
+export AUTHOR_MAIL="AUTHOR EMAIL"
+export AUTHOR_INSTITUTE="INSTITUTE"
 # Simulation / DRS
-export DRS_PROJECT_ID="DETECT"
+export DRS_PROJECT_ID="PROJECTID"
 export DRS_DOMAIN="EUR-11"
 export DRS_GCMMODEL="ECMWF-ERA5"
 export DRS_EXPERIMENT_NAME="evaluation"

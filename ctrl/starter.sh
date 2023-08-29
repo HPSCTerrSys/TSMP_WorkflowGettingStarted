@@ -11,8 +11,8 @@ simLength='1 month'  # length of one simulaiton. Has to be a valid `date`
                      # option like '1 month', '10 days', etc. (number is 
                      # IMPORTANT!)
                      # AT THE MOMENT simLength>=1day IS NEEDED!
-NoS=1            # total number of tasks (NoS/simPerJob=numberof sbatch jobs)
-startDate="1981-07-01T00:00Z" # start date - is changing while simulation is
+NoS=1                # total number of tasks (NoS/simPerJob=numberof sbatch jobs)
+startDate="1979-01-01T00:00Z" # start date - is changing while simulation is
                      # progressing.
 initDate="1979-01-01T00:00Z"  # init date - is fix for entre simulation 
                      # The format of `startDate` and `initDate` hast to follow 
@@ -26,15 +26,15 @@ dependency=12200000  # JOBID to depend the following jobs on
 simPerJob=1          # number of simulaitons to run within one job (less queuing 
                      # time?), default by NWa is 4
                      # -> 6: run 6 simulaitons within one big job
-pre=false # Define which substeps (PREprocessing, SIMulation, 
-sim=false # POStprocessing, FINishing) should be run. Default is to
-pos=true  # set each substep to 'true', if one need to run individual 
-fin=true  # steps exclude other substeps by setting to 'false'
-computeAcount='jjsc39' # jjsc39, slts, esmtst
+pre=true             # Define which substeps (PREprocessing, SIMulation, 
+sim=true             # POStprocessing, FINishing) should be run. Default is to
+pos=true             # set each substep to 'true', if one need to run individual 
+fin=true             # steps exclude other substeps by setting to 'false'
+computeAcount='clts' # slts, esmtst, ...
 CTRLDIR=$(pwd)       # assuming one is executing this script from the 
                      # BASE_CTRLDIR, what is the cast most of the time
 
-CaseID="ProductionV1"     # Which case to run? Cases are defined in ctrl/CASES.conf
+CaseID="MainRun"     # Which case to run? Cases are defined in ctrl/CASES.conf
                      # Available are: "ActiveLakes", "HetTen", "NoPfsol", 
                      #   "TestHincrad05", "SeepageFace", "SeepageFaceAndHetTen"
 

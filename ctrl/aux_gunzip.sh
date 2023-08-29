@@ -12,11 +12,6 @@
 # USAGE: 
 # >> sbatch ./$0 TARGET/FILES/WILDCARDS/ARE/POSSIBL*
 # >> sbatch ./aux_gunzip.sh /p/scratch/cjibg35/tsmpforecast/ERA5Climat_EUR11_ECMWF-ERA5_analysis_FZJ-IBG3/run_TSMP/laf_lbfd/201[8,9]
-# for i in $(find /p/scratch/cjjsc39/goergen1/sim/DETECT_EUR-11_ECMWF-ERA5_evaluation_r1i1p1_FZJ-COSMO5-01-CLM3-5-0-ParFlow3-12-0_vBaseline/simres/ProductionV1/REMOVE_1979010100 -type f -name '*.gz') ; do echo $i ; done
-# recurseiveness is missing with subdirs with COSMO
-
-# Some hardcoding due to COSMO subdirectories needed in conjunction with 
-# the passing of positional parameters to the script
 
 parallelGzip() (
   # Simple run gzip on inFile
@@ -26,11 +21,10 @@ parallelGzip() (
 
 MAX_PARALLEL=${SLURM_NTASKS}
 echo "MAX_PARALLEL: $MAX_PARALLEL"
-##inFiles=$@
-##echo "${inFiles[@]}"
+inFiles=$@
+echo "${inFiles[@]}"
 tmp_parallel_counter=0
-##for inFile in $inFiles
-for inFile in $(find /p/scratch/cjjsc39/goergen1/sim/DETECT_EUR-11_ECMWF-ERA5_evaluation_r1i1p1_FZJ-COSMO5-01-CLM3-5-0-ParFlow3-12-0_vBaseline/simres/ProductionV1/1979100100 -type f -name '*.gz')
+for inFile in $inFiles
 do
   echo "DEBUG: inFile ${inFile}"
   parallelGzip ${inFile} &
