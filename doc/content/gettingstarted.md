@@ -36,6 +36,32 @@ cd $TSMP_DIR/bldsva
 ./build_tsmp.ksh --readclm=true --maxpft=4 -c clm3-cos5-pfl -m JURECA -O Intel
 ```
 
+**Third**, install int2lm which is needed to prepare the COSMO forcing needed
+during the actual simulation. `int2lm` is provided as a submodule and can be
+found in `src/int2lm3.00/`.
+To build int2lm change to its directory and prepare the `Fopts` and `loadenv`
+file. You find predefined files in `LOCAL`, which you can simply link to the
+int2lm-rootdir:
+
+````
+cd ${BASE_ROOT}/src/int2lm3.00/                                                     
+ln -sf LOCAL/JUWELS_Fopts ./Fopts && ln -sf LOCAL/JUWELS_Stage2020_loadenv ./loadenv
+```
+
+Note: `Fopts` and `loadenv` are generic enough to work on both `JUWELS` and
+`JURECA`, so stick with them on both machines for now.
+After preparation, source the environment, clean up the installation directory,
+and compile the source:
+
+```
+cd ${BASE_ROOT}/src/int2lm3.00/                                                      
+source loadenv                                                                  
+make clean                                                                      
+make                                                                            
+```
+
+When no error is thrown, a binary called `int2lm3.00` is created.
+
 **Finally**, adapt `ctrl/export_paths.ksh` to correctly determine the root 
 directory of this workflow and `SimInfo.sh` to set the correct author dates:
 
