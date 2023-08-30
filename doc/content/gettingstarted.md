@@ -43,7 +43,7 @@ To build int2lm change to its directory and prepare the `Fopts` and `loadenv`
 file. You find predefined files in `LOCAL`, which you can simply link to the
 int2lm-rootdir:
 
-````
+```
 cd ${BASE_ROOT}/src/int2lm3.00/                                                     
 ln -sf LOCAL/JUWELS_Fopts ./Fopts && ln -sf LOCAL/JUWELS_Stage2020_loadenv ./loadenv
 ```
