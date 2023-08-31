@@ -24,7 +24,7 @@ Migrating in this context means:
 - Link new created tar-ball to source location
 
 Usage:  
-```
+``` bash
 # in the current shell
 bash aux_MigrateFromScratch.sh PATH/TO/TARGET PATH/TO/SOURCES/WILDCARDS/ARE/POSSIBL*
 # in the background
@@ -39,7 +39,7 @@ tar-balls, you need to untar / unpack them.
 So `aux_UnTarManyTars.sh` unpacks the provided tar-balls to a given target 
 location.  
 Usage:   
-```
+``` bash
 # in the current shell
 bash aux_UnTarManyTars.sh PATH/TO/TARGET PATH/TO/TARBALLS/WILDCARDS/ARE/POSSIBL*
 # in the background
@@ -56,7 +56,7 @@ started automatically when a file on that related tape is requested, but it
 can take some time. So if you need data that is no longer available on 
 spinning disk, use `aux_restageTape.sh` to restage this data.  
 Usage:   
-```
+``` bash
 nohup bash aux_restageTape.sh PATH/TO/DATA/WILDCARDS/ARE/POSSIBL* &
 ```
 
@@ -71,11 +71,16 @@ So `aux_gunzip.sh` and `aux_gzip.sh` does provide an auxiliary script to
 run `gzip` and `gunzip` on a computenode, using all available CPUs, thus 
 increasing compression speed drastically.   
 Usage:   
-```
+``` bash
 # compressing
 sbatch ./aux_gzip.s TARGET/FILES/WILDCARDS/ARE/POSSIBL*
 # uncompressing
 sbatch ./aux_gunzip.s TARGET/FILES/WILDCARDS/ARE/POSSIBL*
+```
+Even if the above two scripts are quiet easy, they can be very powerfull. For 
+example, can you imagine what the below call of `aux_gunzip.sh` is doing?
+``` bash
+sbatch aux_gunzip.sh ${BASE_ROOT}/simres/ProductionV1/*/{clm,cosmo,parflow}/{*/*,*}
 ```
 
 ## aux_sha512sum.sh
@@ -84,6 +89,6 @@ You may need to (re)calculate the checksum for some or many of the data in
 the workflow. Then `aux_sha512sum.sh` simply allows you to run this calculation 
 on a computenode to speed things up.  
 Usage:  
-```
+``` bash
 sbatch ./aux_sha512sum.sh TARGET/FILES/WILDCARDS/ARE/POSSIBL*
 ```

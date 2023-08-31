@@ -8,9 +8,9 @@ figure below should help you to understand the different terminology used.
 
 [![JobSubmission overview](./JobSubmission.png)](./JobSubmission.png)
 
-So the whole experiment (climate simulation from 1950 to 2100) consists of 
-several jobs. Each job does runs a specific substep for several months. 
-Dependencies between these jobs are indicated by arrows.   
+So the whole experiment (lets assume a climate simulation from 1950 to 2100) 
+consists of several jobs. Each job does runs a specific substep for several 
+months. Dependencies between these jobs are indicated by arrows.   
 For example, the job containing the `simulation` for Jan. and Feb. 1950 cannot 
 start before the job containing the `prepro` for the same months has finished. 
 Furthermore, the jobs that contain the `prepro` substeps do not see any 
@@ -60,8 +60,8 @@ required jobs with all necessary dependencies.
 
 A small note on the naming / wording used:   
 As the core of all substeps is the `simulation` substep, the terminology is 
-based on this. So we set a `simLength`, but this is e.g. also dictating the 
-`postpro` substep. Further we set `NoS` (**N**umber **o**f **S**imulations), 
-but also determine the number of `postpro`, and `finishing` substeps etc. 
-Similar for `simPerJob`.
+based on this. So we set a `simLength` (simulation length), but this is also 
+affecting the other substeps as `prepro`, `postpro`, and `finishing`. Further we 
+set `NoS` (**N**umber **o**f **S**imulations), but also determine the number of 
+`postpro`, and `finishing` substeps etc. Similar for `simPerJob`.
 

@@ -24,6 +24,7 @@ TSMP_WorkflowGettingStarted
    :caption: InDetail:
 
    content/inDetail/monitoring.md
+   content/inDetail/cases.md
    content/inDetail/ReproduceSimulation.md
    content/inDetail/maintenance.md
    content/inDetail/HowToContribute.md

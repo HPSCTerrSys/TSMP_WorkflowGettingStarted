@@ -74,8 +74,11 @@ months. To address this challenge, a monitoring functionality has been
 incorporated into this workflow.
 
 The monitoring functionality automatically generates summary plots at regular
-intervals, providing a concise overview of the simulation progress. These plots 
-are stored in the `monitoring/` directory, allowing users to conveniently monitor 
+intervals, providing a concise overview of the simulation progress. A detailed 
+description of the implementation could be found within the 
+[Simulation Monitoring](./inDetail/monitoring.md#simulation-monitoring) section.  
+Those monitoring plots are stored in the `monitoring/` directory, allowing users 
+to conveniently monitor 
 the simulation directly by browsing through them. It is also conceivable that 
 one could upload these plots to a web server, enabling even more accessible
 monitoring of the simulation. Scripts providing this functionality have been
@@ -88,7 +91,7 @@ understanding of the simulation results to effectively utilize these scripts.
 ## postpro/
 `postpro/` simply contains the **post-pro**cessed simulation results. The 
 post-processing step is thereby very individual for each simulation and can vary 
-from simple aggregation of simulation results to e.g. monthly files, to the 
+from simple aggregation of simulation results (to e.g. monthly files), to the 
 calculation of further diagnostics derived from the original simulation results.
 
 ## rundir/

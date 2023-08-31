@@ -23,7 +23,7 @@ Setting up the configure file is quite straightforward and well explained in the
 
 **Extensions**:  
 Below extensions for sphinx are used and needed to render the documentation:
-```
+``` bash
 extensions = [
         'sphinx.ext.autodoc',
         'sphinx.ext.viewcode',
@@ -38,7 +38,7 @@ extensions = [
 **MyST parser**:   
 [MyST](https://myst-parser.readthedocs.io/en/latest/) is a python parser for the markdown language available as an extension for sphinx. Further MyST can be used to generate link anchors, enabling to easily internally link different documentation pages. 
 Using MyST requires the following setting in `conf.py`:
-```
+``` bash
 myst_heading_anchors = 4
 
 myst_enable_extensions = [
@@ -48,7 +48,7 @@ myst_enable_extensions = [
 ```
 
 To use a link anchors, first scan the related file for available anchors
-```
+``` bash
 myst-anchors -l auxiliaryscripts.md
 >> <h1 id="auxiliary-scripts"></h1>
 >> <h2 id="aux_migratefromscratchsh"></h2>
@@ -58,13 +58,13 @@ myst-anchors -l auxiliaryscripts.md
 >> <h2 id="aux_sha512sumsh"></h2>
 ```
 than use a found anchor similar as normal links in markdown:
-```
+``` bash
 [aux_UnTarManyTars.sh](REL/PATH/TO/auxiliaryscripts.md#aux_untarmanytarssh)
 ```
 
 **Edit on GitHub button**:   
 By default, sphinx provides a `View page source` button in the top right corner of each page of the documentation. Clicking on this button will display the unrendered, raw content of that page. This functionality is not very helpful, but can easily be adapted into an `Edit on GitHub` button, which will take you directly to the corresponding file in the repository to quickly apply changes. How to use this feature is described in detail in the [How to contribute](./HowToContribute.md#how-to-contribute-to-the-documentation) section. To enable this functionality, the following settings are required in `conf.py`:
-```
+``` bash
 html_context = {
     "display_github": True, # Integrate GitHub
     "github_user": "HPSCTerrSys", # Username
@@ -80,7 +80,7 @@ The `index.rst` file forms the structure of the documentation and acts as a tabl
 Below is an example of an `index.rst` file with a screenshot of the generated table of contents:
 > **To be Noted:**   
 > The actual text in the rendered TOC (such as `1. Introduction` or `1. Simulation Monitoring`) is taken from the headline of the associated markdown file, even if the file names are identical by chance!
-```
+``` bash
 TSMP_WorkflowGettingStarted
 ===========================
 
@@ -122,36 +122,24 @@ The following screenshot shows all the settings needed to enable GitHub pages:
 
 GitHub workflows are the functionality to execute a predefined set of programs in a defined order when a defined condition is met. 
 These processing chains / workflows are defined in YAML files as a kind of abstract cookbook, e.g. saying   
-When event A is triggered, execute job B, which consists of steps C, D, and E.   
-These workflows can be as complex as you like by combining many and nested steps, which makes them very powerful! Each YAML file is a workflow, and you can have many workflows running in parallel with your repository, each for a different task. 
 
-This repository contains three workflows, all aimed at rendering and deploying the documentation, but with slight differences depending on the triggering event.
+> When event A is triggered, execute job B, which consists of steps C, D, and E.  
+
+These workflows can be as complex as you like by combining many and nested job-steps, which makes them very powerful! Each YAML file is a workflow, and you can have many workflows running in parallel with your repository, each for a different task. In order to be recognised as a workflow by GitHub, the YAML files must be saved under [`.github/workflows`](https://github.com/HPSCTerrSys/TSMP_WorkflowGettingStarted/tree/main/.github/workflows).
+
+This repository contains three workflows, all aimed at rendering and deploying this documentation, but with slight differences depending on the triggering event.
 
 Below is a annotated sample YAML file to get a quick feel for it:
-[![ScreenshotTableOfContent](./ScreenshotYAMLFile.png)](./ScreenshotYAMLfile.png)
+[![ScreenshotTableOfContent](./ScreenshotYAMLFile.png)](./ScreenshotYAMLFile.png)  
+
 Again imagine this workflow as a cook-book, executed on a blank machine. So when the above workflow is triggered 
 
 - A machine is started
 - Ubuntu is selected as the operating system
 - The content we want to render is checked out to this machine
-- Set up the environment by using a pre-defined python environment and installing the necessary programs
-- Render the documentation using sphinx
-- The rendered documentation is deployed to the gh-pages branch and published to the web.
+- The environment is set-up by using a pre-defined python environment and installing the necessary programs
+- The documentation is rendered using sphinx
+- The rendered documentation is deployed to the `gh-pages` branch and published to the web.
 
-As we chose Ubuntu as the operating system, we can run all available linux commands as job-steps, e.g. `pip install --upgrade myst-parser`, but also more complex predefined job-steps, e.g. `uses: peaceiris/actions-gh-pages@v3`, which is a kind of makro that combines a more complex task into a single command.
-
-
-## Internal linking / referencing:
-```
-myst-anchors -l auxiliaryscripts.md
->> <h1 id="auxiliary-scripts"></h1>
->> <h2 id="aux_migratefromscratchsh"></h2>
->> <h2 id="aux_untarmanytarssh"></h2>
->> <h2 id="aux_restagetapesh"></h2>
->> <h2 id="aux_gzipsh-and-aux_gunzipsh"></h2>
->> <h2 id="aux_sha512sumsh"></h2>
-```
-Than use links like:
-```
-[aux_UnTarManyTars.sh](REL/PATH/TO/auxiliaryscripts.md#aux_untarmanytarssh)
-```
+As we chose Ubuntu as the operating system, we can run all available linux commands as job-steps, e.g. `pip install --upgrade myst-parser`, but also more complex predefined job-steps, e.g. `uses: peaceiris/actions-gh-pages@v3`, which is a kind of makro that combines a more complex task into a single command. There are many predefined makros available for GitHub workflows, which could be used for free 
+- see [GitHub-Marketplace](https://github.com/marketplace).
