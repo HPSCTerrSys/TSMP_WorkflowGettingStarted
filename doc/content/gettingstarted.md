@@ -220,3 +220,7 @@ To become a little bit famillar with this workflow, work on the following tasks:
 4) Think about how you could check the simulation is running fine during 
    runtime.
 
+## Running not full coupled mode
+
+The example above is for the fully coupled TSMP, but other model combinations can be run using this workflow as well. What to look out for when running in other than fully coupled mode can be read in the section ['Run not fully coupled experiments'](./inDetail/NotFullyCoupledExp.md).
+

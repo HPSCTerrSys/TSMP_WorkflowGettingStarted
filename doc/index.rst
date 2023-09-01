@@ -25,6 +25,7 @@ TSMP_WorkflowGettingStarted
 
    content/inDetail/monitoring.md
    content/inDetail/cases.md
+   content/inDetail/NotFullyCoupledExp.md
    content/inDetail/ReproduceSimulation.md
    content/inDetail/maintenance.md
    content/inDetail/HowToContribute.md
