@@ -28,3 +28,4 @@ TSMP_WorkflowGettingStarted
    content/inDetail/ReproduceSimulation.md
    content/inDetail/maintenance.md
    content/inDetail/HowToContribute.md
+   content/inDetail/FAQ.md
