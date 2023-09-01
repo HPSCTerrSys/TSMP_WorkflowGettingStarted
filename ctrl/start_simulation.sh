@@ -153,10 +153,9 @@ for component in "${components[@]}"; do
 	# Check if COMBINATION does contain "cos", so that COSMO ist 
 	# used, wherefore CLM does NOT needs forcing files
   if [[ $COMBINATION == *"cos"* ]]; then
-	  # replace line matchin *offline_atmdir* with offline_atmdir = ''
-	  # NWR test if below has to be filled with something
+    # To make sure no offine forcing is accidentally read in:
+	  # replace line matchin *offline_atmdir* with offline_atmdir = 'BULLSHIT'
 	  sed -i "s,.*offline_atmdir.*, offline_atmdir = 'BULLSHIT',g" lnd.stdin
-	  #sed -i "s,.*offline_atmdir.*, offline_atmdir = '',g" lnd.stdin
   fi
 	# 
 	cp -v ${TSMP_BINDIR}/clm ${rundir}/
@@ -184,7 +183,6 @@ for component in "${components[@]}"; do
       echo "ParFlow restart file (${pfl_restart_file}) does not exist --> exit"
       exit 1
   fi
-	cp -v ${BASE_RUNDIR}/restarts/parflow/${pfidb_m1}.out.*.nc .
 	ic_pressure=`ls -1 ${pfidb_m1}.out.*.nc | tail -1`
 	sed -i "s,__ICPressure__,${ic_pressure},g" coup_oas.tcl
 	sed -i "s,__pfidb__,${pfidb},g" coup_oas.tcl
