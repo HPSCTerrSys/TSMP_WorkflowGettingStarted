@@ -191,18 +191,17 @@ for component in "${components[@]}"; do
 	sed -i "s,__nprocy_pfl_bldsva__,${PROC_PARFLOW_Q},g" coup_oas.tcl
 	# Check if COMBINATION does NOT contain "clm", so that neither COSMO nor
   # CLM ist used, wherefore ParFlow needs forcing files
-    if [[ $COMBINATION != *"clm"* ]]; then
+  if [[ $COMBINATION != *"clm"* ]]; then
 	  # Adjust lines if ParFlow forcing is needed
-	  evaptransfile="SpinUpForcing_ClimateMean.pfb"
-    pfl_EvapTrans="ParFlow_Spinup_30yAve"
-	  cp -v ${BASE_FORCINGDIR}/${pfl_EvapTrans}/${evaptransfile} ${rundir}/
-          sed -i "s,__EvapTransFile__,"True",g" coup_oas.tcl
-          sed -i "s,__EvapTrans_FileName__,"${evaptransfile}",g" coup_oas.tcl
-        else
+	  evaptransfile="evaptrans_${formattedStartDate}.nc"
+	  cp -v ${BASE_FORCINGDIR}/parflow/${evaptransfile} ${rundir}/
+    sed -i "s,__EvapTransFile__,"True",g" coup_oas.tcl
+    sed -i "s,__EvapTrans_FileName__,"${evaptransfile}",g" coup_oas.tcl
+  else
 	  # Remove lines if no ParFlow forcing is needed
 	  sed -i '/__EvapTransFile__/d' coup_oas.tcl
 	  sed -i '/__EvapTrans_FileName__/d' coup_oas.tcl
-        fi
+  fi
 
 	echo "--- execute ParFlow distributeing tcl-scripts "
 	sed -i "s,__nprocx_pfl_bldsva__,${PROC_PARFLOW_P},g" ascii2pfb_slopes.tcl
