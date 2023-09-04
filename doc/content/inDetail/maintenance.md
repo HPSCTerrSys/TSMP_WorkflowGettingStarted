@@ -106,7 +106,7 @@ TSMP_WorkflowGettingStarted
    content/inDetail/maintenance.md
    content/inDetail/HowToContribute.md
 ``` 
-[![ScreenshotTabelOfContent](./ScreenshotTabelOfContent.png)](./ScreenshotTabelOfContent.png)
+[![ScreenshotTabelOfContent](./ScreenshotTabelOfContent_CODE.png)](./ScreenshotTabelOfContent_CODE.png)[![ScreenshotTabelOfContent](./ScreenshotTabelOfContent_IMG.png)](./ScreenshotTabelOfContent_IMG.png)
 
 
 ## GitHub Pages
