@@ -20,6 +20,7 @@ echo "---             COMBINATION: ${COMBINATION}"
 echo "---              sim_NTASKS: ${sim_NTASKS}"
 echo "---               sim_NODES: ${sim_NODES}"
 echo "--- HOST:  $(hostname)"
+echo "--- SLURM_JOB_ID: ${SLURM_JOB_ID}"
 
 echo "--- save script start time to calculate total runtime"
 scriptStartTime=$(date -u "+%s")
@@ -393,6 +394,7 @@ e-mail: ${AUTHOR_MAIL}
 version: $(date)
 ###############################################################################
 MACHINE: $(cat /etc/FZJ/systemname)
+SLURM_JOB_ID: ${SLURM_JOB_ID}
 PARTITION: ${SIM_PARTITION}
 CaseID: ${CaseID}
 Total runtime: ${totalRunTime}
