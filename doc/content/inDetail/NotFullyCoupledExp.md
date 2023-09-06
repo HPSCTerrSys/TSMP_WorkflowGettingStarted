@@ -34,4 +34,4 @@ where `YYYY-MM` is the year and month of the simulation start date, and
 For the correct content and structure of the forcing file itself, we refere to the individual model manual.
 
 > **IMPORTANT NOTE:**  
-> Running ParFlow standalone build with TSMP does need a patched / fixed parflow version, where Evaptrans forcing is possible even without the `with-clm` compiler flag.
+> Running ParFlow standalone build with TSMP does need a [patched / fixed ParFlow version](https://github.com/HPSCTerrSys/parflow/tree/ActivateEvapTransTSMP), where Evaptrans forcing is possible even without the `HAVECLM` compiler flag.
