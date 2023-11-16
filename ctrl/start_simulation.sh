@@ -261,6 +261,41 @@ fi
 ################################################################################
 rm -rf YU*
 echo "DEBUG: start simulation"
+if [[ $GPU == "GPU" ]] ; then
+srun --het-group=0 ./lmparbin_pur :\
+     --pack-group=1 ./clm :\
+     --pack-group=2 ./parflow ${pfidb}
+elif [[ $GPU == "MSA" ]] ; then
+srun --pack-group=0 xenv -P \
+                         -U $OTHERSTAGES \
+                         -L Stages/2022 \
+                         -L Intel/2021.4.0 \
+                         -L ParaStationMPI/5.5.0-1 \
+                         -L netCDF/4.8.1 \
+                         -L netCDF-Fortran/4.5.3 \
+                         -L ecCodes/2.22.1 \
+                         ./lmparbin_pur : \
+     --pack-group=1 xenv -P \
+                         -U $OTHERSTAGES \
+                         -L Stages/2022 \
+                         -L Intel/2021.4.0 \
+                         -L ParaStationMPI/5.5.0-1 \
+                         -L netCDF/4.8.1 \
+                         -L netCDF-Fortran/4.5.3 \
+                         ./clm : \
+     --pack-group=2 xenv -P \
+                         -U $OTHERSTAGES \
+                         -L Stages/2022 \
+                         -L Intel/2021.4.0 \
+                         -L ParaStationMPI/5.5.0-1 \
+                         -L netCDF/4.8.1 \
+                         -L netCDF-Fortran/4.5.3 \
+                         -L Silo/4.11 \
+ 			 -L Hypre/2.25.0-cpu \
+                         LD_LIBRARY_PATH+=${BASE_SRCDIR}/TSMP/parflow_${SYSTEM}_${COMBINATION}_MSA/rmm/lib:$LD_LIBRARY_PATH \
+                         ./parflow ${pfidb}
+else
+
 srun  --threads-per-core=1 --multi-prog slm_multiprog_mapping.conf
 if [[ $? != 0 ]] ; then exit 1 ; fi
 date

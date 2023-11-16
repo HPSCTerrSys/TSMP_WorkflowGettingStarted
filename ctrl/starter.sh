@@ -3,6 +3,15 @@
 # USAGE: 
 # >> ./$0
 # >> ./starter.sh
+# >> ./starter.sh MSA
+GPU=$1
+export GPU
+if [[ $SYSTEMNAME == "juwels" ]] ; then
+   SYSTEM="JUWELS"
+elif [[ $SYSTEMNAME == "jurecadc" ]] ; then
+   SYSTEM="JURECA"
+fi
+
 
 ###############################################################################
 #### Adjust according to your need BELOW
@@ -41,8 +50,14 @@ CaseID="MainRun"     # Which case to run? Cases are defined in ctrl/CASES.conf
 # PROC (processor) distribution of individual component models
 PROC_COSMO_X=16
 PROC_COSMO_Y=24
-PROC_PARFLOW_P=14
-PROC_PARFLOW_Q=14
+ if [[ $GPU == "MSA" || $GPU == "GPU" ]] ; then
+   echo "Running with MSA!"
+   PROC_PARFLOW_P=1
+   PROC_PARFLOW_Q=12
+else
+   PROC_PARFLOW_P=14
+   PROC_PARFLOW_Q=14
+fi
 PROC_CLM=60
 PROCX_INT2LM=16
 PROCY_INT2LM=8
@@ -56,9 +71,24 @@ pre_PARTITION=dc-cpu
 pre_MAILTYPE=FAIL
 # def SBATCH for simulation
 # sim_NODES and sim_NTASKS are set automatically based on PROC_* further below
-sim_NTASKSPERNODE=128 # 128, 48 
+if [[ $SYSTEM == "JURECA" ]] ; then
+   sim_NTASKSPERNODE=128
+elif [[ $SYSTEM == "JUWELS" ]] ; then
+   sim_NTASKSPERNODE=48
+fi 
 sim_WALLCLOCK=06:00:00
-sim_PARTITION=dc-cpu #dc-cpu, mem192, batch, esm
+if [[ $SYSTEM == "JURECA" ]] ; then
+   sim_PARTITION=dc-cpu
+   gpu_PARTITION=dc-gpu
+elif [[ $SYSTEM == "JUWELS" ]] ; then
+   sim_PARTITION=batch
+   gpu_PARTITION=gpus
+fi
+if [[ $GPU == "MSA" ]] ; then
+   sim_PARTITION=batch
+   gpu_PARTITION=booster
+fi
+gpu_NTASKSPERNODE=4
 sim_MAILTYPE=ALL
 # def SBATCH for postpro (was set to 24 tasks)
 pos_NODES=1
@@ -94,6 +124,9 @@ export PRE_PARTITION=${pre_PARTITION}
 export PRE_NTASKS=${pre_NTASKS}
 export SIM_PARTITION=${sim_PARTITION}
 export SIM_NTASKS=${sim_NTASKS}
+export GPU_PARTITION=${gpu_PARTITION}
+export SIM_NTASKS_NODE=${sim_NTASKSPERNODE}
+export gpu_NTASKSPERNODE
 export POST_PARTITION=${pos_PARTITION}
 export POST_NTASKS=${pos_NTASKS}
 export FIN_PARTITION=${fin_PARTITION}
@@ -107,8 +140,17 @@ source ${BASE_CTRLDIR}/start_helper.sh
 # 'updatePathsForCASES()' is located in 'start_helper.sh'
 updatePathsForCASES ${BASE_CTRLDIR}/CASES.conf ${CaseID}
 export COMBINATION=${COMBINATION}
-TSMPbuild="JURECA_${COMBINATION}" # The TSMP build name.
-#TSMPbuild="JUWELS_${COMBINATION}" # The TSMP build name.
+if [[ "${GPU}" == MSA ]]; then
+  TSMPbuild="${SYSTEM}_${COMBINATION}_MSA"
+  export LD_LIBRARY_PATH=${BASE_SRCDIR}/TSMP/parflow_${SYSTEM}_${COMBINATION}_MSA/rmm/lib:$LD_LIBRARY_PATH
+elif [[ "${GPU}" == GPU ]]; then
+  TSMPbuild="${SYSTEM}_${COMBINATION}_GPU"
+  export LD_LIBRARY_PATH=${BASE_SRCDIR}/TSMP/parflow_${SYSTEM}_${COMBINATION}_GPU/rmm/lib:$LD_LIBRARY_PATH
+else
+   TSMPbuild="${SYSTEM}_${COMBINATION}" # The TSMP build name.
+fi
+
+export COMBINATION=${COMBINATION} #The TSMP build name.
 # This name is automatically created during the TSMP 
 # builing step (compilation) and typically consists of
 # JSCMACHINE_COMBINATION. One can look up
@@ -202,6 +244,32 @@ do
     # dependency manualy by setting to JOBID of substep before
     submit_simulation=$submit_prepro
   else
+     if [[ $GPU == "MSA" || $GPU == "GPU" ]] ; then
+     export PROC_COSMO_ALL=$((PROC_COSMO_X * PROC_COSMO_Y / SIM_NTASKS_NODE))
+     export PROC_PARFLOW_ALL=$((PROC_PARFLOW_P * PROC_PARFLOW_Q / gpu_NTASKSPERNODE))
+     echo $PROC_COSMO_ALL
+     export PROC_CLM_ALL=1
+     cp submit_simulation_MSA_sed.sh submit_simulation_MSA.sh
+     sed -i "s/PROC_COSMO_ALL/${PROC_COSMO_ALL}/" submit_simulation_MSA.sh
+     sed -i "s/SIM_NTASKS_NODE/${SIM_NTASKS_NODE}/" submit_simulation_MSA.sh
+     sed -i "s/SIM_PARTITION/${SIM_PARTITION}/" submit_simulation_MSA.sh
+     sed -i "s/PROC_CLM_ALL/${PROC_CLM_ALL}/" submit_simulation_MSA.sh
+     sed -i "s/PROC_PARFLOW_ALL/${PROC_PARFLOW_ALL}/" submit_simulation_MSA.sh
+     sed -i "s/GPU_PARTITION/${GPU_PARTITION}/" submit_simulation_MSA.sh
+     sed -i "s/GPU_NTASKS_NODE/${gpu_NTASKSPERNODE}/" submit_simulation_MSA.sh
+     sed -i "s/GPU_NTASKS_NODE/${gpu_NTASKSPERNODE}/" submit_simulation_MSA.sh
+     submit_simulation_return=$(sbatch -d afterok:${submit_prepro}:${submit_simulation} \
+           --job-name="${CaseID}_simulation_MSA" \
+           --export=ALL,startDate=$startDate,CTRLDIR=$BASE_CTRLDIR,NoS=$simPerJob \
+           -o "${BASE_LOGDIR}/%x-out" -e "${BASE_LOGDIR}/%x-err" \
+           --mail-user=${AUTHOR_MAIL} --account=$computeAcount \
+           --mail-type=${sim_MAILTYPE} \
+           --time=${sim_WALLCLOCK}  \
+           submit_simulation_MSA.sh 2>&1)
+     echo "${submit_simulation_return}"
+     submit_simulation=$(echo $submit_simulation_return | awk 'END{print $(NF)}')
+     echo "simulation for $startDate: $submit_simulation"
+     else
     submit_simulation_return=$(sbatch -d afterok:${submit_prepro}:${submit_simulation} \
           --job-name="${CaseID}_simulation" \
           --threads-per-core=1 \
@@ -216,6 +284,7 @@ do
     echo "${submit_simulation_return}"
     submit_simulation=$(echo $submit_simulation_return | awk 'END{print $(NF)}')
     echo "simulation for $startDate: $submit_simulation"
+  fi
   fi
 
   if [ "$pos" = false ]; then
