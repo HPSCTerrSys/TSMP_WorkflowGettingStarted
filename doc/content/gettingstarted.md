@@ -210,6 +210,38 @@ vi ./starter.sh
 ./starter.sh 
 ```
 
+## Start a simulation with GPU or MSA
+Currently, the branch `msa_update` includes the necessary adaptions to use the 
+workflow with ParFlow running on internal GPUs (GPU) and on the JUWELS-Booster
+(MSA).
+To use the functionality, ParFlow has to be compiled for GPU in the `TSMP/bldsva`
+folder
+```bash
+./build_tsmp.ksh --readclm=true --maxpft=4 -c clm3-cos5-pfl -m JUWELS -O Intel -A GPU
+```
+After the compilation, rename the ParFlow and the binaries folder.
+Use `_GPU` as an appendix for internal GPU runs and `_MSA` for cross-cluster 
+submissions. 
+
+```bash
+mv TSMP/parflow_JUWELS_clm3-cos5-pfl/ TSMP/parflow_JUWELS_clm3-cos5-pfl_GPU/
+mv TSMP/bin/JUWELS_clm3-cos5-pfl/ TSMP/JUWELS_clm3-cos5-pfl_GPU/
+```
+In the branch `msa_update` `starter.sh` has new functionalities
+(choice of GPU partition, etc..:).
+Have look at them before you start the simulation. If you are ready submit the 
+simulation with:
+```bash
+./starter.sh GPU
+or
+./starter.sh MSA
+```
+
+Note: GPU and MSA submissions are experimental. ParFlow tends to not probably 
+terminate in GPU-runs compiled with Intel. MSA-runs on the JUWELS-Booster have 
+problems with the Hypre library which is as a default used for simulations on 
+EUR-11.
+
 ## Exercice
 To become a little bit famillar with this workflow, work on the following tasks:
 
