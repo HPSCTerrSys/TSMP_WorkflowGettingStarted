@@ -297,6 +297,7 @@ srun --pack-group=0 xenv -P \
 else
 
 srun  --threads-per-core=1 --multi-prog slm_multiprog_mapping.conf
+fi
 if [[ $? != 0 ]] ; then exit 1 ; fi
 date
 wait
