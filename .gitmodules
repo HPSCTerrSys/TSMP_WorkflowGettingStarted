@@ -1,15 +1,20 @@
 [submodule "src/TSMP"]
 	path = src/TSMP
 	url = https://github.com/HPSCTerrSys/TSMP.git
+	update = merge
 [submodule "geo/TSMP_EUR-11"]
 	path = geo/TSMP_EUR-11
 	url = https://gitlab.jsc.fz-juelich.de/detect/detect_z03_z04/constant_fields/TSMP_EUR-11.git
+	update = merge
 [submodule "ctrl/namelists/MainRun"]
 	path = ctrl/namelists/MainRun
 	url = https://gitlab.jsc.fz-juelich.de/detect/detect_z03_z04/software_tools/tools_mirrors/tsmp_eur-11_eval.git
+	update = merge
 [submodule "src/SLOTH"]
 	path = src/SLOTH
 	url = https://github.com/HPSCTerrSys/SLOTH.git
+	update = merge
 [submodule "src/int2lm3.00"]
 	path = src/int2lm3.00
 	url = https://gitlab.jsc.fz-juelich.de/detect/detect_z03_z04/software_tools/tools_mirrors/int2lm3.00.git
+	update = merge
