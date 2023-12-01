@@ -101,6 +101,17 @@ cd ${rundir}
 source ${BASE_ENVSDIR}/env_simulation
 echo "--- -- copying binaries, geo files, and namlists for"
 IFS='-' read -ra components <<< "${COMBINATION}"
+numComp=$(echo "${#components[@]}")
+if [ ${numComp} -ne 1 ];then
+  # OASIS coupler
+  echo "--- -- - oasis"
+  cp ${BASE_GEODIR}/oasis/* ${rundir}/
+  cp ${BASE_NAMEDIR}/namcouple_${COMBINATION} ${rundir}/namcouple
+  runTime=$((numHours*3600+TSTP_CLM))
+  sed -i "s,__runTime__,${runTime},g" namcouple
+fi
+
+# model components
 for component in "${components[@]}"; do
   # COSMO
   if [[ "${component}" == cos? ]]; then
@@ -109,7 +120,7 @@ for component in "${components[@]}"; do
 	mkdir -vp ${rundir}/cosmo_out/pl
 	mkdir -vp ${rundir}/cosmo_out/ml
 	mkdir -vp ${rundir}/cosmo_out/zl
-  mkdir -vp ${BASE_RUNDIR}/restarts/cosmo
+        mkdir -vp ${BASE_RUNDIR}/restarts/cosmo
 	cp -v ${BASE_NAMEDIR}/INPUT_* ${rundir}/
 	sed -i "s,__hstart__,${hstart},g" INPUT_IO
 	sed -i "s,__hstop__,${hstop},g" INPUT_IO
@@ -123,6 +134,12 @@ for component in "${components[@]}"; do
 	cosmo_ydate_ini=$(date -u -d "${initDate}" '+%Y%m%d%H')
 	sed -i "s,__hstart__,$hstart,g" INPUT_ORG
 	sed -i "s,__hstop__,$hstop,g" INPUT_ORG
+	cosmo_tstp_nml=$(awk 'sub(/.*dt/,""){print $0}' INPUT_ORG | tr -d -c 0-9)
+        if [ ${cosmo_tstp_nml} -ne ${TSTP_COSMO} ]; then
+           printf "WARNING: Timestep of workflow NOT equal to namelist settings! Take timestep of workflow! \n"
+           printf "Timestep COSMO namelist: ${cosmo_tstp_nml}; timestep COSMO workflow: ${TSTP_COSMO} \n"
+	   sed -i "s#^\([[:blank:]]*\)dt.*#\1dt=${TSTP_COSMO},#" INPUT_ORG
+        fi
 	sed -i "s,__cosmo_ydate_ini__,${cosmo_ydate_ini},g" INPUT_ORG
 	sed -i "s,__nprocx_cos_bldsva__,${PROC_COSMO_X},g" INPUT_ORG
 	sed -i "s,__nprocy_cos_bldsva__,${PROC_COSMO_Y},g" INPUT_ORG
@@ -132,7 +149,7 @@ for component in "${components[@]}"; do
   elif [[ "${component}" == clm? ]]; then
 	echo "--- -- - clm"
 	cp -v ${BASE_NAMEDIR}/lnd.stdin ${rundir}/
-	nelapse=$((numHours*3600/900+1))
+	nelapse=$((numHours*3600/TSTP_CLM+1))
 	sed -i "s,__nelapse__,${nelapse},g" lnd.stdin
 	start_ymd=$(date -u -d "${startDate}" '+%Y%m%d')
 	sed -i "s,__start_ymd__,${start_ymd},g" lnd.stdin
@@ -145,8 +162,15 @@ for component in "${components[@]}"; do
 	start_tod=$((tmp_h*60*60 + tmp_m*60 + tmp_s))
 	sed -i "s,__start_tod__,${start_tod},g" lnd.stdin
 	clm_restart_date=$(date -u -d "${startDate}" '+%Y-%m-%d')
-  clm_restart_sec=$(printf "%05d" ${start_tod=})
+        clm_restart_sec=$(printf "%05d" ${start_tod=})
 	sed -i "s,__clm_restart__,clmoas.clm2.r.${clm_restart_date}-${clm_restart_sec}.nc,g" lnd.stdin
+	clm_tstp_nml=$(awk 'sub(/.*dtime/,""){print $2}' lnd.stdin)
+	if [ ${clm_tstp_nml} -ne ${TSTP_CLM} ]; then
+	   printf "WARNING: Timestep of workflow NOT equal to namelist settings! Take timestep of workflow! \n"
+	   printf "Timestep CLM namelist: ${clm_tstp_nml}; timestep CLM workflow: ${TSTP_CLM} \n"
+	   sed -i "s,^\([[:blank:]]*\)dtime.*$,\1dtime          =  ${TSTP_CLM}," lnd.stdin
+	   sed -E -i "s/^((CLM|COS).{5} {1,}(COS|CLM).{5} {1,}[0-9]{1,}) [0-9]{1,} /\1 ${TSTP_CLM} /" namcouple
+	fi
 	sed -i "s,__BASE_RUNDIR__,${BASE_RUNDIR},g" lnd.stdin
 	sed -i "s,__BASE_FORCINGDIR__,${BASE_FORCINGDIR},g" lnd.stdin
 	sed -i "s,__BASE_GEODIR__,${BASE_GEODIR},g" lnd.stdin
@@ -170,6 +194,14 @@ for component in "${components[@]}"; do
 	cp -v ${BASE_NAMEDIR}/coup_oas.tcl ${rundir}/
 	cp -v ${BASE_GEODIR}/parflow/* ${rundir}/
 	sed -i "s,__TimingInfo.StopTime__,${numHours},g" coup_oas.tcl
+	parflow_tstp_nml=$(awk 'sub(/.*pfset TimeStep.Value/,""){print $0}' coup_oas.tcl | awk '{ gsub (" ", "", $0); print}')
+        TSTP_PARFLOW_HR=$(echo "scale=4;${TSTP_PARFLOW}/3600" | bc)
+	if (( $(echo "$parflow_tstp_nml != $TSTP_PARFLOW_HR" | bc -l) )); then
+           printf "WARNING: Timestep of workflow NOT equal to namelist settings! Take timestep of workflow! \n"
+           printf "Timestep PARFLOW namelist: ${parflow_tstp_nml}; timestep PARFLOW workflow: ${TSTP_PARFLOW_HR} \n"
+	   sed -i "s,^\([[:blank:]]*\)pfset TimeStep.Value.*$,\1pfset TimeStep.Value                     ${TSTP_PARFLOW_HR}," coup_oas.tcl
+	   sed -E -i "s/^((CLM|PFL).{5} {1,}(PFL|CLM).{5} {1,}[0-9]{1,}) [0-9]{1,} /\1 ${TSTP_PARFLOW} /" namcouple
+        fi
   # Below test if restart file for ParFlow does exist is important!
   # If ParFlow is driven with netCDF files, a non existing ICPressure file
   # will not crash the program, but ParFlow is assuming init pressure of zero 
@@ -220,13 +252,6 @@ for component in "${components[@]}"; do
 	exit 1
   fi
 done
-
-# OASIS
-echo "--- -- - oasis"
-cp ${BASE_GEODIR}/oasis/* ${rundir}/
-cp ${BASE_NAMEDIR}/namcouple_${COMBINATION} ${rundir}/namcouple
-runTime=$((numHours*3600+900))
-sed -i "s,__runTime__,${runTime},g" namcouple
 
 ################################################################################
 # Prepare slm_multiprog_mapping.conf
