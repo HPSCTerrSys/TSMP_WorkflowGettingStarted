@@ -301,10 +301,17 @@ echo "--- new_simres: $new_simres"
 # clean befor to avoid conflicts
 rm -rvf $new_simres
 mkdir -p "$new_simres/log"
+mkdir -p "$new_simres/nml"
 
 echo "--- Moving model-output to simres/ and restarts/"
 # looping over all component set in COMBINATION
 IFS='-' read -ra components <<< "${COMBINATION}"
+numComp=$(echo "${#components[@]}")
+if [ ${numComp} -ne 1 ];then
+  echo "--- - OASIS"
+  # Move OASIS namelist to simres/nml
+  cp -v ${rundir}/namcouple ${new_simres}/nml/
+fi
 for component in "${components[@]}"; do
   # COSMO
   if [[ "${component}" == cos? ]]; then
@@ -323,6 +330,8 @@ for component in "${components[@]}"; do
     check4error $? "--- ERROR while moving COSMO model output to simres-dir"
     # Move COSMO logs to simres/log
     cp -v ${rundir}/YU* ${new_simres}/log/
+    # Move COSMO namelist to simres/nml
+    cp -v ${rundir}/INPUT_* ${new_simres}/nml/
   # CLM
   elif [[ "${component}" == clm? ]]; then
     echo "--- - CLM"
@@ -334,13 +343,13 @@ for component in "${components[@]}"; do
     # Do use `-` prefix for date string to avoid below error:
     # ERROR: value too great for base (error token is "09")
     # Solution found at: https://stackoverflow.com/a/65848366
-	  tmp_h=$(date -u -d "${startDate_p1}" '+%-H')
-	  tmp_m=$(date -u -d "${startDate_p1}" '+%-M')
-	  tmp_s=$(date -u -d "${startDate_p1}" '+%-S')
-	  start_tod_p1=$((tmp_h*60*60 + tmp_m*60 + tmp_s))
-	  clm_restart_date_p1=$(date -u -d "${startDate_p1}" '+%Y-%m-%d')
+    tmp_h=$(date -u -d "${startDate_p1}" '+%-H')
+    tmp_m=$(date -u -d "${startDate_p1}" '+%-M')
+    tmp_s=$(date -u -d "${startDate_p1}" '+%-S')
+    start_tod_p1=$((tmp_h*60*60 + tmp_m*60 + tmp_s))
+    clm_restart_date_p1=$(date -u -d "${startDate_p1}" '+%Y-%m-%d')
     clm_restart_sec_p1=$(printf "%05d" ${start_tod_p1})
-	  clm_restart_fiel_p1="clmoas.clm2.r.${clm_restart_date_p1}-${clm_restart_sec_p1}.nc"
+    clm_restart_fiel_p1="clmoas.clm2.r.${clm_restart_date_p1}-${clm_restart_sec_p1}.nc"
     
     # Create component subdir
 
@@ -349,9 +358,11 @@ for component in "${components[@]}"; do
     cp -v ${rundir}/clmoas.clm2.h?.*.nc $new_simres/clm/
     check4error $? "--- ERROR while moving CLM model output to simres-dir"
     cp -v ${BASE_RUNDIR}/restarts/clm/${clm_restart_fiel_p1} $new_simres/restarts/clm
-    check4error $? "--- ERROR while moving CLM model output to simres-dir"
+    check4error $? "--- ERROR while moving CLM restart file to restart-dir"
     # Move CLM logs to simres/log
     cp -v ${rundir}/timing_all ${new_simres}/log/
+    # Move CLM namelist to simres/nml
+    cp -v ${rundir}/lnd.stdin ${new_simres}/nml/
   # PFL
   elif [[ "${component}" == pfl ]]; then
     echo "--- - PFL"
@@ -370,6 +381,8 @@ for component in "${components[@]}"; do
     cp -v ${rundir}/*out.kinsol.log ${new_simres}/log/
     # Move ParFlow timing to simres/log
     cp -v ${rundir}/*out.timing* ${new_simres}/log/
+    # Move ParFlow namelist to simres/nml
+    cp -v ${rundir}/coup_oas.tcl ${new_simres}/nml/
   else
     echo "ERROR: unknown component ($component) --> Exit"
     exit 1

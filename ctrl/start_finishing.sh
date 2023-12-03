@@ -70,6 +70,9 @@ wait
 cd ${SimresDir}/log
 wrap_calc_sha512sum 1 ./*
 wait
+cd ${SimresDir}/nml
+wrap_calc_sha512sum 1 ./*
+wait
 
 exit 0
 
