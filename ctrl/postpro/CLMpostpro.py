@@ -5,6 +5,7 @@ import argparse
 import sys
 import datetime as dt
 import sloth.IO
+import os
 
 parser = argparse.ArgumentParser(description='Tell me what this script can do!.')
 parser.add_argument('--variables', '-v', nargs='+', type=str, required=True,
@@ -24,6 +25,11 @@ inDir         = args.indir
 outDir        = args.outdir
 gridDes       = args.gridDes
 NBOUNDCUT     = args.NBOUNDCUT 
+
+# Get environment variables
+author_name      = os.getenv('AUTHOR_NAME')
+author_mail      = os.getenv('AUTHOR_MAIL')
+author_institute = os.getenv('AUTHOR_INSTITUTE')
 
 ################################################################################
 # Read in all CLM output
@@ -78,8 +84,8 @@ for name in VARs:
 
 
         netCDFFileName = sloth.IO.createNetCDF(f'{outDir}/{name}.nc', domain=gridDes,
-                author='Niklas WAGNER', contact='n.wagner@fz-juelich.de',
-                institution='FZJ - IBG-3', calcLatLon=True,
+                author=author_name, contact=author_mail,
+                institution=author_institute, calcLatLon=True,
                 history=f'Created: {dt.datetime.now().strftime("%Y-%m-%d %H:%M")}')
         with nc.Dataset(netCDFFileName, 'r+') as dst:
             a = dst.createVariable('time','f8',('time'))

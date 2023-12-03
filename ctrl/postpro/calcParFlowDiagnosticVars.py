@@ -93,6 +93,11 @@ griddesFile          = args.griddesFile
 LLSMFile             = args.LLSMFile
 outPrepandName       = args.outPrepandName
 
+# Get environment variables
+author_name      = os.getenv('AUTHOR_NAME')
+author_mail      = os.getenv('AUTHOR_MAIL')
+author_institute = os.getenv('AUTHOR_INSTITUTE')
+
 # Need for HeAT
 split=None
 
@@ -326,8 +331,8 @@ description_str = [f'Water table depth (simple algorithm) based on ParFlow',
 description_str = ' '.join(description_str)
 netCDFFileName = sloth.IO.createNetCDF(saveFile, domain=griddesFile,
         calcLatLon=True, timeUnit=timeUnit, timeCalendar=timeCalendar,
-        author='Niklas WAGNER', contact='n.wagner@fz-juelich.de',
-        institution='FZJ - IBG-3', 
+        author=author_name, contact=author_mail,
+        institution=author_institute, 
         history=f'Created: {datetime.datetime.now().strftime("%Y-%m-%d %H:%M")}',
         description=description_str)
 

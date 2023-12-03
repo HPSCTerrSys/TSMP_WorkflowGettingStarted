@@ -33,9 +33,9 @@ CDO_BINDIR="${tmp_CDO_BINDIR%/*}"
 CDO=${tmp_CDO_BINDIR} # postpro functions need this as "CDO"
 echo "--- set CDO: ${CDO}"
 
-NBOUNDCUT=3
-IE_TOT=450
-JE_TOT=438
+NBOUNDCUT=$(awk 'sub(/.*nboundlines/,""){print $0}' ${BASE_NAMEDIR}/INPUT_ORG | tr -d -c 0-9)
+IE_TOT=$(awk 'sub(/.*ie_tot/,""){print $0}' ${BASE_NAMEDIR}/INPUT_ORG | tr -d -c 0-9)
+JE_TOT=$(awk 'sub(/.*je_tot/,""){print $0}' ${BASE_NAMEDIR}/INPUT_ORG | tr -d -c 0-9)
 let "IESPONGE = ${IE_TOT} - NBOUNDCUT - 1"
 let "JESPONGE = ${JE_TOT} - NBOUNDCUT - 1"
 YDATE_START=$(date -u -d "${initDate}" "+%Y%m%d%H")
