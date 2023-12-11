@@ -225,7 +225,7 @@ submissions.
 
 ```bash
 mv TSMP/parflow_JUWELS_clm3-cos5-pfl/ TSMP/parflow_JUWELS_clm3-cos5-pfl_GPU/
-mv TSMP/bin/JUWELS_clm3-cos5-pfl/ TSMP/JUWELS_clm3-cos5-pfl_GPU/
+mv TSMP/bin/JUWELS_clm3-cos5-pfl/ TSMP/bin/JUWELS_clm3-cos5-pfl_GPU/
 ```
 In the branch `msa_update` `starter.sh` has new functionalities
 (choice of GPU partition, etc..:).
