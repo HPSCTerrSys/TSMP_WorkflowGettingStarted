@@ -364,8 +364,8 @@ description_str = [f'overlandFlow based on ParFlow output (post-processed variab
 description_str = ' '.join(description_str)
 netCDFFileName = sloth.IO.createNetCDF(saveFile, domain=griddesFile,
         calcLatLon=True, timeUnit=timeUnit, timeCalendar=timeCalendar,
-        author='Niklas WAGNER', contact='n.wagner@fz-juelich.de',
-        institution='FZJ - IBG-3', 
+        author=author_name, contact=author_mail,
+        institution=author_institute,
         history=f'Created: {datetime.datetime.now().strftime("%Y-%m-%d %H:%M")}',
         description=description_str)
 
@@ -396,9 +396,9 @@ description_str = [f'Surface Storage based on ParFlow (post-processed variable)'
                 ]
 description_str = ' '.join(description_str)
 netCDFFileName = sloth.IO.createNetCDF(saveFile, domain=griddesFile,
-        calcLatLon=True, timeUnit=timeUnit, timeCalendar=timeCalendar, 
-        author='Niklas WAGNER', contact='n.wagner@fz-juelich.de',
-        institution='FZJ - IBG-3', 
+        calcLatLon=True, timeUnit=timeUnit, timeCalendar=timeCalendar,
+        author=author_name, contact=author_mail,
+        institution=author_institute,
         history=f'Created: {datetime.datetime.now().strftime("%Y-%m-%d %H:%M")}',
         description=description_str)
 
@@ -430,8 +430,8 @@ description_str = [f'Subsurface Storage based on ParFlow (post-processed variabl
 description_str = ' '.join(description_str)
 netCDFFileName = sloth.IO.createNetCDF(saveFile, domain=griddesFile,
         calcLatLon=True, timeUnit=timeUnit, timeCalendar=timeCalendar,
-        author='Niklas WAGNER', contact='n.wagner@fz-juelich.de',
-        institution='FZJ - IBG-3', 
+        author=author_name, contact=author_mail,
+        institution=author_institute,
         history=f'Created: {datetime.datetime.now().strftime("%Y-%m-%d %H:%M")}',
         description=description_str)
 
@@ -463,8 +463,8 @@ description_str = [f'Saturated Subsurface Storage based on ParFlow (post-process
 description_str = ' '.join(description_str)
 netCDFFileName = sloth.IO.createNetCDF(saveFile, domain=griddesFile,
         calcLatLon=True, timeUnit=timeUnit, timeCalendar=timeCalendar,
-        author='Niklas WAGNER', contact='n.wagner@fz-juelich.de',
-        institution='FZJ - IBG-3', 
+        author=author_name, contact=author_mail,
+        institution=author_institute,
         history=f'Created: {datetime.datetime.now().strftime("%Y-%m-%d %H:%M")}',
         description=description_str)
 
@@ -496,8 +496,8 @@ description_str = [f'Subsurface Runoff based on ParFlow (post-processed variable
 description_str = ' '.join(description_str)
 netCDFFileName = sloth.IO.createNetCDF(saveFile, domain=griddesFile,
         calcLatLon=True, timeUnit=timeUnit, timeCalendar=timeCalendar,
-        author='Niklas WAGNER', contact='n.wagner@fz-juelich.de',
-        institution='FZJ - IBG-3', 
+        author=author_name, contact=author_mail,
+        institution=author_institute,
         history=f'Created: {datetime.datetime.now().strftime("%Y-%m-%d %H:%M")}',
         description=description_str)
 
